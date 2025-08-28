@@ -10,8 +10,10 @@ import {
 } from 'typeorm';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Whitelist } from '../../whitelist/entities/whitelist.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('tenancies')
+@Auditable()
 export class Tenancy {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -7,8 +7,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import { RolePermission } from '../../role/entities/role-permission.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('permissions')
+@Auditable()
 export class Permission {
   @PrimaryGeneratedColumn('uuid')
   id: string;

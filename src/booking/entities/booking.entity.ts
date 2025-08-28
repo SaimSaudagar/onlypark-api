@@ -10,8 +10,10 @@ import {
 } from 'typeorm';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { VehicleRegChangeOtp } from './vehicle-reg-change-otp.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('bookings')
+@Auditable()
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
   id: string;

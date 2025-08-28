@@ -8,8 +8,10 @@ import {
 } from 'typeorm';
 import { RolePermission } from './role-permission.entity';
 import { UserRole } from '../../user/entities/user-role.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('roles')
+@Auditable()
 export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string;

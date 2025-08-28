@@ -8,8 +8,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Booking } from './booking.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('vehicle_reg_change_otps')
+@Auditable()
 export class VehicleRegChangeOtp {
   @PrimaryGeneratedColumn('uuid')
   id: string;
