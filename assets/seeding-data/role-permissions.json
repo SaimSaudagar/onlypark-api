@@ -1,0 +1,121 @@
+[
+  {
+    "role": "Super Admin",
+    "permissions": [
+      "user.create",
+      "user.read",
+      "user.update",
+      "user.delete",
+      "role.create",
+      "role.read",
+      "role.update",
+      "role.delete",
+      "permission.create",
+      "permission.read",
+      "permission.update",
+      "permission.delete",
+      "master-car-park.create",
+      "master-car-park.read",
+      "master-car-park.update",
+      "master-car-park.delete",
+      "sub-car-park.create",
+      "sub-car-park.read",
+      "sub-car-park.update",
+      "sub-car-park.delete",
+      "booking.create",
+      "booking.read",
+      "booking.update",
+      "booking.delete",
+      "infringement.create",
+      "infringement.read",
+      "infringement.update",
+      "infringement.delete",
+      "whitelist.create",
+      "whitelist.read",
+      "whitelist.update",
+      "whitelist.delete",
+      "blacklist.create",
+      "blacklist.read",
+      "blacklist.update",
+      "blacklist.delete",
+      "audit-log.read",
+      "system.settings",
+      "reports.generate",
+      "reports.read"
+    ]
+  },
+  {
+    "role": "Admin",
+    "permissions": [
+      "user.create",
+      "user.read",
+      "user.update",
+      "role.read",
+      "permission.read",
+      "master-car-park.create",
+      "master-car-park.read",
+      "master-car-park.update",
+      "sub-car-park.create",
+      "sub-car-park.read",
+      "sub-car-park.update",
+      "booking.create",
+      "booking.read",
+      "booking.update",
+      "infringement.create",
+      "infringement.read",
+      "infringement.update",
+      "whitelist.create",
+      "whitelist.read",
+      "whitelist.update",
+      "blacklist.create",
+      "blacklist.read",
+      "blacklist.update",
+      "audit-log.read",
+      "reports.generate",
+      "reports.read"
+    ]
+  },
+  {
+    "role": "Carpark Manager",
+    "permissions": [
+      "user.read",
+      "master-car-park.read",
+      "master-car-park.update",
+      "sub-car-park.read",
+      "sub-car-park.update",
+      "booking.create",
+      "booking.read",
+      "booking.update",
+      "infringement.create",
+      "infringement.read",
+      "infringement.update",
+      "whitelist.create",
+      "whitelist.read",
+      "whitelist.update",
+      "reports.read"
+    ]
+  },
+  {
+    "role": "Patrol Officer",
+    "permissions": [
+      "master-car-park.read",
+      "sub-car-park.read",
+      "booking.read",
+      "infringement.create",
+      "infringement.read",
+      "infringement.update",
+      "whitelist.read",
+      "blacklist.read"
+    ]
+  },
+  {
+    "role": "User",
+    "permissions": [
+      "master-car-park.read",
+      "sub-car-park.read",
+      "booking.create",
+      "booking.read",
+      "booking.update"
+    ]
+  }
+]

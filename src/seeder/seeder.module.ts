@@ -1,0 +1,50 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+// Seeder modules
+import { RoleSeederModule } from './role/role-seeder.module';
+import { PermissionSeederModule } from './permission/permission-seeder.module';
+import { RolePermissionSeederModule } from './role-permission/role-permission-seeder.module';
+import { UserSeederModule } from './user/user-seeder.module';
+import { CarMakeSeederModule } from './car-make/car-make-seeder.module';
+import { MasterCarParkSeederModule } from './master-car-park/master-car-park-seeder.module';
+import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.module';
+
+@Module({
+  imports: [
+    // Configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+    }),
+
+    // Database
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST') || 'localhost',
+        port: parseInt(configService.get<string>('DB_PORT') || '5432'),
+        username: configService.get<string>('DB_USERNAME') || 'postgres',
+        password: configService.get<string>('DB_PASSWORD') || 'password',
+        database: configService.get<string>('DB_NAME') || 'onlypark',
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        synchronize: false,
+        logging: process.env.NODE_ENV === 'development',
+        timezone: 'Z',
+      }),
+      inject: [ConfigService],
+    }),
+
+    // Seeder modules
+    RoleSeederModule,
+    PermissionSeederModule,
+    RolePermissionSeederModule,
+    UserSeederModule,
+    CarMakeSeederModule,
+    MasterCarParkSeederModule,
+    SubCarParkSeederModule,
+  ],
+})
+export class SeederModule {}

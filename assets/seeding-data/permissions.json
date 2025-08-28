@@ -1,0 +1,162 @@
+[
+  {
+    "name": "user.create",
+    "description": "Create new users"
+  },
+  {
+    "name": "user.read",
+    "description": "Read user information"
+  },
+  {
+    "name": "user.update",
+    "description": "Update user information"
+  },
+  {
+    "name": "user.delete",
+    "description": "Delete users"
+  },
+  {
+    "name": "role.create",
+    "description": "Create new roles"
+  },
+  {
+    "name": "role.read",
+    "description": "Read role information"
+  },
+  {
+    "name": "role.update",
+    "description": "Update role information"
+  },
+  {
+    "name": "role.delete",
+    "description": "Delete roles"
+  },
+  {
+    "name": "permission.create",
+    "description": "Create new permissions"
+  },
+  {
+    "name": "permission.read",
+    "description": "Read permission information"
+  },
+  {
+    "name": "permission.update",
+    "description": "Update permission information"
+  },
+  {
+    "name": "permission.delete",
+    "description": "Delete permissions"
+  },
+  {
+    "name": "master-car-park.create",
+    "description": "Create new master car parks"
+  },
+  {
+    "name": "master-car-park.read",
+    "description": "Read master car park information"
+  },
+  {
+    "name": "master-car-park.update",
+    "description": "Update master car park information"
+  },
+  {
+    "name": "master-car-park.delete",
+    "description": "Delete master car parks"
+  },
+  {
+    "name": "sub-car-park.create",
+    "description": "Create new sub car parks"
+  },
+  {
+    "name": "sub-car-park.read",
+    "description": "Read sub car park information"
+  },
+  {
+    "name": "sub-car-park.update",
+    "description": "Update sub car park information"
+  },
+  {
+    "name": "sub-car-park.delete",
+    "description": "Delete sub car parks"
+  },
+  {
+    "name": "booking.create",
+    "description": "Create new bookings"
+  },
+  {
+    "name": "booking.read",
+    "description": "Read booking information"
+  },
+  {
+    "name": "booking.update",
+    "description": "Update booking information"
+  },
+  {
+    "name": "booking.delete",
+    "description": "Delete bookings"
+  },
+  {
+    "name": "infringement.create",
+    "description": "Create new infringements"
+  },
+  {
+    "name": "infringement.read",
+    "description": "Read infringement information"
+  },
+  {
+    "name": "infringement.update",
+    "description": "Update infringement information"
+  },
+  {
+    "name": "infringement.delete",
+    "description": "Delete infringements"
+  },
+  {
+    "name": "whitelist.create",
+    "description": "Create new whitelist entries"
+  },
+  {
+    "name": "whitelist.read",
+    "description": "Read whitelist information"
+  },
+  {
+    "name": "whitelist.update",
+    "description": "Update whitelist information"
+  },
+  {
+    "name": "whitelist.delete",
+    "description": "Delete whitelist entries"
+  },
+  {
+    "name": "blacklist.create",
+    "description": "Create new blacklist entries"
+  },
+  {
+    "name": "blacklist.read",
+    "description": "Read blacklist information"
+  },
+  {
+    "name": "blacklist.update",
+    "description": "Update blacklist information"
+  },
+  {
+    "name": "blacklist.delete",
+    "description": "Delete blacklist entries"
+  },
+  {
+    "name": "audit-log.read",
+    "description": "Read audit logs"
+  },
+  {
+    "name": "system.settings",
+    "description": "Manage system settings"
+  },
+  {
+    "name": "reports.generate",
+    "description": "Generate reports"
+  },
+  {
+    "name": "reports.read",
+    "description": "Read reports"
+  }
+]

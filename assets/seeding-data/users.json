@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Super Admin User",
+    "email": "superadmin@onlypark.com",
+    "password": "SuperAdmin123!",
+    "type": "admin",
+    "phone": "+1234567890",
+    "status": "active"
+  },
+  {
+    "name": "Admin User",
+    "email": "admin@onlypark.com",
+    "password": "Admin123!",
+    "type": "admin",
+    "phone": "+1234567891",
+    "status": "active"
+  },
+  {
+    "name": "Carpark Manager User",
+    "email": "carparkmanager@onlypark.com",
+    "password": "Manager123!",
+    "type": "carparkManager",
+    "phone": "+1234567892",
+    "status": "active"
+  },
+  {
+    "name": "Patrol Officer User",
+    "email": "patrolofficer@onlypark.com",
+    "password": "Officer123!",
+    "type": "officer",
+    "phone": "+1234567893",
+    "status": "active"
+  },
+  {
+    "name": "Regular User",
+    "email": "user@onlypark.com",
+    "password": "User123!",
+    "type": "user",
+    "phone": "+1234567894",
+    "status": "active"
+  }
+]

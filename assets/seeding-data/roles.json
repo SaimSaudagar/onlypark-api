@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Super Admin",
+    "description": "Full system administrator with all permissions"
+  },
+  {
+    "name": "Admin",
+    "description": "System administrator with limited permissions"
+  },
+  {
+    "name": "Carpark Manager",
+    "description": "Manager responsible for carpark operations"
+  },
+  {
+    "name": "Patrol Officer",
+    "description": "Officer responsible for patrolling and enforcement"
+  },
+  {
+    "name": "User",
+    "description": "Regular user with basic permissions"
+  }
+]

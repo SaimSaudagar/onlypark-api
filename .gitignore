@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+
+# Environment variables
+.env
+env.local
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
