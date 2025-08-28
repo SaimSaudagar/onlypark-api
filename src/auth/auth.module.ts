@@ -8,7 +8,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import JwtAuthGuard from './guards/jwt-auth.guard';
-import { RolesGuard } from './guards/roles.guard';
+import { RoleGuard } from './guards/roles.guard';
 
 import { User } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
@@ -31,7 +31,7 @@ import { ConfigKeys } from '../common/configs';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
-  exports: [AuthService, JwtAuthGuard, RolesGuard, PassportModule],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, RoleGuard],
+  exports: [AuthService, JwtAuthGuard, RoleGuard, PassportModule],
 })
 export class AuthModule {}

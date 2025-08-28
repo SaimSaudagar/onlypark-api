@@ -4,11 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
-import { Permission } from '../../permission/entities/permission.entity';
-import { User } from '../../user/entities/user.entity';
+import { RolePermission } from './role-permission.entity';
+import { UserRole } from '../../user/entities/user-role.entity';
 
 @Entity('roles')
 export class Role {
@@ -28,14 +27,9 @@ export class Role {
   updatedAt: Date;
 
   
-  @ManyToMany(() => Permission)
-  @JoinTable({
-    name: 'role_permissions',
-    joinColumn: { name: 'rolesId' },
-    inverseJoinColumn: { name: 'permissionsId' },
-  })
-  permissions: Permission[];
+  @OneToMany(() => RolePermission, (rolePermission) => rolePermission.role)
+  rolePermissions: RolePermission[];
 
-  @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
+  @OneToMany(() => UserRole, (userRole) => userRole.role)
+  userRoles: UserRole[];
 }

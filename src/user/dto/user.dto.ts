@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength } from 'class-validator';
-import { UserType, AddressType } from '../common/enums';
+import { UserType, AddressType } from '../../common/enums';
 
 export class CreateUserRequest {
   @IsNotEmpty() 

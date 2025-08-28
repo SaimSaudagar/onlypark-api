@@ -93,3 +93,7 @@ export class DependencyInjectionKeys {
   public static readonly PAYMENT_PROCESSOR = 'PAYMENT_PROCESSOR';
   public static readonly GEOLOCATION_SERVICE = 'GEOLOCATION_SERVICE';
 }
+
+export class GUARD_KEYS {
+  public static readonly ALLOWED_ROLE = 'ALLOWED_ROLE';
+}

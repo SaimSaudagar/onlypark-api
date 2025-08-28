@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Role } from '../../role/entities/role.entity';
+import { UserRole } from '../../user/entities/user-role.entity';
 import { FileUtils } from '../../common/utils/file.utils';
 import { UserType } from '../../common/enums';
 
@@ -15,6 +16,8 @@ export class UserSeederService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
+    @InjectRepository(UserRole)
+    private readonly userRoleRepository: Repository<UserRole>,
   ) {
     this.logger = new Logger(this.constructor.name);
   }
@@ -30,7 +33,7 @@ export class UserSeederService {
     for (const userData of users) {
       const existingUser = await this.userRepository.findOne({
         where: { email: userData.email },
-        relations: ['roles'],
+        relations: ['userRoles', 'userRoles.role'],
       });
 
       if (!existingUser) {
@@ -54,7 +57,7 @@ export class UserSeederService {
         this.logger.log(`User ${userData.email} already exists`);
         
         // Ensure role is assigned
-        if (existingUser.roles.length === 0) {
+        if (existingUser.userRoles.length === 0) {
           await this.assignRoleToUser(existingUser, userData.type);
           this.logger.log(`Role assigned to existing user ${userData.email}`);
         }
@@ -87,8 +90,13 @@ export class UserSeederService {
     });
 
     if (role) {
-      user.roles = [role];
-      await this.userRepository.save(user);
+      // Clear existing roles and assign new one
+      await this.userRoleRepository.delete({ usersId: user.id });
+      
+      const userRole = new UserRole();
+      userRole.usersId = user.id;
+      userRole.rolesId = role.id;
+      await this.userRoleRepository.save(userRole);
     } else {
       this.logger.warn(`Role ${roleName} not found for user ${user.email}`);
     }

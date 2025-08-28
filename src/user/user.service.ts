@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { AuthenticatedUser } from '../common';
 import { User } from './entities/user.entity';
-import { UserAddress } from './entities/user-address.entity';
 import {
   CreateUserRequest,
   GetProfileResponse,
@@ -12,15 +11,13 @@ import {
   UpdateUserDto,
   UpdateUserProfileRequest,
   UserAddressRequest,
-} from './user.dto';
+} from './dto/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    @InjectRepository(UserAddress)
-    private userAddressRepository: Repository<UserAddress>,
   ) {}
 
   async create(userDto: CreateUserRequest): Promise<User> {
@@ -61,42 +58,11 @@ export class UserService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const userToBeUpdated = await this.usersRepository.create(updateUserDto);
-    userToBeUpdated.id = id;
     const updatedUser = await this.usersRepository.save(userToBeUpdated);
     return updatedUser;
   }
 
-  async updateAddressRecord(user: User, address: UserAddressRequest) {
-    const updatedAddress = await this.userAddressRepository.create(address);
-    updatedAddress.user = user;
 
-    return this.userAddressRepository.save(updatedAddress);
-  }
-
-  async updateUserAddress(
-    user: User,
-    updatedAddressDTO: UpdateUserAddressRequest,
-  ) {
-    const response = { shippingAddressId: '', permanentAddressId: '' };
-
-    if (updatedAddressDTO.shippingAddress) {
-      const updatedRecord = await this.updateAddressRecord(
-        user,
-        updatedAddressDTO.shippingAddress,
-      );
-      response.shippingAddressId = updatedRecord.id;
-    }
-
-    if (updatedAddressDTO.permanentAddress) {
-      const updatedRecord = await this.updateAddressRecord(
-        user,
-        updatedAddressDTO.permanentAddress,
-      );
-      response.permanentAddressId = updatedRecord.id;
-    }
-
-    return response;
-  }
 
   async updateUserProfile(
     user: User,
@@ -134,13 +100,13 @@ export class UserService {
   async findAllPermissions(id: string): Promise<any> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['roles', 'roles.permissions'],
+      relations: ['userRoles', 'userRoles.role', 'userRoles.role.rolePermissions', 'userRoles.role.rolePermissions.permission'],
     });
     const permissions: string[] = [];
 
-    user?.roles?.forEach((role) => {
-      role.permissions?.forEach((permission) => {
-        permissions.push(permission.name);
+    user?.userRoles?.forEach((userRole) => {
+      userRole.role?.rolePermissions?.forEach((rolePermission) => {
+        permissions.push(rolePermission.permission.name);
       });
     });
     return permissions;
@@ -150,7 +116,7 @@ export class UserService {
     try {
       const user = await this.findOne({
         where: { id },
-        relations: ['roles'],
+        relations: ['userRoles', 'userRoles.role'],
       });
       return {
         id: user.id,
@@ -166,9 +132,9 @@ export class UserService {
         emailVerifiedAt: user.emailVerifiedAt,
         createdAt: user.createdAt,
         roles:
-          user.roles?.map((role) => ({
-            id: role.id,
-            name: role.name,
+          user.userRoles?.map((userRole) => ({
+            id: userRole.role.id,
+            name: userRole.role.name,
           })) || [],
       };
     } catch (error) {

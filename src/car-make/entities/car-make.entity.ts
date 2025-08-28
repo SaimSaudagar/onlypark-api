@@ -4,9 +4,13 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Infringement } from '../../infringement/entities/infringement.entity';
+import { Auditable } from '../../common';
 
 @Entity('car_make')
+@Auditable()
 export class CarMake {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,4 +23,7 @@ export class CarMake {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Infringement, (infringement) => infringement.carMake)
+  infringements: Infringement[];
 }

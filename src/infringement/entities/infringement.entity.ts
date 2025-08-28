@@ -15,6 +15,7 @@ import { InfringementReason } from './infringement-reason.entity';
 import { InfringementPenalty } from './infringement-penalty.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Dispute } from './dispute.entity';
+import { CarMake } from '../../car-make/entities/car-make.entity';
 
 @Entity('infringements')
 @Auditable()
@@ -29,7 +30,7 @@ export class Infringement {
   ticketTime: string;
 
   @Column({ type: 'varchar', nullable: false })
-  carSpotId: string;
+  carPark: string;
 
   @Column({ type: 'text', nullable: true })
   comment: string;
@@ -38,7 +39,7 @@ export class Infringement {
   regNo: string;
 
   @Column({ type: 'varchar', nullable: false })
-  carMake: string;
+  carMakeID: string;
 
   @Column({
     type: 'enum',
@@ -81,8 +82,12 @@ export class Infringement {
   penalty: InfringementPenalty;
 
   @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.infringements)
-  @JoinColumn({ name: 'carSpotId', referencedColumnName: 'carParkCode' })
+  @JoinColumn({ name: 'carPark', referencedColumnName: 'carParkCode' })
   parkingSpot: SubCarPark;
+
+  @ManyToOne(() => CarMake)
+  @JoinColumn({ name: 'carMakeID' })
+  carMake: CarMake;
 
   @OneToMany(() => Dispute, (dispute) => dispute.infringement)
   disputes: Dispute[];

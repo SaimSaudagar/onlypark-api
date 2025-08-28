@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, In } from 'typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from '../permission/entities/permission.entity';
+import { RolePermission } from './entities/role-permission.entity';
 import {
   CreateRoleRequest,
   UpdateRoleRequest,
@@ -15,6 +16,8 @@ export class RoleService {
     private roleRepository: Repository<Role>,
     @InjectRepository(Permission)
     private permissionRepository: Repository<Permission>,
+    @InjectRepository(RolePermission)
+    private rolePermissionRepository: Repository<RolePermission>,
   ) {}
 
   async create(roleDto: CreateRoleRequest): Promise<Role> {
@@ -37,7 +40,16 @@ export class RoleService {
       const permissionEntities = await this.permissionRepository.findBy({
         id: In(permissions)
       });
-      role.permissions = permissionEntities;
+      
+      // Create role-permission relationships
+      const rolePermissions = permissionEntities.map(permission => {
+        const rolePermission = new RolePermission();
+        rolePermission.rolesId = role.id;
+        rolePermission.permissionsId = permission.id;
+        return rolePermission;
+      });
+      
+      await this.rolePermissionRepository.save(rolePermissions);
     }
 
     await this.roleRepository.save(role);
@@ -56,7 +68,7 @@ export class RoleService {
   async findByRoleName(name: string) {
     return await this.roleRepository.findOne({
       where: { name },
-      relations: ['permissions'],
+      relations: ['rolePermissions', 'rolePermissions.permission'],
     });
   }
 

@@ -4,7 +4,7 @@ import {
   Column,
   CreateDateColumn,
 } from 'typeorm';
-import { Action } from '../audit-log.enum';
+import { AuditAction } from '../../../enums';
 
 @Entity('audit_logs')
 export class AuditLog {
@@ -19,9 +19,9 @@ export class AuditLog {
 
   @Column({
     type: 'enum',
-    enum: Action,
+    enum: AuditAction,
   })
-  action: Action;
+  action: AuditAction;
 
   @Column({ type: 'json', nullable: true })
   oldValue: object | null;

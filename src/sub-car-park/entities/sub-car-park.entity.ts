@@ -102,7 +102,7 @@ export class SubCarPark {
   @OneToMany(() => Tenancy, (tenancy) => tenancy.carPark)
   tenancies: Tenancy[];
 
-  @OneToMany(() => Whitelist, (whitelist) => whitelist.parkingSpot)
+  @OneToMany(() => Whitelist, (whitelist) => whitelist.carPark)
   whitelists: Whitelist[];
 
   @OneToMany(() => BlacklistReg, (blacklist) => blacklist.parkingSpot)

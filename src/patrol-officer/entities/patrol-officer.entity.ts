@@ -51,6 +51,6 @@ export class PatrolOfficer {
   user: User;
 
   @ManyToOne(() => SubCarPark, (spot) => spot.patrolOfficers)
-  @JoinColumn({ name: 'spotId' })
+  @JoinColumn({ name: 'subCarParkId' })
   spot: SubCarPark;
 }

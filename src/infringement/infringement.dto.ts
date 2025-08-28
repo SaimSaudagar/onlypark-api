@@ -17,7 +17,7 @@ export class CreateInfringementRequest {
 
   @IsNotEmpty()
   @IsString()
-  carSpotId: string;
+  carPark: string;
 
   @IsNotEmpty()
   @IsString()
@@ -25,7 +25,7 @@ export class CreateInfringementRequest {
 
   @IsOptional()
   @IsString()
-  carMake?: string;
+  carMakeID?: string;
 
   @IsOptional()
   @IsEnum(InfringementStatus)
@@ -58,9 +58,9 @@ export interface GetInfringementResponse {
   ticketNumber: string;
   ticketDate: string;
   ticketTime: string;
-  carSpotId: string;
+  carPark: string;
   regNo: string;
-  carMake?: string;
+  carMakeID?: string;
   status?: InfringementStatus;
   reasonId?: string;
   penaltyId?: string;

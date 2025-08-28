@@ -4,8 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
   OneToMany,
   OneToOne,
   BeforeInsert,
@@ -14,8 +12,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UserType } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
-import { Role } from '../../role/entities/role.entity';
-import { UserAddress } from './user-address.entity';
+import { UserRole } from './user-role.entity';
 import { Admin } from '../../admin/entities/admin.entity';
 import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
@@ -72,18 +69,8 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  
-  @ManyToMany(() => Role)
-  @JoinTable({
-    name: 'user_roles',
-    joinColumn: { name: 'usersId' },
-    inverseJoinColumn: { name: 'rolesId' },
-  })
-  roles: Role[];
-
-  @OneToMany(() => UserAddress, (userAddress) => userAddress.user)
-  addresses: UserAddress[];
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles: UserRole[];
 
   @OneToOne(() => Admin, (admin) => admin.user)
   admin: Admin;

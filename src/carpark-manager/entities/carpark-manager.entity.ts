@@ -21,7 +21,7 @@ export class CarparkManager {
   managerCode: string;
 
   @Column({ type: 'json', nullable: false })
-  assignedCarParks: string[];
+  assignedCarParks: object;
 
   @Column({ type: 'varchar', nullable: true })
   region: string;

@@ -6,6 +6,10 @@ export * from './types';
 // Decorators exports
 export * from './decorators';
 
+// Guards exports
+export * from './guards/permission.guard';
+export { AllowedRoles, RoleGuard } from '../auth/guards/roles.guard';
+
 // Exceptions exports
 export * from './exceptions/custom.exception';
 export * from './exceptions/error-code';

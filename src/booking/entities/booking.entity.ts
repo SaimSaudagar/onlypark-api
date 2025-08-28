@@ -23,7 +23,7 @@ export class Booking {
   vehicleReg: string;
 
   @Column({ type: 'varchar', nullable: false })
-  parkingSpotId: string;
+  subCarParkCode: string;
 
   @Column({ type: 'varchar', nullable: false })
   property: string;
@@ -45,7 +45,7 @@ export class Booking {
 
   
   @ManyToOne(() => SubCarPark)
-  @JoinColumn({ name: 'parkingSpotId', referencedColumnName: 'carParkCode' })
+  @JoinColumn({ name: 'subCarParkCode', referencedColumnName: 'carParkCode' })
   parkingSpot: SubCarPark;
 
   @OneToMany(() => VehicleRegChangeOtp, (otp) => otp.booking)

@@ -8,17 +8,19 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
+import JwtAuthenticationGuard, { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { CarMakeService } from './car-make.service';
 import {
   CreateCarMakeRequest,
   UpdateCarMakeRequest,
 } from './car-make.dto';
+import { RoleGuard } from 'src/auth/guards/roles.guard';
+import { PermissionsGuard } from 'src/common/guards/permission.guard';
 
 @ApiTags('CarMake')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'car-make', version: '1' })
 export class CarMakeController {
   constructor(private readonly carMakeService: CarMakeService) {}
@@ -29,6 +31,7 @@ export class CarMakeController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthenticationGuard, RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
     return this.carMakeService.findOne({ where: { id } });
   }

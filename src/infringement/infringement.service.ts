@@ -15,7 +15,11 @@ export class InfringementService {
   ) {}
 
   async create(infringementDto: CreateInfringementRequest): Promise<Infringement> {
-    const infringement = this.infringementRepository.create(infringementDto);
+    const infringement = this.infringementRepository.create({
+      ...infringementDto,
+      ticketDate: new Date(infringementDto.ticketDate),
+      dueDate: infringementDto.dueDate ? new Date(infringementDto.dueDate) : undefined,
+    });
     return await this.infringementRepository.save(infringement);
   }
 

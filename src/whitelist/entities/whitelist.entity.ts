@@ -31,14 +31,10 @@ export class Whitelist {
   updatedAt: Date;
 
   @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.whitelists)
-  @JoinColumn({ name: 'carParkId' })
+  @JoinColumn({ name: 'subCarParkId' })
   carPark: SubCarPark;
 
   @ManyToOne(() => Tenancy, (tenancy) => tenancy.whitelists)
   @JoinColumn({ name: 'tenancyId' })
   tenancy: Tenancy;
-
-  @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.whitelists)
-  @JoinColumn({ name: 'parkingSpotId' })
-  parkingSpot: SubCarPark;
 }

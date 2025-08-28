@@ -1,27 +1,39 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpStatus,
+  SetMetadata,
+  CustomDecorator,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../../common/decorators/roles.decorator';
-import { UserType } from '../../common/enums';
+import { RequestContextService } from '../../common/services/request-context/request-context.service';
+import { GUARD_KEYS } from '../../common/configs';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+export class RoleGuard implements CanActivate {
+  constructor(
+    private reflector: Reflector,
+    private readonly requestContextService: RequestContextService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<UserType[]>(ROLES_KEY, [
+    const requiredUserTypes = this.reflector.get<string[]>(
+      GUARD_KEYS.ALLOWED_ROLE,
       context.getHandler(),
-      context.getClass(),
-    ]);
-
-    if (!requiredRoles) {
-      return true;
+    );
+    if (!requiredUserTypes) {
+      return true; // No user type restriction on this route
     }
-
-    const { user } = context.switchToHttp().getRequest();
-    if (!user) {
+    const user = this.requestContextService?.get()?.user;
+    if (!user || !requiredUserTypes.includes(user?.userType)) {
       return false;
     }
 
-    return requiredRoles.some((role) => user.type === role);
+    return true;
   }
+}
+
+export function AllowedRoles(...roles: string[]): CustomDecorator<string> {
+  return SetMetadata(GUARD_KEYS.ALLOWED_ROLE, roles);
 }

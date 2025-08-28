@@ -98,6 +98,9 @@ export enum AuditAction {
   DELETE = 'DELETE',
 }
 
+// Permission System Enums
+export * from './enums/permission.enum';
+
 // Audit Log Action enum (used by audit-log.service)
 export enum Action {
   INSERT = 'INSERT',

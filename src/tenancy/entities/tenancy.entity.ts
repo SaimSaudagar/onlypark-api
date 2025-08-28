@@ -30,7 +30,7 @@ export class Tenancy {
 
   
   @ManyToOne(() => SubCarPark, (carPark) => carPark.tenancies)
-  @JoinColumn({ name: 'carParkId' })
+  @JoinColumn({ name: 'subCarParkId' })
   carPark: SubCarPark;
 
   @OneToMany(() => Whitelist, (whitelist) => whitelist.tenancy)

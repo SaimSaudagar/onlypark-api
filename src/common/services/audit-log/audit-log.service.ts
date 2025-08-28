@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditLog } from './entities/audit-log.entity';
-import { Action } from './audit-log.enum';
+import { AuditAction } from '../../enums';
 
 @Injectable()
 export class AuditLogService {
@@ -14,7 +14,7 @@ export class AuditLogService {
   async createAuditLog(params: {
     entityName: string;
     entityId: string;
-    action: Action;
+    action: AuditAction;
     oldValue: object;
     newValue: object;
     userId: string;

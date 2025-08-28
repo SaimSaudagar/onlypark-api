@@ -27,7 +27,7 @@ export class BlacklistReg {
   comments: string;
 
   @Column({ type: 'varchar', nullable: false })
-  spotCode: string;
+  subCarParkCode: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -37,6 +37,6 @@ export class BlacklistReg {
 
   
   @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.blacklists)
-  @JoinColumn({ name: 'spotCode', referencedColumnName: 'carParkCode' })
+  @JoinColumn({ name: 'subCarParkCode', referencedColumnName: 'carParkCode' })
   parkingSpot: SubCarPark;
 }

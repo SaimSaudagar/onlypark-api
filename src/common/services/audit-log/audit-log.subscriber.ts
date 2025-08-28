@@ -9,7 +9,7 @@ import {
   RemoveEvent,
 } from 'typeorm';
 import { AUDITABLE_KEY } from '../../decorators/auditable.decorator';
-import { Action } from './audit-log.enum';
+import { Action, AuditAction } from '../../enums';
 import { RequestContextService } from '../request-context/request-context.service';
 import { AuditLogService } from './audit-log.service';
 
@@ -31,7 +31,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     if (!this.isAuditable(event.entity)) return;
     this.logger.log(`afterInsert triggered for entity: ${event.metadata.name}`);
     this.createAuditLog(
-      Action.INSERT,
+      AuditAction.INSERT,
       event.metadata.tableName,
       event.entity.id,
       {},
@@ -43,7 +43,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     if (!this.isAuditable(event.entity)) return;
     this.logger.log(`afterUpdate triggered for entity: ${event.metadata.name}`);
     this.createAuditLog(
-      Action.UPDATE,
+      AuditAction.UPDATE,
       event.metadata.tableName,
       event.entity.id,
       event.databaseEntity,
@@ -55,7 +55,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     if (!this.isAuditable(event.entity)) return;
     this.logger.log(`afterRemove triggered for entity: ${event.metadata.name}`);
     this.createAuditLog(
-      Action.DELETE,
+      AuditAction.DELETE,
       event.metadata.tableName,
       event.entityId,
       event.databaseEntity,
@@ -64,7 +64,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
   }
 
   private async createAuditLog(
-    action: Action,
+    action: AuditAction,
     entityName: string,
     entityId: string,
     oldValues: Record<string, any>,
