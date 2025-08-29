@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions, FindOneOptions } from 'typeorm';
 import { Permission } from './entities/permission.entity';
@@ -7,13 +7,16 @@ import {
   UpdatePermissionRequest,
   GetPermissionResponse,
 } from './permission.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class PermissionService {
   constructor(
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
-  ) {}
+  ) { }
 
   async create(createPermissionDto: CreatePermissionRequest): Promise<GetPermissionResponse> {
     const permission = this.permissionRepository.create(createPermissionDto);
@@ -39,7 +42,10 @@ export class PermissionService {
   async findOne(options: FindOneOptions<Permission>): Promise<GetPermissionResponse> {
     const permission = await this.permissionRepository.findOne(options);
     if (!permission) {
-      throw new BadRequestException('Permission not found');
+      throw new CustomException(
+        ErrorCode.PERMISSION_NOT_FOUND.code,
+        HttpStatus.NOT_FOUND,
+      );
     }
     return {
       id: permission.id,
@@ -56,7 +62,10 @@ export class PermissionService {
   async update(id: string, updatePermissionDto: UpdatePermissionRequest): Promise<GetPermissionResponse> {
     const permission = await this.permissionRepository.findOne({ where: { id } });
     if (!permission) {
-      throw new BadRequestException('Permission not found');
+      throw new CustomException(
+        ErrorCode.PERMISSION_NOT_FOUND.code,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const updatedPermission = await this.permissionRepository.save({
@@ -75,7 +84,10 @@ export class PermissionService {
   async remove(id: string): Promise<void> {
     const permission = await this.permissionRepository.findOne({ where: { id } });
     if (!permission) {
-      throw new BadRequestException('Permission not found');
+      throw new CustomException(
+        ErrorCode.PERMISSION_NOT_FOUND.code,
+        HttpStatus.NOT_FOUND,
+      );
     }
     await this.permissionRepository.delete(id);
   }

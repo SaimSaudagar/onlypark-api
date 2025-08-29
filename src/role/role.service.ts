@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, In } from 'typeorm';
 import { Role } from './entities/role.entity';
@@ -8,6 +8,9 @@ import {
   CreateRoleRequest,
   UpdateRoleRequest,
 } from './role.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class RoleService {
@@ -18,7 +21,7 @@ export class RoleService {
     private permissionRepository: Repository<Permission>,
     @InjectRepository(RolePermission)
     private rolePermissionRepository: Repository<RolePermission>,
-  ) {}
+  ) { }
 
   async create(roleDto: CreateRoleRequest): Promise<Role> {
     const { name, permissions } = roleDto;
@@ -28,9 +31,12 @@ export class RoleService {
       where: { name },
     });
     if (roleInDb) {
-      throw new BadRequestException('Role already exists');
+      throw new CustomException(
+        ErrorCode.ROLE_ALREADY_EXISTS.code,
+        HttpStatus.CONFLICT,
+      );
     }
-    
+
     const role: Role = await this.roleRepository.create({
       name,
     });
@@ -40,7 +46,7 @@ export class RoleService {
       const permissionEntities = await this.permissionRepository.findBy({
         id: In(permissions)
       });
-      
+
       // Create role-permission relationships
       const rolePermissions = permissionEntities.map(permission => {
         const rolePermission = new RolePermission();
@@ -48,7 +54,7 @@ export class RoleService {
         rolePermission.permissionsId = permission.id;
         return rolePermission;
       });
-      
+
       await this.rolePermissionRepository.save(rolePermissions);
     }
 
@@ -75,7 +81,10 @@ export class RoleService {
   async update(id: string, updateRoleDto: UpdateRoleRequest) {
     const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) {
-      throw new BadRequestException('Role not found');
+      throw new CustomException(
+        ErrorCode.ROLE_NOT_FOUND.code,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     Object.assign(role, updateRoleDto);

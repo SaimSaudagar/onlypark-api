@@ -10,14 +10,9 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserType } from '../../common/enums';
+import { UserStatus, UserType } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
 import { UserRole } from './user-role.entity';
-import { Admin } from '../../admin/entities/admin.entity';
-import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
-import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
-
-
 @Entity('users')
 @Auditable()
 export class User {
@@ -47,22 +42,10 @@ export class User {
   rememberToken: string;
 
   @Column({ type: 'varchar', nullable: true })
-  phone: string;
+  phoneNumber: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  address: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  city: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  state: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  zipCode: string;
-
-  @Column({ type: 'varchar', nullable: false, default: 'active' })
-  status: string;
+  @Column({ type: 'varchar', nullable: false, default: 'Active' })
+  status: UserStatus;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -71,15 +54,6 @@ export class User {
   updatedAt: Date;
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   userRoles: UserRole[];
-
-  @OneToOne(() => Admin, (admin) => admin.user)
-  admin: Admin;
-
-  @OneToOne(() => CarparkManager, (manager) => manager.user)
-  carparkManager: CarparkManager;
-
-  @OneToOne(() => PatrolOfficer, (officer) => officer.user)
-  patrolOfficer: PatrolOfficer;
 
   @BeforeInsert()
   @BeforeUpdate()

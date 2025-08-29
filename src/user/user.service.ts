@@ -7,10 +7,8 @@ import {
   CreateUserRequest,
   GetProfileResponse,
   UpdateNotificationTokenRequest,
-  UpdateUserAddressRequest,
   UpdateUserDto,
   UpdateUserProfileRequest,
-  UserAddressRequest,
 } from './dto/user.dto';
 
 @Injectable()
@@ -18,29 +16,24 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(userDto: CreateUserRequest): Promise<User> {
-    const { name, email, password, type, phone, address, city, state, zipCode, status } = userDto;
+    const { name, email, password, type, phoneNumber, status } = userDto;
 
-    // check if the user exists in the db
     const userInDb = await this.usersRepository.findOne({
       where: { email },
     });
     if (userInDb) {
       throw new BadRequestException('User already exists');
     }
-    
+
     const user: User = await this.usersRepository.create({
       name,
       email,
       password,
       type,
-      phone,
-      address,
-      city,
-      state,
-      zipCode,
+      phoneNumber,
       status,
     });
     await this.usersRepository.save(user);
@@ -61,8 +54,6 @@ export class UserService {
     const updatedUser = await this.usersRepository.save(userToBeUpdated);
     return updatedUser;
   }
-
-
 
   async updateUserProfile(
     user: User,
@@ -100,7 +91,7 @@ export class UserService {
   async findAllPermissions(id: string): Promise<any> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['userRoles', 'userRoles.role', 'userRoles.role.rolePermissions', 'userRoles.role.rolePermissions.permission'],
+      relations: { userRoles: { role: { rolePermissions: { permission: true } } } },
     });
     const permissions: string[] = [];
 
@@ -123,11 +114,7 @@ export class UserService {
         name: user.name,
         email: user.email,
         type: user.type,
-        phone: user.phone,
-        address: user.address,
-        city: user.city,
-        state: user.state,
-        zipCode: user.zipCode,
+        phoneNumber: user.phoneNumber,
         status: user.status,
         emailVerifiedAt: user.emailVerifiedAt,
         createdAt: user.createdAt,

@@ -1,10 +1,12 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
-import { ConfigKeys } from './common/configs';
+import { ConfigKeys, DependencyInjectionKeys } from './common/configs';
+import { AppExceptionFilter } from './common/exceptions/app-exception.filter';
+import { RequestContextService } from './common/services/request-context/request-context.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +27,15 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
+  const httpAdapterHost = app.get(HttpAdapterHost);
+  const requestContext = app.get(RequestContextService);
+  app.useGlobalFilters(
+    new AppExceptionFilter(
+      httpAdapterHost,
+      requestContext,
+    ),
+  );
 
   // Global validation pipe
   app.useGlobalPipes(

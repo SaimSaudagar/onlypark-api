@@ -6,8 +6,10 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Role } from '../../role/entities/role.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('user_roles')
+@Auditable()
 export class UserRole {
   @PrimaryColumn({ type: 'uuid' })
   usersId: string;

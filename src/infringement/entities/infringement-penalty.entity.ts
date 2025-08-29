@@ -7,8 +7,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Infringement } from './infringement.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('infringement_penalty')
+@Auditable()
 export class InfringementPenalty {
   @PrimaryGeneratedColumn('uuid')
   id: string;

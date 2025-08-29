@@ -33,7 +33,7 @@ import {
 @JwtAuthGuardWithApiBearer()
 @Controller({ path: 'user', version: '1' })
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   @AllowedRoles(UserType.ADMIN)
@@ -48,7 +48,7 @@ export class UserController {
   @RequirePermissions(AdminPermission.USER_VIEW)
   @UseGuards(RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
-    return this.userService.findOne({ where: { id }, relations: ['addresses'] });
+    return this.userService.findOne({ where: { id } });
   }
 
   @Get('me')
@@ -68,7 +68,6 @@ export class UserController {
 
   @Post()
   @AllowedRoles(UserType.ADMIN)
-  @RequirePermissions(AdminPermission.USER_CREATE)
   @UseGuards(RoleGuard, PermissionsGuard)
   create(@Body() createUserDto: CreateUserRequest) {
     return this.userService.create(createUserDto);

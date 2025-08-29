@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength } from 'class-validator';
-import { UserType, AddressType } from '../../common/enums';
+import { UserType, AddressType, UserStatus } from '../../common/enums';
 
 export class CreateUserRequest {
   @IsNotEmpty() 
@@ -23,27 +23,11 @@ export class CreateUserRequest {
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  phoneNumber?: string;
 
   @IsOptional()
   @IsString()
-  address?: string;
-
-  @IsOptional()
-  @IsString()
-  city?: string;
-
-  @IsOptional()
-  @IsString()
-  state?: string;
-
-  @IsOptional()
-  @IsString()
-  zipCode?: string;
-
-  @IsOptional()
-  @IsString()
-  status?: string = 'active';
+  status: UserStatus = UserStatus.ACTIVE;
 
   @IsOptional()
   emailVerifiedAt?: Date;
@@ -85,11 +69,7 @@ export interface GetProfileResponse {
   name: string;
   email: string;
   type: UserType;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
+  phoneNumber: string;
   status: string;
   emailVerifiedAt?: Date;
   createdAt: Date;

@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Auditable } from '../../common/decorators';
 
 @Entity('outstanding_registrations')
+@Auditable()
 export class OutstandingRegistration {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtPayload } from '../common/types';
-import { UserType } from '../common/enums';
+import { UserStatus, UserType } from '../common/enums';
 
 import {
   SignUpRequest,
@@ -22,14 +22,12 @@ import {
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
     private userService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async signUp(request: SignUpRequest): Promise<void> {
-    // Check if user already exists
-    const existingUser = await this.userRepository.findOne({
+    const existingUser = await this.userService.findOne({
       where: { email: request.email },
     });
 
@@ -39,21 +37,19 @@ export class AuthService {
 
     // Create new user
     const hashedPassword = await bcrypt.hash(request.password, 10);
-    
-    const user = this.userRepository.create({
+
+    const user = this.userService.create({
       name: request.name,
       email: request.email,
       password: hashedPassword,
-      type: (request.type as UserType) || UserType.USER, // Default type
-      status: 'active',
+      phoneNumber: request.phoneNumber,
+      type: request.type,
+      status: UserStatus.ACTIVE,
     });
-
-    await this.userRepository.save(user);
   }
 
   async confirmEmail(request: ConfirmEmailRequest): Promise<boolean> {
-    // For now, just mark email as verified
-    const user = await this.userRepository.findOne({
+    const user = await this.userService.findOne({
       where: { email: request.email },
     });
 
@@ -62,13 +58,13 @@ export class AuthService {
     }
 
     user.emailVerifiedAt = new Date();
-    await this.userRepository.save(user);
+    await this.userService.update(user.id, user);
 
     return true;
   }
 
   async login(request: LoginRequest) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userService.findOne({
       where: { email: request.email },
     });
 
@@ -77,7 +73,7 @@ export class AuthService {
     }
 
     const isPasswordValid = await bcrypt.compare(request.password, user.password);
-    
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -101,7 +97,7 @@ export class AuthService {
   }
 
   async sendLinkForForgetPassword(request: SendLinkForForgetPasswordRequest): Promise<boolean> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userService.findOne({
       where: { email: request.email },
     });
 
@@ -115,26 +111,27 @@ export class AuthService {
   }
 
   async confirmNewPasswordForForgetPassword(request: ResetPasswordRequest): Promise<boolean> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userService.findOne({
       where: { email: request.email },
     });
 
     if (!user) {
       throw new BadRequestException('User not found');
     }
+    if (user.email !== request.email) {
+      throw new BadRequestException('User not found');
+    }
 
-    // TODO: Validate reset token
-    
     // Hash new password and update user
     const hashedPassword = await bcrypt.hash(request.password, 10);
     user.password = hashedPassword;
-    await this.userRepository.save(user);
+    await this.userService.update(user.id, user);
 
     return true;
   }
 
   async changePassword(user: any, request: ChangePasswordRequest): Promise<void> {
-    const userEntity = await this.userRepository.findOne({
+    const userEntity = await this.userService.findOne({
       where: { id: user.id },
     });
 
@@ -155,6 +152,6 @@ export class AuthService {
     // Hash new password and update
     const hashedPassword = await bcrypt.hash(request.newPassword, 10);
     userEntity.password = hashedPassword;
-    await this.userRepository.save(userEntity);
+    await this.userService.update(userEntity.id, userEntity);
   }
 }

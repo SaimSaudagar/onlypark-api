@@ -2,21 +2,19 @@
 export enum UserType {
   ADMIN = 'admin',
   CARPARK_MANAGER = 'carparkManager',
-  SUB_ADMIN = 'subAdmin',
   OFFICER = 'officer',
-  USER = 'user',
+}
+
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
 }
 
 export enum AdminAccessLevel {
   FULL = 'full',
   LIMITED = 'limited',
   READ_ONLY = 'read_only',
-}
-
-export enum AdminStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
 }
 
 export enum CarparkManagerLevel {

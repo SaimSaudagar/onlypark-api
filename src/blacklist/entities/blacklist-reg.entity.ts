@@ -8,8 +8,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
+import { Auditable } from '../../common/decorators';
 
 @Entity('black_list_reg')
+@Auditable()
 export class BlacklistReg {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -62,7 +62,32 @@ export class ErrorCode {
     message: 'Invalid user type',
   };
 
-  // Parking Spot Errors
+  // Permission & Role Errors
+  public static readonly PERMISSION_NOT_FOUND = {
+    key: 'PERMISSION_NOT_FOUND',
+    code: 'PERMISSION_NOT_FOUND',
+    message: 'Permission not found',
+  };
+
+  public static readonly PERMISSION_ALREADY_EXISTS = {
+    key: 'PERMISSION_ALREADY_EXISTS',
+    code: 'PERMISSION_ALREADY_EXISTS',
+    message: 'Permission already exists',
+  };
+
+  public static readonly ROLE_NOT_FOUND = {
+    key: 'ROLE_NOT_FOUND',
+    code: 'ROLE_NOT_FOUND',
+    message: 'Role not found',
+  };
+
+  public static readonly ROLE_ALREADY_EXISTS = {
+    key: 'ROLE_ALREADY_EXISTS',
+    code: 'ROLE_ALREADY_EXISTS',
+    message: 'Role already exists',
+  };
+
+  // Car Park Errors
   public static readonly PARKING_SPOT_NOT_FOUND = {
     key: 'PARKING_SPOT_NOT_FOUND',
     code: 'PARKING_SPOT_NOT_FOUND',

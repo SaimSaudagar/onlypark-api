@@ -1,13 +1,13 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { ApiRequest } from '../common';
+import { ApiRequest, UserType } from '../common';
 
 export class SignUpRequest {
   @IsNotEmpty() name: string;
   @IsNotEmpty() @IsEmail() email: string;
   @IsNotEmpty() password: string;
-  type?: string;
-  phone?: string;
-  verified?: boolean;
+  @IsNotEmpty() type: UserType;
+  @IsNotEmpty() phoneNumber: string;
+  @IsNotEmpty() verified: boolean;
 }
 
 export class LoginRequest extends ApiRequest {
