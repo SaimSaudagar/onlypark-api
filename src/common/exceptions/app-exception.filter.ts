@@ -18,7 +18,7 @@ export class AppExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(AppExceptionFilter.name);
 
   constructor(
-    private readonly httpAdapterrHost: HttpAdapterHost,
+    private readonly httpAdapterrHost: HttpAdapterHost, 
     private readonly requestContextService: RequestContextService,
   ) { }
 
