@@ -43,7 +43,7 @@ export class UserSeederService {
           email: userData.email,
           password: userData.password,
           type: userData.type as UserType,
-          phone: userData.phone,
+          phoneNumber: userData.phone,
           status: userData.status,
         });
 
@@ -55,7 +55,7 @@ export class UserSeederService {
         this.logger.log(`User ${userData.email} seeded with role ${userData.type}`);
       } else {
         this.logger.log(`User ${userData.email} already exists`);
-        
+
         // Ensure role is assigned
         if (existingUser.userRoles.length === 0) {
           await this.assignRoleToUser(existingUser, userData.type);
@@ -92,7 +92,7 @@ export class UserSeederService {
     if (role) {
       // Clear existing roles and assign new one
       await this.userRoleRepository.delete({ usersId: user.id });
-      
+
       const userRole = new UserRole();
       userRole.usersId = user.id;
       userRole.rolesId = role.id;

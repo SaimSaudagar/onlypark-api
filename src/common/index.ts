@@ -3,6 +3,9 @@ export * from './configs';
 export * from './enums';
 export * from './types';
 
+// Constants exports
+export * from './constants/template-keys';
+
 // Decorators exports
 export * from './decorators';
 

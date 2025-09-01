@@ -30,7 +30,6 @@ import {
 } from './dto/user.dto';
 
 @ApiTags('User')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'user', version: '1' })
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -67,9 +66,10 @@ export class UserController {
   }
 
   @Post()
-  @AllowedRoles(UserType.ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
-  create(@Body() createUserDto: CreateUserRequest) {
+  // @AllowedRoles(UserType.ADMIN)
+  // @RequirePermissions(AdminPermission.USER_CREATE)
+  // @UseGuards(RoleGuard, PermissionsGuard)
+  async create(@Body() createUserDto: CreateUserRequest) {
     return this.userService.create(createUserDto);
   }
 

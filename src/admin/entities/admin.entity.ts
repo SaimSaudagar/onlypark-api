@@ -17,28 +17,6 @@ export class Admin {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
-  adminCode: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  department: string;
-
-  @Column({
-    type: 'enum',
-    enum: AdminAccessLevel,
-    default: AdminAccessLevel.FULL,
-  })
-  accessLevel: AdminAccessLevel;
-
-  @Column({ type: 'boolean', default: true })
-  canManageUsers: boolean;
-
-  @Column({ type: 'boolean', default: true })
-  canManageRoles: boolean;
-
-  @Column({ type: 'boolean', default: true })
-  canManageSystem: boolean;
-
   @Column({ type: 'timestamp', nullable: true })
   lastLoginAt: Date;
 
@@ -58,8 +36,10 @@ export class Admin {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column({ type: 'varchar', nullable: true })
+  userId: string;
 }

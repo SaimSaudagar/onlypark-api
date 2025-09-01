@@ -36,7 +36,6 @@ export class BlacklistReg {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
   
   @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.blacklists)
   @JoinColumn({ name: 'subCarParkCode', referencedColumnName: 'carParkCode' })

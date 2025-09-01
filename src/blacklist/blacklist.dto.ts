@@ -10,7 +10,11 @@ export class CreateBlacklistDto {
 
   @IsOptional()
   @IsString()
-  spotCode?: string;
+  subCarParkCode?: string;
+
+  @IsOptional()
+  @IsString()
+  comments?: string;
 }
 
-export class UpdateBlacklistDto extends PartialType(CreateBlacklistDto) {}
+export class UpdateBlacklistDto extends PartialType(CreateBlacklistDto) { }

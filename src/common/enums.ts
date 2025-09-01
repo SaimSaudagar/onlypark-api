@@ -1,8 +1,8 @@
 // User Management Enums
 export enum UserType {
-  ADMIN = 'admin',
-  CARPARK_MANAGER = 'carparkManager',
-  OFFICER = 'officer',
+  ADMIN = 'ADMIN',
+  CARPARK_MANAGER = 'CARPARK_MANAGER',
+  PATROL_OFFICER = 'PATROL_OFFICER',
 }
 
 export enum UserStatus {
@@ -15,6 +15,12 @@ export enum AdminAccessLevel {
   FULL = 'full',
   LIMITED = 'limited',
   READ_ONLY = 'read_only',
+}
+
+export enum AdminStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
 }
 
 export enum CarparkManagerLevel {
@@ -62,7 +68,7 @@ export enum CarParkType {
 
 export enum SpotType {
   REGULAR = 'regular',
-  DISABLED = 'disabled', 
+  DISABLED = 'disabled',
   ELECTRIC = 'electric',
   COMPACT = 'compact',
   MOTORCYCLE = 'motorcycle',
@@ -221,4 +227,10 @@ export enum QueueJobType {
   INFRINGEMENT_REMINDER = 'infringement_reminder',
   GENERATE_QR_CODE = 'generate_qr_code',
   PAYMENT_PROCESSING = 'payment_processing',
+}
+
+// Sorting Enums
+export enum SortOrder {
+  ASC = 'ASC',
+  DESC = 'DESC',
 }

@@ -43,6 +43,12 @@ export class ErrorCode {
     message: 'Account has been suspended',
   };
 
+  public static readonly ADMIN_ALREADY_EXISTS = {
+    key: 'ADMIN_ALREADY_EXISTS',
+    code: 'ADMIN_ALREADY_EXISTS',
+    message: 'Admin already exists',
+  };
+
   // User Management Errors
   public static readonly USER_NOT_FOUND = {
     key: 'USER_NOT_FOUND',

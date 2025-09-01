@@ -1,4 +1,8 @@
-import { ApiHideProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { SortOrder } from './enums';
+import { ConfigConstants } from './configs';
 
 // JWT Payload Interfaces
 export interface JwtPayload {
@@ -304,4 +308,39 @@ export interface HealthCheckResult {
   info?: Record<string, any>;
   error?: Record<string, any>;
   details?: Record<string, any>;
+}
+
+// API Base Request and Response Classes
+export class ApiGetBaseRequest {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  pageNo?: number = ConfigConstants.DEFAULT_PAGE_NO;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  pageSize?: number = ConfigConstants.DEFAULT_PAGE_SIZE;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  sortField?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  sortOrder?: string = SortOrder.ASC;
+}
+
+export class ApiGetBaseResponse<T> {
+  rows: T[];
+  [key: string]: unknown;
+  pagination: {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+  };
 }

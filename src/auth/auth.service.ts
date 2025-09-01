@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,6 +17,8 @@ import {
   ResetPasswordRequest,
   ChangePasswordRequest,
 } from './auth.dto';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { CustomException } from '../common/exceptions/custom.exception';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +34,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
+      throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS.code, HttpStatus.BAD_REQUEST);
     }
 
     // Create new user
@@ -41,10 +43,8 @@ export class AuthService {
     const user = this.userService.create({
       name: request.name,
       email: request.email,
-      password: hashedPassword,
       phoneNumber: request.phoneNumber,
       type: request.type,
-      status: UserStatus.ACTIVE,
     });
   }
 
@@ -54,7 +54,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new CustomException(ErrorCode.USER_NOT_FOUND.code, HttpStatus.BAD_REQUEST);
     }
 
     user.emailVerifiedAt = new Date();

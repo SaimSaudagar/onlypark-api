@@ -44,7 +44,21 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   phoneNumber: string;
 
-  @Column({ type: 'varchar', nullable: false, default: 'Active' })
+  @Column({ type: 'varchar', nullable: true })
+  image: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  passwordResetToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  passwordResetExpires: Date;
+
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    nullable: false,
+    default: UserStatus.INACTIVE,
+  })
   status: UserStatus;
 
   @CreateDateColumn()
@@ -59,7 +73,7 @@ export class User {
   @BeforeUpdate()
   async hashPassword() {
     if (this.password) {
-      this.password = await bcrypt.hash(this.password, 12);
+      this.password = await bcrypt.hash(this.password, 10);
     }
   }
 

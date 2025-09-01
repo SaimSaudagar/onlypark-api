@@ -1,17 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
+import { AdminAccessLevel, AdminStatus } from '../common/enums';
+import { CreateAdminDto, UpdateAdminDto } from './dto/admin.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
 
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
-  ) {}
+  ) { }
 
-  create(createAdminDto: any) {
-    return 'This action adds a new admin';
+  async create(request: CreateAdminDto) {
+    const adminInDb = await this.adminRepository.findOne({ where: { userId: request.userId } });
+
+    if (adminInDb) {
+      throw new CustomException(
+        ErrorCode.ADMIN_ALREADY_EXISTS.code,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const savedAdmin = this.adminRepository.create({
+      userId: request.userId,
+      status: AdminStatus.ACTIVE,
+    });
+    return await this.adminRepository.save(savedAdmin);
   }
 
   findAll() {
@@ -22,11 +39,22 @@ export class AdminService {
     return this.adminRepository.findOne({ where: { id }, relations: ['user'] });
   }
 
-  update(id: string, updateAdminDto: any) {
-    return `This action updates a #${id} admin`;
+  async update(id: string, updateAdminDto: UpdateAdminDto) {
+    const admin = await this.adminRepository.findOne({ where: { id } });
+    if (!admin) {
+      throw new Error(`Admin with ID ${id} not found`);
+    }
+
+    Object.assign(admin, updateAdminDto);
+    return await this.adminRepository.save(admin);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} admin`;
+  async remove(id: string) {
+    const admin = await this.adminRepository.findOne({ where: { id } });
+    if (!admin) {
+      throw new Error(`Admin with ID ${id} not found`);
+    }
+
+    return await this.adminRepository.remove(admin);
   }
 }

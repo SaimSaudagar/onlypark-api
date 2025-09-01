@@ -1,25 +1,17 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray } from 'class-validator';
 import { UserType, AddressType, UserStatus } from '../../common/enums';
+import { ApiGetBaseRequest, ApiGetBaseResponse } from '../../common';
 
 export class CreateUserRequest {
-  @IsNotEmpty() 
+  @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsNotEmpty() 
-  @IsEmail() 
+  @IsNotEmpty()
+  @IsEmail()
   email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(6)
-  password: string;
-
-  @IsNotEmpty()
-  @IsEnum(UserType)
-  type: UserType;
 
   @IsOptional()
   @IsString()
@@ -27,23 +19,31 @@ export class CreateUserRequest {
 
   @IsOptional()
   @IsString()
-  status: UserStatus = UserStatus.ACTIVE;
+  image?: string;
+
+  @IsNotEmpty()
+  @IsEnum(UserType)
+  type: UserType;
 
   @IsOptional()
-  emailVerifiedAt?: Date;
+  @IsArray()
+  @IsString({ each: true })
+  whitelist?: string[];
 
   @IsOptional()
-  rememberToken?: string;
+  @IsArray()
+  @IsString({ each: true })
+  blacklist?: string[];
 }
 
-export class UpdateUserDto extends PartialType(CreateUserRequest) {}
+export class UpdateUserDto extends PartialType(CreateUserRequest) { }
 
 export class UpdateUserProfileRequest {
-  @IsNotEmpty() 
+  @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsNotEmpty() 
+  @IsNotEmpty()
   @IsString()
   phone: string;
 
@@ -104,3 +104,35 @@ export class UpdateUserAddressRequest {
   @ValidateNested()
   permanentAddress: UserAddressRequest;
 }
+
+// Example DTOs using ApiGetBaseRequest and ApiGetBaseResponse
+export class FindUsersRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsEnum(UserType)
+  type?: UserType;
+
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status?: UserStatus;
+}
+
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  type: UserType;
+  phoneNumber: string;
+  status: UserStatus;
+  emailVerifiedAt?: Date;
+  createdAt: Date;
+}
+
+export type FindUsersResponse = ApiGetBaseResponse<UserResponse>;

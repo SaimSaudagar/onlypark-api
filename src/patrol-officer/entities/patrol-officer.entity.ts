@@ -45,7 +45,7 @@ export class PatrolOfficer {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  
+
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;

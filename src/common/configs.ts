@@ -76,6 +76,8 @@ export class ConfigConstants {
   public static readonly AUTH_PROVIDER_STRATEGY_DI_KEY = 'AUTH_PROVIDER_STRATEGY';
   public static readonly DEFAULT_TIMEZONE = 'Australia/Brisbane';
   public static readonly DEFAULT_GEOLOCATION_RADIUS = 3000; // 3km in meters
+  public static readonly DEFAULT_PAGE_NO = 1;
+  public static readonly DEFAULT_PAGE_SIZE = 10;
 }
 
 export class DependencyInjectionKeys {

@@ -28,17 +28,17 @@ import {
 @UseGuards(RoleGuard, PermissionsGuard)
 @Controller({ path: 'infringement', version: '1' })
 export class InfringementController {
-  constructor(private readonly infringementService: InfringementService) {}
+  constructor(private readonly infringementService: InfringementService) { }
 
   @Get()
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.USER, UserType.OFFICER)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_LIST, CarparkManagerPermission.INFRINGEMENT_LIST, UserPermission.INFRINGEMENT_LIST, PatrolOfficerPermission.INFRINGEMENT_LIST)
   findAll() {
     return this.infringementService.findAll();
   }
 
   @Get(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.USER, UserType.OFFICER)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_VIEW, CarparkManagerPermission.INFRINGEMENT_VIEW, UserPermission.INFRINGEMENT_VIEW, PatrolOfficerPermission.INFRINGEMENT_VIEW)
   findOne(@Param('id') id: string) {
     return this.infringementService.findOne({ where: { ticketNumber: parseInt(id) } });
@@ -46,14 +46,14 @@ export class InfringementController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.OFFICER)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_CREATE, CarparkManagerPermission.INFRINGEMENT_CREATE, PatrolOfficerPermission.INFRINGEMENT_CREATE)
   create(@Body() createInfringementDto: CreateInfringementRequest) {
     return this.infringementService.create(createInfringementDto);
   }
 
   @Patch(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.OFFICER)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_EDIT, CarparkManagerPermission.INFRINGEMENT_EDIT, PatrolOfficerPermission.INFRINGEMENT_EDIT)
   update(@Param('id') id: string, @Body() updateInfringementDto: UpdateInfringementRequest) {
     return this.infringementService.update(id, updateInfringementDto);

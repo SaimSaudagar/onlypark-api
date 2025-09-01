@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1756413714881 implements MigrationInterface {
-    name = 'Migrations1756413714881'
+export class Migrations1756730559822 implements MigrationInterface {
+    name = 'Migrations1756730559822'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -127,68 +127,10 @@ export class Migrations1756413714881 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."admin_accesslevel_enum" AS ENUM('full', 'limited', 'read_only')
+            CREATE TYPE "public"."users_type_enum" AS ENUM('ADMIN', 'CARPARK_MANAGER', 'PATROL_OFFICER')
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."admin_status_enum" AS ENUM('active', 'inactive', 'suspended')
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "admin" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "adminCode" character varying NOT NULL,
-                "department" character varying,
-                "accessLevel" "public"."admin_accesslevel_enum" NOT NULL DEFAULT 'full',
-                "canManageUsers" boolean NOT NULL DEFAULT true,
-                "canManageRoles" boolean NOT NULL DEFAULT true,
-                "canManageSystem" boolean NOT NULL DEFAULT true,
-                "lastLoginAt" TIMESTAMP,
-                "loginCount" integer NOT NULL DEFAULT '0',
-                "status" "public"."admin_status_enum" NOT NULL DEFAULT 'active',
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "userId" uuid,
-                CONSTRAINT "UQ_fa33e00151e0ac0242e079b5db2" UNIQUE ("adminCode"),
-                CONSTRAINT "REL_f8a889c4362d78f056960ca6da" UNIQUE ("userId"),
-                CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."carpark_manager_managerlevel_enum" AS ENUM('senior', 'junior', 'trainee')
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('active', 'inactive', 'suspended')
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "carpark_manager" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "managerCode" character varying NOT NULL,
-                "assignedCarParks" json NOT NULL,
-                "region" character varying,
-                "contactNumber" character varying,
-                "emergencyContact" character varying,
-                "managerLevel" "public"."carpark_manager_managerlevel_enum" NOT NULL DEFAULT 'senior',
-                "canManagePatrolOfficers" boolean NOT NULL DEFAULT true,
-                "canGenerateReports" boolean NOT NULL DEFAULT true,
-                "canManageTenancies" boolean NOT NULL DEFAULT true,
-                "lastLoginAt" TIMESTAMP,
-                "loginCount" integer NOT NULL DEFAULT '0',
-                "status" "public"."carpark_manager_status_enum" NOT NULL DEFAULT 'active',
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "userId" uuid,
-                CONSTRAINT "UQ_26f8c95d7844037a7799f38b225" UNIQUE ("managerCode"),
-                CONSTRAINT "REL_3bb5b79e3aa960a37de422f2f8" UNIQUE ("userId"),
-                CONSTRAINT "PK_aaef20b8ffe08bd5b1d520b74e9" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."users_type_enum" AS ENUM(
-                'admin',
-                'carparkManager',
-                'subAdmin',
-                'officer',
-                'user'
-            )
+            CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'suspended')
         `);
         await queryRunner.query(`
             CREATE TABLE "users" (
@@ -199,12 +141,11 @@ export class Migrations1756413714881 implements MigrationInterface {
                 "emailVerifiedAt" TIMESTAMP,
                 "type" "public"."users_type_enum" NOT NULL,
                 "rememberToken" character varying,
-                "phone" character varying,
-                "address" character varying,
-                "city" character varying,
-                "state" character varying,
-                "zipCode" character varying,
-                "status" character varying NOT NULL DEFAULT 'active',
+                "phoneNumber" character varying,
+                "image" character varying,
+                "passwordResetToken" character varying,
+                "passwordResetExpires" TIMESTAMP,
+                "status" "public"."users_status_enum" NOT NULL DEFAULT 'active',
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"),
@@ -378,6 +319,51 @@ export class Migrations1756413714881 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE TYPE "public"."carpark_manager_managerlevel_enum" AS ENUM('senior', 'junior', 'trainee')
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('active', 'inactive', 'suspended')
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "carpark_manager" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "managerCode" character varying NOT NULL,
+                "assignedCarParks" json NOT NULL,
+                "region" character varying,
+                "contactNumber" character varying,
+                "emergencyContact" character varying,
+                "managerLevel" "public"."carpark_manager_managerlevel_enum" NOT NULL DEFAULT 'senior',
+                "canManagePatrolOfficers" boolean NOT NULL DEFAULT true,
+                "canGenerateReports" boolean NOT NULL DEFAULT true,
+                "canManageTenancies" boolean NOT NULL DEFAULT true,
+                "lastLoginAt" TIMESTAMP,
+                "loginCount" integer NOT NULL DEFAULT '0',
+                "status" "public"."carpark_manager_status_enum" NOT NULL DEFAULT 'active',
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "userId" uuid,
+                CONSTRAINT "UQ_26f8c95d7844037a7799f38b225" UNIQUE ("managerCode"),
+                CONSTRAINT "REL_3bb5b79e3aa960a37de422f2f8" UNIQUE ("userId"),
+                CONSTRAINT "PK_aaef20b8ffe08bd5b1d520b74e9" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."admin_status_enum" AS ENUM('active', 'inactive', 'suspended')
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "admin" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "lastLoginAt" TIMESTAMP,
+                "loginCount" integer NOT NULL DEFAULT '0',
+                "status" "public"."admin_status_enum" NOT NULL DEFAULT 'active',
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "userId" uuid,
+                CONSTRAINT "REL_f8a889c4362d78f056960ca6da" UNIQUE ("userId"),
+                CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
             CREATE TYPE "public"."audit_logs_action_enum" AS ENUM('INSERT', 'UPDATE', 'DELETE')
         `);
         await queryRunner.query(`
@@ -426,14 +412,6 @@ export class Migrations1756413714881 implements MigrationInterface {
             ADD CONSTRAINT "FK_13380e7efec83468d73fc37938e" FOREIGN KEY ("rolesId") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "admin"
-            ADD CONSTRAINT "FK_f8a889c4362d78f056960ca6dad" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "carpark_manager"
-            ADD CONSTRAINT "FK_3bb5b79e3aa960a37de422f2f89" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
             ALTER TABLE "patrol_officer"
             ADD CONSTRAINT "FK_74afad8adf286702e5e73f6b988" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -473,9 +451,23 @@ export class Migrations1756413714881 implements MigrationInterface {
             ALTER TABLE "whitelist"
             ADD CONSTRAINT "FK_453632bbe549789b1826d07c8d8" FOREIGN KEY ("tenancyId") REFERENCES "tenancies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
+        await queryRunner.query(`
+            ALTER TABLE "carpark_manager"
+            ADD CONSTRAINT "FK_3bb5b79e3aa960a37de422f2f89" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "admin"
+            ADD CONSTRAINT "FK_f8a889c4362d78f056960ca6dad" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            ALTER TABLE "admin" DROP CONSTRAINT "FK_f8a889c4362d78f056960ca6dad"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "carpark_manager" DROP CONSTRAINT "FK_3bb5b79e3aa960a37de422f2f89"
+        `);
         await queryRunner.query(`
             ALTER TABLE "whitelist" DROP CONSTRAINT "FK_453632bbe549789b1826d07c8d8"
         `);
@@ -507,12 +499,6 @@ export class Migrations1756413714881 implements MigrationInterface {
             ALTER TABLE "patrol_officer" DROP CONSTRAINT "FK_74afad8adf286702e5e73f6b988"
         `);
         await queryRunner.query(`
-            ALTER TABLE "carpark_manager" DROP CONSTRAINT "FK_3bb5b79e3aa960a37de422f2f89"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "admin" DROP CONSTRAINT "FK_f8a889c4362d78f056960ca6dad"
-        `);
-        await queryRunner.query(`
             ALTER TABLE "user_roles" DROP CONSTRAINT "FK_13380e7efec83468d73fc37938e"
         `);
         await queryRunner.query(`
@@ -541,6 +527,21 @@ export class Migrations1756413714881 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TYPE "public"."audit_logs_action_enum"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "admin"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."admin_status_enum"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "carpark_manager"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."carpark_manager_status_enum"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."carpark_manager_managerlevel_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "outstanding_registrations"
@@ -585,25 +586,10 @@ export class Migrations1756413714881 implements MigrationInterface {
             DROP TABLE "users"
         `);
         await queryRunner.query(`
+            DROP TYPE "public"."users_status_enum"
+        `);
+        await queryRunner.query(`
             DROP TYPE "public"."users_type_enum"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "carpark_manager"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."carpark_manager_status_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."carpark_manager_managerlevel_enum"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "admin"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."admin_status_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."admin_accesslevel_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "user_roles"

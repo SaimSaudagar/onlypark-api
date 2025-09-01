@@ -52,3 +52,10 @@ export class ChangePasswordRequest {
   @IsNotEmpty()
   readonly newPassword: string;
 }
+
+export class SetupPasswordRequest {
+  @IsNotEmpty()
+  readonly token: string;
+  @IsNotEmpty()
+  readonly password: string;
+}

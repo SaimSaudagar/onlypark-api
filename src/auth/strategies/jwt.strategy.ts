@@ -25,22 +25,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (!user) {
         throw new UnauthorizedException();
       }
-      
+
       // Get user permissions
       const permissions = await this.userService.findAllPermissions(user.id);
-      
+
       // Create AuthenticatedUser object
       const authenticatedUser = new AuthenticatedUser(
         user.id,
         user.email,
         user.name,
         '', // profileImageUrl - add if available
-        user.phone || '',
+        user.phoneNumber || '',
         user.type,
         [], // roles - add if needed
         permissions,
       );
-      
+
       return authenticatedUser;
     } catch (error) {
       throw new UnauthorizedException();

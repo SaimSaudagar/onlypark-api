@@ -67,7 +67,7 @@ export class CarparkManager {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  
+
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;

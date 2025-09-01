@@ -46,6 +46,7 @@ import { QrCodeModule } from './common/services/qr-code/qr-code.module';
 import { GeolocationModule } from './common/services/geolocation/geolocation.module';
 import { PaymentModule } from './common/services/payment/payment.module';
 import { FileUploadModule } from './common/services/file-upload/file-upload.module';
+import { TemplateEngineModule } from './common/services/template-engine/template-engine.module';
 
 @Module({
   imports: [
@@ -118,6 +119,7 @@ import { FileUploadModule } from './common/services/file-upload/file-upload.modu
     GeolocationModule,
     PaymentModule,
     FileUploadModule,
+    TemplateEngineModule,
   ],
   controllers: [AppController],
   providers: [
@@ -128,7 +130,7 @@ import { FileUploadModule } from './common/services/file-upload/file-upload.modu
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(RequestContextMiddleware, TraceIdMiddleware, HttpLoggingMiddleware)
+      .apply(RequestContextMiddleware, HttpLoggingMiddleware)
       .forRoutes('*');
   }
 }
