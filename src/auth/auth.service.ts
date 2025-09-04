@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, HttpStatus } from '@nestjs/common';
+import { Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -34,7 +34,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS.code, HttpStatus.BAD_REQUEST);
+      throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS.key, HttpStatus.BAD_REQUEST);
     }
 
     // Create new user
@@ -48,19 +48,17 @@ export class AuthService {
     });
   }
 
-  async confirmEmail(request: ConfirmEmailRequest): Promise<boolean> {
-    const user = await this.userService.findOne({
-      where: { email: request.email },
-    });
-
+  async confirmEmail(confirmEmailRequest: ConfirmEmailRequest): Promise<void> {
+    const user = await this.userService.findOne({ where: { email: confirmEmailRequest.email } });
     if (!user) {
-      throw new CustomException(ErrorCode.USER_NOT_FOUND.code, HttpStatus.BAD_REQUEST);
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     user.emailVerifiedAt = new Date();
     await this.userService.update(user.id, user);
-
-    return true;
   }
 
   async login(request: LoginRequest) {
@@ -96,53 +94,57 @@ export class AuthService {
     };
   }
 
-  async sendLinkForForgetPassword(request: SendLinkForForgetPasswordRequest): Promise<boolean> {
-    const user = await this.userService.findOne({
-      where: { email: request.email },
-    });
-
+  async sendLinkForForgetPassword(
+    sendLinkForForgetPasswordRequest: SendLinkForForgetPasswordRequest,
+  ): Promise<void> {
+    const user = await this.userService.findOne({ where: { email: sendLinkForForgetPasswordRequest.email } });
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // TODO: Implement email sending logic
     // For now, just return true
-    return true;
   }
 
-  async confirmNewPasswordForForgetPassword(request: ResetPasswordRequest): Promise<boolean> {
-    const user = await this.userService.findOne({
-      where: { email: request.email },
-    });
-
+  async confirmNewPasswordForForgetPassword(
+    resetPasswordRequest: ResetPasswordRequest,
+  ): Promise<void> {
+    const user = await this.userService.findOne({ where: { email: resetPasswordRequest.email } });
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    if (user.email !== request.email) {
-      throw new BadRequestException('User not found');
+    if (user.email !== resetPasswordRequest.email) {
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Hash new password and update user
-    const hashedPassword = await bcrypt.hash(request.password, 10);
+    const hashedPassword = await bcrypt.hash(resetPasswordRequest.password, 10);
     user.password = hashedPassword;
     await this.userService.update(user.id, user);
-
-    return true;
   }
 
-  async changePassword(user: any, request: ChangePasswordRequest): Promise<void> {
-    const userEntity = await this.userService.findOne({
-      where: { id: user.id },
-    });
-
-    if (!userEntity) {
-      throw new BadRequestException('User not found');
+  async changePassword(user: any, changePasswordRequest: ChangePasswordRequest): Promise<void> {
+    const userInDb = await this.userService.findOne(user.id);
+    if (!userInDb) {
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Verify current password
     const isCurrentPasswordValid = await bcrypt.compare(
-      request.currentPassword,
-      userEntity.password,
+      changePasswordRequest.currentPassword,
+      userInDb.password,
     );
 
     if (!isCurrentPasswordValid) {
@@ -150,8 +152,8 @@ export class AuthService {
     }
 
     // Hash new password and update
-    const hashedPassword = await bcrypt.hash(request.newPassword, 10);
-    userEntity.password = hashedPassword;
-    await this.userService.update(userEntity.id, userEntity);
+    const hashedPassword = await bcrypt.hash(changePasswordRequest.newPassword, 10);
+    userInDb.password = hashedPassword;
+    await this.userService.update(userInDb.id, userInDb);
   }
 }

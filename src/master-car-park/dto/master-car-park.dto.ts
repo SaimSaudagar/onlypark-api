@@ -8,64 +8,8 @@ export class CreateMasterCarParkRequest {
   carParkName: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  totalCarSpace: number;
-
-  @IsNotEmpty()
   @IsEnum(CarParkType)
   carParkType: CarParkType;
-
-  @IsNotEmpty()
-  @IsString()
-  location: string;
-
-  @IsNotEmpty()
-  @IsDecimal()
-  lat: number;
-
-  @IsNotEmpty()
-  @IsDecimal()
-  lang: number;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsString()
-  carParkCode?: string;
-
-  @IsOptional()
-  @IsString()
-  slug?: string;
-
-  @IsOptional()
-  @IsNumber()
-  operatingHours?: number;
-
-  @IsOptional()
-  @IsBoolean()
-  tenantEmailCheck?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  geolocation?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  event?: boolean;
-
-  @IsOptional()
-  @IsDateString()
-  eventDate?: Date;
-
-  @IsOptional()
-  @IsDateString()
-  eventExpiryDate?: Date;
-
-  @IsOptional()
-  @IsEnum(ParkingSpotStatus)
-  status?: ParkingSpotStatus;
 }
 
 export class UpdateMasterCarParkRequest extends PartialType(CreateMasterCarParkRequest) {}
@@ -79,8 +23,8 @@ export interface GetMasterCarParkResponse {
   lat: number;
   lang: number;
   description?: string;
-  carParkCode: string;
-  slug: string;
+  subCarParkCode: string;
+  freeHours?: number;
   operatingHours?: number;
   tenantEmailCheck: boolean;
   geolocation: boolean;

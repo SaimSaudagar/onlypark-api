@@ -1,8 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID } from 'class-validator';
-import { SpotType, ParkingSpotStatus } from '../../common/enums';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail } from 'class-validator';
+import { ParkingSpotStatus } from '../../common/enums';
 
 export class CreateSubCarParkRequest {
+  @IsNotEmpty()
+  @IsUUID()
+  masterCarParkId: string;
+
   @IsNotEmpty()
   @IsString()
   carParkName: string;
@@ -16,11 +20,11 @@ export class CreateSubCarParkRequest {
   location: string;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   lat: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   lang: number;
 
   @IsOptional()
@@ -28,24 +32,16 @@ export class CreateSubCarParkRequest {
   description?: string;
 
   @IsOptional()
-  @IsString()
-  carParkCode?: string;
-
-  @IsOptional()
-  @IsString()
-  slug?: string;
-
-  @IsOptional()
   @IsNumber()
-  hours?: number;
+  freeHours?: number;
 
   @IsOptional()
   @IsBoolean()
   tenantEmailCheck?: boolean;
 
   @IsOptional()
-  @IsBoolean()
-  geolocation?: boolean;
+  @IsNumber()
+  noOfPermitsPerRegNo?: number;
 
   @IsOptional()
   @IsBoolean()
@@ -53,28 +49,30 @@ export class CreateSubCarParkRequest {
 
   @IsOptional()
   @IsDateString()
-  eventDate?: Date;
+  eventDate?: string;
 
   @IsOptional()
   @IsDateString()
-  eventExpiryDate?: Date;
-
-  @IsNotEmpty()
-  @IsEnum(SpotType)
-  spotType: SpotType;
+  eventExpiryDate?: string;
 
   @IsOptional()
-  @IsEnum(ParkingSpotStatus)
-  status?: ParkingSpotStatus;
-
-  @IsNotEmpty()
-  @IsUUID()
-  masterCarParkId: string;
+  @IsArray()
+  tenancies?: TenancyRequest[];
 }
 
-export class UpdateSubCarParkRequest extends PartialType(CreateSubCarParkRequest) {}
+export class TenancyRequest {
+  @IsNotEmpty()
+  @IsString()
+  tenantName: string;
 
-export interface GetSubCarParkResponse {
+  @IsNotEmpty()
+  @IsEmail()
+  tenantEmail: string;
+}
+
+export class UpdateSubCarParkRequest extends PartialType(CreateSubCarParkRequest) { }
+
+export class SubCarParkResponse {
   id: string;
   carParkName: string;
   carSpace: number;
@@ -82,25 +80,83 @@ export interface GetSubCarParkResponse {
   lat: number;
   lang: number;
   description?: string;
-  carParkCode: string;
-  slug: string;
-  hours?: number;
+  subCarParkCode: string;
+  freeHours?: number;
   tenantEmailCheck: boolean;
   geolocation: boolean;
   event: boolean;
   eventDate?: Date;
   eventExpiryDate?: Date;
-  spotType: SpotType;
   status: ParkingSpotStatus;
   masterCarParkId: string;
-  masterCarPark?: MasterCarParkSummary;
-  createdAt: Date;
-  updatedAt: Date;
+  masterCarPark?: MasterCarPark;
+  tenancies?: Tenancy[];
 }
 
-export interface MasterCarParkSummary {
+export class MasterCarPark {
   id: string;
   carParkName: string;
-  carParkCode: string;
+  masterCarParkCode: string;
+  carParkType: string;
+  status: string;
+}
+
+export class Tenancy {
+  id: string;
+  tenantName: string;
+  tenantEmail: string;
+}
+
+export class SubCarParkAvailabilityResponse {
+  subCarParkId: string;
+  carParkName: string;
+  totalSpaces: number;
+  availableSpaces: number;
+  occupiedSpaces: number;
+  status: ParkingSpotStatus;
+  freeHours?: number;
+  event: boolean;
+  eventDate?: Date;
+  eventExpiryDate?: Date;
+  lastUpdated: Date;
+}
+
+export class QrCodeResponse {
+  subCarParkId: string;
+  subCarParkCode: string;
+  carParkName: string;
+  masterCarParkId: string;
+  qrCode: string;
+  generatedAt: Date;
+}
+
+export class SubCarParkCreateResponse {
+  id: string;
+  carParkName: string;
+  carSpace: number;
   location: string;
+  subCarParkCode: string;
+  status: ParkingSpotStatus;
+  masterCarParkId: string;
+  tenancyCount: number;
+  createdAt: Date;
+}
+
+export class SubCarParkUpdateResponse {
+  id: string;
+  carParkName: string;
+  carSpace: number;
+  location: string;
+  subCarParkCode: string;
+  status: ParkingSpotStatus;
+  masterCarParkId: string;
+  updatedAt: Date;
+  message: string;
+}
+
+export class SubCarParkDeleteResponse {
+  id: string;
+  carParkName: string;
+  message: string;
+  deletedAt: Date;
 }

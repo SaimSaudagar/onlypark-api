@@ -23,6 +23,12 @@ import { SubCarParkService } from './sub-car-park.service';
 import {
   CreateSubCarParkRequest,
   UpdateSubCarParkRequest,
+  SubCarParkResponse,
+  SubCarParkAvailabilityResponse,
+  QrCodeResponse,
+  SubCarParkCreateResponse,
+  SubCarParkUpdateResponse,
+  SubCarParkDeleteResponse,
 } from './dto/sub-car-park.dto';
 
 @ApiTags('SubCarPark')
@@ -30,51 +36,45 @@ import {
 @UseGuards(RoleGuard, PermissionsGuard)
 @Controller({ path: 'sub-car-park', version: '1' })
 export class SubCarParkController {
-  constructor(private readonly subCarParkService: SubCarParkService) {}
+  constructor(private readonly subCarParkService: SubCarParkService) { }
 
   @Get()
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_LIST, CarparkManagerPermission.CAR_PARK_LIST)
-  findAll() {
+  findAll(): Promise<SubCarParkResponse[]> {
     return this.subCarParkService.findAll();
   }
 
   @Get('master/:masterCarParkId')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_LIST, CarparkManagerPermission.CAR_PARK_LIST)
-  findByMasterCarPark(@Param('masterCarParkId') masterCarParkId: string) {
+  findByMasterCarPark(@Param('masterCarParkId') masterCarParkId: string): Promise<SubCarParkResponse[]> {
     return this.subCarParkService.findByMasterCarPark(masterCarParkId);
   }
 
   @Get(':id')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<SubCarParkResponse> {
     return this.subCarParkService.findOne({ where: { id } });
   }
 
   @Get(':id/qr-code')
   @HttpCode(HttpStatus.OK)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  async getQrCode(@Param('id') id: string) {
-    const qrCode = await this.subCarParkService.generateQrCode(id);
-    return { qrCode };
+  async getQrCode(@Param('id') id: string): Promise<QrCodeResponse> {
+    return await this.subCarParkService.generateQrCode(id);
   }
 
   @Get(':id/availability')
   @HttpCode(HttpStatus.OK)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  async getAvailability(@Param('id') id: string) {
+  async getAvailability(@Param('id') id: string): Promise<SubCarParkAvailabilityResponse> {
     return await this.subCarParkService.getAvailability(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_CREATE, CarparkManagerPermission.CAR_PARK_CREATE)
-  create(@Body() createSubCarParkDto: CreateSubCarParkRequest) {
+  create(@Body() createSubCarParkDto: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse> {
     return this.subCarParkService.create(createSubCarParkDto);
   }
 
@@ -84,15 +84,15 @@ export class SubCarParkController {
   update(
     @Param('id') id: string,
     @Body() updateSubCarParkDto: UpdateSubCarParkRequest,
-  ) {
+  ): Promise<SubCarParkUpdateResponse> {
     return this.subCarParkService.update(id, updateSubCarParkDto);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   @RequirePermissions(AdminPermission.CAR_PARK_DELETE, CarparkManagerPermission.CAR_PARK_DELETE)
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<SubCarParkDeleteResponse> {
     return this.subCarParkService.remove(id);
   }
 }

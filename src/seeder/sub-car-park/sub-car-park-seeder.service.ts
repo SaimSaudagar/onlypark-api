@@ -43,8 +43,7 @@ export class SubCarParkSeederService {
         }
 
         // Generate car park code and slug
-        const carParkCode = this.generateCarParkCode();
-        const slug = this.generateSlug(subCarParkData.carParkName);
+        const subCarParkCode = this.generateCarParkCode();
 
         const subCarPark = this.subCarParkRepository.create({
           carParkName: subCarParkData.carParkName,
@@ -53,15 +52,13 @@ export class SubCarParkSeederService {
           lat: subCarParkData.lat,
           lang: subCarParkData.lang,
           description: subCarParkData.description,
-          carParkCode: carParkCode,
-          slug: slug,
-          hours: subCarParkData.hours,
+          subCarParkCode: subCarParkCode,
+          freeHours: subCarParkData.freeHours,
           tenantEmailCheck: subCarParkData.tenantEmailCheck,
           geolocation: subCarParkData.geolocation,
           event: subCarParkData.event,
           eventDate: subCarParkData.eventDate,
           eventExpiryDate: subCarParkData.eventExpiryDate,
-          spotType: subCarParkData.spotType,
           status: subCarParkData.status,
           masterCarParkId: masterCarPark.id,
         });

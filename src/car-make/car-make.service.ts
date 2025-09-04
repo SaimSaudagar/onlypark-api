@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CarMake } from './entities/car-make.entity';
@@ -6,13 +6,16 @@ import {
   CreateCarMakeRequest,
   UpdateCarMakeRequest,
 } from './car-make.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class CarMakeService {
   constructor(
     @InjectRepository(CarMake)
     private carMakeRepository: Repository<CarMake>,
-  ) {}
+  ) { }
 
   async create(carMakeDto: CreateCarMakeRequest): Promise<CarMake> {
     const { name } = carMakeDto;
@@ -22,9 +25,12 @@ export class CarMakeService {
       where: { name },
     });
     if (carMakeInDb) {
-      throw new BadRequestException('Car make already exists');
+      throw new CustomException(
+        ErrorCode.CAR_MAKE_ALREADY_EXISTS.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    
+
     const carMake = this.carMakeRepository.create({
       name,
     });
@@ -43,7 +49,10 @@ export class CarMakeService {
   async update(id: string, updateCarMakeDto: UpdateCarMakeRequest) {
     const carMake = await this.carMakeRepository.findOne({ where: { id } });
     if (!carMake) {
-      throw new BadRequestException('Car make not found');
+      throw new CustomException(
+        ErrorCode.CAR_MAKE_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     Object.assign(carMake, updateCarMakeDto);

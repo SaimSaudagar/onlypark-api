@@ -66,14 +66,6 @@ export enum CarParkType {
   RESIDENTIAL = 'Residential',
 }
 
-export enum SpotType {
-  REGULAR = 'regular',
-  DISABLED = 'disabled',
-  ELECTRIC = 'electric',
-  COMPACT = 'compact',
-  MOTORCYCLE = 'motorcycle',
-}
-
 export enum Status {
   ACTIVE = 'active',
   INACTIVE = 'inactive',

@@ -9,7 +9,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import {
-  SpotType,
   ParkingSpotStatus,
 } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
@@ -42,17 +41,17 @@ export class SubCarPark {
   @Column({ type: 'decimal', precision: 11, scale: 8, nullable: false })
   lang: number;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'varchar', unique: true, nullable: false })
-  carParkCode: string;
+  subCarParkCode: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
-  slug: string;
+  @Column({ type: 'int', nullable: true })
+  freeHours: number;
 
-  @Column({ type: 'int', nullable: false })
-  hours: number;
+  @Column({ type: 'int', nullable: true })
+  noOfPermitsPerRegNo: number;
 
   @Column({ type: 'boolean', default: false })
   tenantEmailCheck: boolean;
@@ -71,20 +70,10 @@ export class SubCarPark {
 
   @Column({
     type: 'enum',
-    enum: SpotType,
-    nullable: false,
-  })
-  spotType: SpotType;
-
-  @Column({
-    type: 'enum',
     enum: ParkingSpotStatus,
     default: ParkingSpotStatus.ACTIVE,
   })
   status: ParkingSpotStatus;
-
-  @Column({ type: 'uuid', nullable: false })
-  masterCarParkId: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -96,21 +85,41 @@ export class SubCarPark {
   @JoinColumn({ name: 'masterCarParkId' })
   masterCarPark: MasterCarPark;
 
-  @OneToMany(() => Booking, (booking) => booking.parkingSpot)
+  @Column({ type: 'varchar', nullable: false })
+  masterCarParkId: string;
+
+  @OneToMany(() => Booking, (booking) => booking.subCarPark)
+  @JoinColumn({ name: 'bookingIds' })
   bookings: Booking[];
 
-  @OneToMany(() => Tenancy, (tenancy) => tenancy.carPark)
+  @Column({ type: 'varchar', nullable: true })
+  bookingIds: string[];
+
+  @OneToMany(() => Tenancy, (tenancy) => tenancy.subCarPark)
+  @JoinColumn({ name: 'tenancyIds' })
   tenancies: Tenancy[];
 
-  @OneToMany(() => Whitelist, (whitelist) => whitelist.carPark)
+  @Column({ type: 'varchar', nullable: true })
+  tenancyIds: string[];
+
+  @OneToMany(() => Whitelist, (whitelist) => whitelist.subCarPark)
+  @JoinColumn({ name: 'whitelistIds' })
   whitelists: Whitelist[];
 
-  @OneToMany(() => BlacklistReg, (blacklist) => blacklist.parkingSpot)
+  @Column({ type: 'varchar', nullable: true })
+  whitelistIds: string[];
+
+  @OneToMany(() => BlacklistReg, (blacklist) => blacklist.subCarPark)
+  @JoinColumn({ name: 'blacklistIds' })
   blacklists: BlacklistReg[];
 
-  @OneToMany(() => PatrolOfficer, (officer) => officer.spot)
+  @Column({ type: 'varchar', nullable: true })
+  blacklistIds: string[];
+
+  @OneToMany(() => PatrolOfficer, (officer) => officer.subCarParks)
+  @JoinColumn({ name: 'patrolOfficerIds' })
   patrolOfficers: PatrolOfficer[];
 
-  @OneToMany(() => Infringement, (infringement) => infringement.parkingSpot)
-  infringements: Infringement[];
+  @Column({ type: 'varchar', nullable: true })
+  patrolOfficerIds: string[];
 }

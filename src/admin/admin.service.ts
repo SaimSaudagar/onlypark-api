@@ -19,7 +19,7 @@ export class AdminService {
 
     if (adminInDb) {
       throw new CustomException(
-        ErrorCode.ADMIN_ALREADY_EXISTS.code,
+        ErrorCode.ADMIN_ALREADY_EXISTS.key,
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -28,15 +28,21 @@ export class Whitelist {
 
   @CreateDateColumn()
   createdAt: Date;
-  
+
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.whitelists)
+  @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.whitelists)
   @JoinColumn({ name: 'subCarParkId' })
-  carPark: SubCarPark;
+  subCarPark: SubCarPark;
+
+  @Column({ type: 'varchar', nullable: false })
+  subCarParkId: string;
 
   @ManyToOne(() => Tenancy, (tenancy) => tenancy.whitelists)
   @JoinColumn({ name: 'tenancyId' })
   tenancy: Tenancy;
+
+  @Column({ type: 'varchar', nullable: false })
+  tenancyId: string;
 }

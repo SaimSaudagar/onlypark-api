@@ -45,10 +45,14 @@ export class Booking {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  
+  @Column({ type: 'varchar', nullable: false })
+  subCarParkId: string;
+
   @ManyToOne(() => SubCarPark)
-  @JoinColumn({ name: 'subCarParkCode', referencedColumnName: 'carParkCode' })
-  parkingSpot: SubCarPark;
+  @JoinColumn({ name: 'subCarParkId' })
+  subCarPark: SubCarPark;
+
+
 
   @OneToMany(() => VehicleRegChangeOtp, (otp) => otp.booking)
   vehicleRegChangeOtps: VehicleRegChangeOtp[];

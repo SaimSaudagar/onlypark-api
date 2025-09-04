@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus } from '../common';
@@ -44,7 +44,7 @@ export class UserService {
     });
     if (userInDb) {
       throw new CustomException(
-        ErrorCode.EMAIL_ALREADY_EXISTS.code,
+        ErrorCode.EMAIL_ALREADY_EXISTS.key,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -145,7 +145,10 @@ export class UserService {
     } catch (error) {
       // Rollback transaction on any error
       await queryRunner.rollbackTransaction();
-      throw error;
+      throw new CustomException(
+        ErrorCode.CLIENT_ERROR.key,
+        HttpStatus.BAD_REQUEST,
+      );
     } finally {
       // Release query runner
       await queryRunner.release();
@@ -181,7 +184,10 @@ export class UserService {
   async findById(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return user;
   }
@@ -237,7 +243,10 @@ export class UserService {
           })) || [],
       };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

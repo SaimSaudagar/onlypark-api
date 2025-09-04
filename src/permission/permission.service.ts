@@ -43,7 +43,7 @@ export class PermissionService {
     const permission = await this.permissionRepository.findOne(options);
     if (!permission) {
       throw new CustomException(
-        ErrorCode.PERMISSION_NOT_FOUND.code,
+        ErrorCode.PERMISSION_NOT_FOUND.key,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -63,7 +63,7 @@ export class PermissionService {
     const permission = await this.permissionRepository.findOne({ where: { id } });
     if (!permission) {
       throw new CustomException(
-        ErrorCode.PERMISSION_NOT_FOUND.code,
+        ErrorCode.PERMISSION_NOT_FOUND.key,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -85,7 +85,7 @@ export class PermissionService {
     const permission = await this.permissionRepository.findOne({ where: { id } });
     if (!permission) {
       throw new CustomException(
-        ErrorCode.PERMISSION_NOT_FOUND.code,
+        ErrorCode.PERMISSION_NOT_FOUND.key,
         HttpStatus.NOT_FOUND,
       );
     }

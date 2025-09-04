@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import {
   CarParkType,
@@ -22,9 +23,6 @@ export class MasterCarPark {
   @Column({ type: 'varchar', nullable: false })
   carParkName: string;
 
-  @Column({ type: 'int', nullable: false })
-  totalCarSpace: number;
-
   @Column({
     type: 'enum',
     enum: CarParkType,
@@ -32,41 +30,8 @@ export class MasterCarPark {
   })
   carParkType: CarParkType;
 
-  @Column({ type: 'varchar', nullable: false })
-  location: string;
-
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: false })
-  lat: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: false })
-  lang: number;
-
-  @Column({ type: 'text', nullable: false })
-  description: string;
-
   @Column({ type: 'varchar', unique: true, nullable: false })
-  carParkCode: string;
-
-  @Column({ type: 'varchar', unique: true, nullable: false })
-  slug: string;
-
-  @Column({ type: 'int', nullable: false })
-  operatingHours: number;
-
-  @Column({ type: 'boolean', default: false })
-  tenantEmailCheck: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  geolocation: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  event: boolean;
-
-  @Column({ type: 'timestamp', nullable: true })
-  eventDate: Date;
-
-  @Column({ type: 'timestamp', nullable: true })
-  eventExpiryDate: Date;
+  masterCarParkCode: string;
 
   @Column({
     type: 'enum',
@@ -82,5 +47,9 @@ export class MasterCarPark {
   updatedAt: Date;
 
   @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.masterCarPark)
+  @JoinColumn({ name: 'subCarParkIds' })
   subCarParks: SubCarPark[];
+
+  @Column({ type: 'varchar', nullable: true })
+  subCarParkIds: string[];
 }

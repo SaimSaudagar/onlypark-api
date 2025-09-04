@@ -32,7 +32,7 @@ export class RoleService {
     });
     if (roleInDb) {
       throw new CustomException(
-        ErrorCode.ROLE_ALREADY_EXISTS.code,
+        ErrorCode.ROLE_ALREADY_EXISTS.key,
         HttpStatus.CONFLICT,
       );
     }
@@ -82,7 +82,7 @@ export class RoleService {
     const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) {
       throw new CustomException(
-        ErrorCode.ROLE_NOT_FOUND.code,
+        ErrorCode.ROLE_NOT_FOUND.key,
         HttpStatus.NOT_FOUND,
       );
     }

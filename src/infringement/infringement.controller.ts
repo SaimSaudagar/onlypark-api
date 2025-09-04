@@ -41,7 +41,7 @@ export class InfringementController {
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_VIEW, CarparkManagerPermission.INFRINGEMENT_VIEW, UserPermission.INFRINGEMENT_VIEW, PatrolOfficerPermission.INFRINGEMENT_VIEW)
   findOne(@Param('id') id: string) {
-    return this.infringementService.findOne({ where: { ticketNumber: parseInt(id) } });
+    return this.infringementService.findOne(id);
   }
 
   @Post()

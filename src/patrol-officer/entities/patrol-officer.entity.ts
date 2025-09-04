@@ -21,18 +21,6 @@ export class PatrolOfficer {
   @Column({ type: 'varchar', nullable: false })
   officerName: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  phoneNumber: string;
-
-  @Column({ type: 'varchar', nullable: false })
-  email: string;
-
-  @Column({ type: 'varchar', nullable: false })
-  startHour: string;
-
-  @Column({ type: 'varchar', nullable: false })
-  endHour: string;
-
   @Column({ type: 'varchar', nullable: true })
   image: string;
 
@@ -45,12 +33,17 @@ export class PatrolOfficer {
   @UpdateDateColumn()
   updatedAt: Date;
 
-
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => SubCarPark, (spot) => spot.patrolOfficers)
-  @JoinColumn({ name: 'subCarParkId' })
-  spot: SubCarPark;
+  @Column({ type: 'varchar', nullable: false })
+  userId: string;
+
+  @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.patrolOfficers)
+  @JoinColumn({ name: 'subCarParkIds' })
+  subCarParks: SubCarPark[];
+
+  @Column({ type: 'varchar', nullable: true })
+  subCarParkIds: string[];
 }

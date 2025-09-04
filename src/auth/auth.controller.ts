@@ -7,7 +7,6 @@ import {
   HttpCode,
   Get,
   Query,
-  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -22,6 +21,8 @@ import {
   SetupPasswordRequest,
 } from './auth.dto';
 import { UserService } from '../user/user.service';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -77,12 +78,18 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async getPasswordSetupPage(@Query('token') token: string) {
     if (!token) {
-      throw new BadRequestException('Token is required');
+      throw new CustomException(
+        ErrorCode.TOKEN_REQUIRED.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user = await this.userService.verifyPasswordResetToken(token);
     if (!user) {
-      throw new BadRequestException('Invalid or expired token');
+      throw new CustomException(
+        ErrorCode.INVALID_OR_EXPIRED_TOKEN.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Return a simple HTML page for password setup
@@ -103,16 +110,25 @@ export class AuthController {
     const { token, password } = request;
 
     if (!token || !password) {
-      throw new BadRequestException('Token and password are required');
+      throw new CustomException(
+        ErrorCode.TOKEN_AND_PASSWORD_REQUIRED.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (password.length < 6) {
-      throw new BadRequestException('Password must be at least 6 characters long');
+      throw new CustomException(
+        ErrorCode.PASSWORD_TOO_SHORT.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const success = await this.userService.resetPassword(token, password);
     if (!success) {
-      throw new BadRequestException('Invalid or expired token');
+      throw new CustomException(
+        ErrorCode.INVALID_OR_EXPIRED_TOKEN.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return {

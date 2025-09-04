@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CarparkManager } from './entities/carpark-manager.entity';
@@ -6,13 +6,16 @@ import {
   CreateCarparkManagerRequest,
   UpdateCarparkManagerRequest,
 } from './carpark-manager.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class CarparkManagerService {
   constructor(
     @InjectRepository(CarparkManager)
     private carparkManagerRepository: Repository<CarparkManager>,
-  ) {}
+  ) { }
 
   async create(carparkManagerDto: CreateCarparkManagerRequest): Promise<CarparkManager> {
     // check if the manager code exists in the db
@@ -20,9 +23,12 @@ export class CarparkManagerService {
       where: { managerCode: carparkManagerDto.managerCode },
     });
     if (managerInDb) {
-      throw new BadRequestException('Manager code already exists');
+      throw new CustomException(
+        ErrorCode.MANAGER_CODE_ALREADY_EXISTS.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    
+
     const carparkManager = this.carparkManagerRepository.create({
       ...carparkManagerDto,
       assignedCarParks: carparkManagerDto.assignedCarParks || [],
@@ -42,7 +48,10 @@ export class CarparkManagerService {
   async update(id: string, updateCarparkManagerDto: UpdateCarparkManagerRequest) {
     const carparkManager = await this.carparkManagerRepository.findOne({ where: { id } });
     if (!carparkManager) {
-      throw new BadRequestException('Carpark manager not found');
+      throw new CustomException(
+        ErrorCode.CARPARK_MANAGER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     Object.assign(carparkManager, updateCarparkManagerDto);

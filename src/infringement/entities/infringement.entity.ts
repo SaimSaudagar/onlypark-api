@@ -72,18 +72,15 @@ export class Infringement {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  
+
   @ManyToOne(() => InfringementReason, (reason) => reason.infringements)
   @JoinColumn({ name: 'reasonId' })
   reason: InfringementReason;
+  
 
   @ManyToOne(() => InfringementPenalty, (penalty) => penalty.infringements)
   @JoinColumn({ name: 'penaltyId' })
   penalty: InfringementPenalty;
-
-  @ManyToOne(() => SubCarPark, (parkingSpot) => parkingSpot.infringements)
-  @JoinColumn({ name: 'carPark', referencedColumnName: 'carParkCode' })
-  parkingSpot: SubCarPark;
 
   @ManyToOne(() => CarMake)
   @JoinColumn({ name: 'carMakeID' })

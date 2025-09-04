@@ -12,6 +12,66 @@ export class ErrorCode {
     message: 'Internal Server Error',
   };
 
+  public static readonly INVALID_EVENT_DATE = {
+    key: 'INVALID_EVENT_DATE',
+    code: 'INVALID_EVENT_DATE',
+    message: 'Invalid event date',
+  };
+
+  public static readonly INVALID_FREE_HOURS = {
+    key: 'INVALID_FREE_HOURS',
+    code: 'INVALID_FREE_HOURS',
+    message: 'Invalid free hours',
+  };
+
+  public static readonly INVALID_CAR_SPACE = {
+    key: 'INVALID_CAR_SPACE',
+    code: 'INVALID_CAR_SPACE',
+    message: 'Car space must be greater than 0',
+  };
+
+  public static readonly INVALID_LATITUDE = {
+    key: 'INVALID_LATITUDE',
+    code: 'INVALID_LATITUDE',
+    message: 'Latitude must be between -90 and 90',
+  };
+
+  public static readonly INVALID_LONGITUDE = {
+    key: 'INVALID_LONGITUDE',
+    code: 'INVALID_LONGITUDE',
+    message: 'Longitude must be between -180 and 180',
+  };
+
+  public static readonly INVALID_EVENT_DATE_RANGE = {
+    key: 'INVALID_EVENT_DATE_RANGE',
+    code: 'INVALID_EVENT_DATE_RANGE',
+    message: 'Event start date must be before end date',
+  };
+
+  public static readonly INVALID_PERMITS_PER_REGISTRATION = {
+    key: 'INVALID_PERMITS_PER_REGISTRATION',
+    code: 'INVALID_PERMITS_PER_REGISTRATION',
+    message: 'Number of permits per registration must be greater than 0',
+  };
+
+  public static readonly INVALID_TENANCY_DATA = {
+    key: 'INVALID_TENANCY_DATA',
+    code: 'INVALID_TENANCY_DATA',
+    message: 'Tenant name and email are required',
+  };
+
+  public static readonly TENANT_ALREADY_EXISTS = {
+    key: 'TENANT_ALREADY_EXISTS',
+    code: 'TENANT_ALREADY_EXISTS',
+    message: 'Tenant with {tenantEmail} already exists',
+  };
+
+  public static readonly NOT_SPECIFIED = {
+    key: 'NOT_SPECIFIED',
+    code: 'NOT_SPECIFIED',
+    message: 'Not specified',
+  };
+
   // Authentication & Authorization Errors
   public static readonly UNAUTHORIZED = {
     key: 'UNAUTHORIZED',
@@ -94,6 +154,114 @@ export class ErrorCode {
   };
 
   // Car Park Errors
+  public static readonly MASTER_CAR_PARK_CODE_ALREADY_EXISTS = {
+    key: 'MASTER_CAR_PARK_CODE_ALREADY_EXISTS',
+    code: 'MASTER_CAR_PARK_CODE_ALREADY_EXISTS',
+    message: 'Master car park code already exists',
+  };
+
+  public static readonly MASTER_CAR_PARK_NOT_FOUND = {
+    key: 'MASTER_CAR_PARK_NOT_FOUND',
+    code: 'MASTER_CAR_PARK_NOT_FOUND',
+    message: 'Master car park not found',
+  };
+
+  public static readonly CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS = {
+    key: 'CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS',
+    code: 'CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS',
+    message: 'Cannot delete master car park with existing sub car parks',
+  };
+
+  public static readonly SUB_CAR_PARK_CODE_ALREADY_EXISTS = {
+    key: 'SUB_CAR_PARK_CODE_ALREADY_EXISTS',
+    code: 'SUB_CAR_PARK_CODE_ALREADY_EXISTS',
+    message: 'Sub car park code already exists',
+  };
+
+  public static readonly SUB_CAR_PARK_NAME_ALREADY_EXISTS = {
+    key: 'SUB_CAR_PARK_NAME_ALREADY_EXISTS',
+    code: 'SUB_CAR_PARK_NAME_ALREADY_EXISTS',
+    message: 'Sub car park name already exists for this master car park',
+  };
+
+  public static readonly SUB_CAR_PARK_CODE_GENERATION_FAILED = {
+    key: 'SUB_CAR_PARK_CODE_GENERATION_FAILED',
+    code: 'SUB_CAR_PARK_CODE_GENERATION_FAILED',
+    message: 'Failed to generate unique sub car park code',
+  };
+
+  public static readonly SUB_CAR_PARK_NOT_FOUND = {
+    key: 'SUB_CAR_PARK_NOT_FOUND',
+    code: 'SUB_CAR_PARK_NOT_FOUND',
+    message: 'Sub car park not found',
+  };
+
+  public static readonly CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS = {
+    key: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS',
+    code: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS',
+    message: 'Cannot delete sub car park with existing bookings',
+  };
+
+  public static readonly CANNOT_DELETE_SUB_CAR_PARK_WITH_TENANCIES = {
+    key: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_TENANCIES',
+    code: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_TENANCIES',
+    message: 'Cannot delete sub car park with existing tenancies',
+  };
+
+  public static readonly CAR_MAKE_ALREADY_EXISTS = {
+    key: 'CAR_MAKE_ALREADY_EXISTS',
+    code: 'CAR_MAKE_ALREADY_EXISTS',
+    message: 'Car make already exists',
+  };
+
+  public static readonly CAR_MAKE_NOT_FOUND = {
+    key: 'CAR_MAKE_NOT_FOUND',
+    code: 'CAR_MAKE_NOT_FOUND',
+    message: 'Car make not found',
+  };
+
+  public static readonly MANAGER_CODE_ALREADY_EXISTS = {
+    key: 'MANAGER_CODE_ALREADY_EXISTS',
+    code: 'MANAGER_CODE_ALREADY_EXISTS',
+    message: 'Manager code already exists',
+  };
+
+  public static readonly CARPARK_MANAGER_NOT_FOUND = {
+    key: 'CARPARK_MANAGER_NOT_FOUND',
+    code: 'CARPARK_MANAGER_NOT_FOUND',
+    message: 'Carpark manager not found',
+  };
+
+  public static readonly BLACKLIST_ENTRY_NOT_FOUND = {
+    key: 'BLACKLIST_ENTRY_NOT_FOUND',
+    code: 'BLACKLIST_ENTRY_NOT_FOUND',
+    message: 'Blacklist entry not found',
+  };
+
+  public static readonly TOKEN_REQUIRED = {
+    key: 'TOKEN_REQUIRED',
+    code: 'TOKEN_REQUIRED',
+    message: 'Token is required',
+  };
+
+  public static readonly INVALID_OR_EXPIRED_TOKEN = {
+    key: 'INVALID_OR_EXPIRED_TOKEN',
+    code: 'INVALID_OR_EXPIRED_TOKEN',
+    message: 'Invalid or expired token',
+  };
+
+  public static readonly TOKEN_AND_PASSWORD_REQUIRED = {
+    key: 'TOKEN_AND_PASSWORD_REQUIRED',
+    code: 'TOKEN_AND_PASSWORD_REQUIRED',
+    message: 'Token and password are required',
+  };
+
+  public static readonly PASSWORD_TOO_SHORT = {
+    key: 'PASSWORD_TOO_SHORT',
+    code: 'PASSWORD_TOO_SHORT',
+    message: 'Password must be at least 6 characters long',
+  };
+
   public static readonly PARKING_SPOT_NOT_FOUND = {
     key: 'PARKING_SPOT_NOT_FOUND',
     code: 'PARKING_SPOT_NOT_FOUND',

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Infringement } from './entities/infringement.entity';
@@ -6,13 +6,16 @@ import {
   CreateInfringementRequest,
   UpdateInfringementRequest,
 } from './infringement.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class InfringementService {
   constructor(
     @InjectRepository(Infringement)
     private infringementRepository: Repository<Infringement>,
-  ) {}
+  ) { }
 
   async create(infringementDto: CreateInfringementRequest): Promise<Infringement> {
     const infringement = this.infringementRepository.create({
@@ -27,15 +30,28 @@ export class InfringementService {
     return await this.infringementRepository.find(options);
   }
 
-  async findOne(options?: FindOneOptions<Infringement>): Promise<Infringement> {
-    const infringement = await this.infringementRepository.findOne(options);
+  async findOne(id: string): Promise<Infringement> {
+    const infringement = await this.infringementRepository.findOne({
+      where: { ticketNumber: Number(id) },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return infringement;
   }
 
   async update(ticketNumber: string, updateInfringementDto: UpdateInfringementRequest) {
     const infringement = await this.infringementRepository.findOne({ where: { ticketNumber: Number(ticketNumber) } });
     if (!infringement) {
-      throw new BadRequestException('Infringement not found');
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     Object.assign(infringement, updateInfringementDto);
@@ -43,6 +59,14 @@ export class InfringementService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} infringement`;
+    const infringement = this.infringementRepository.findOne({ where: { ticketNumber: Number(id) } });
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.infringementRepository.delete(id);
   }
 }

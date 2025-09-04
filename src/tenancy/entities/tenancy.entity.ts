@@ -30,11 +30,16 @@ export class Tenancy {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  
-  @ManyToOne(() => SubCarPark, (carPark) => carPark.tenancies)
+  @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.tenancies)
   @JoinColumn({ name: 'subCarParkId' })
-  carPark: SubCarPark;
+  subCarPark: SubCarPark;
+
+  @Column({ type: 'varchar', nullable: false })
+  subCarParkId: string;
 
   @OneToMany(() => Whitelist, (whitelist) => whitelist.tenancy)
   whitelists: Whitelist[];
+
+  @Column({ type: 'varchar', nullable: true })
+  whitelistIds: string[];
 }

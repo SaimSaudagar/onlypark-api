@@ -45,38 +45,17 @@ export class WhitelistController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create whitelist entry' })
-  @ApiResponse({
-    status: 201,
-    description: 'Whitelist entry created successfully',
-    type: WhitelistResponseDto
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   create(@Body() createDto: CreateWhitelistDto) {
     return this.whitelistService.create(createDto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update whitelist entry' })
-  @ApiResponse({
-    status: 200,
-    description: 'Whitelist entry updated successfully',
-    type: WhitelistResponseDto
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 404, description: 'Whitelist entry not found' })
   update(@Param('id') id: string, @Body() updateDto: UpdateWhitelistDto) {
     return this.whitelistService.update(id, updateDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete whitelist entry' })
-  @ApiResponse({
-    status: 204,
-    description: 'Whitelist entry deleted successfully'
-  })
-  @ApiResponse({ status: 404, description: 'Whitelist entry not found' })
   remove(@Param('id') id: string) {
     return this.whitelistService.remove(id);
   }

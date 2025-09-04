@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { MasterCarPark } from './entities/master-car-park.entity';
@@ -8,63 +8,41 @@ import {
 } from './dto/master-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
+import { ParkingSpotStatus } from 'src/common/enums';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class MasterCarParkService {
   constructor(
     @InjectRepository(MasterCarPark)
     private masterCarParkRepository: Repository<MasterCarPark>,
-  ) {}
+  ) { }
 
   async create(masterCarParkDto: CreateMasterCarParkRequest): Promise<MasterCarPark> {
-    const { 
-      carParkName, 
-      totalCarSpace, 
-      carParkType, 
-      location, 
-      lat, 
-      lang, 
-      description, 
-      operatingHours, 
-      tenantEmailCheck,
-      geolocation,
-      event,
-      eventDate,
-      eventExpiryDate,
-      status 
+    const {
+      carParkName,
+      carParkType,
     } = masterCarParkDto;
 
-    // Generate unique car park code if not provided
-    const carParkCode = masterCarParkDto.carParkCode || this.generateCarParkCode();
-    
-    // Generate slug if not provided
-    const slug = masterCarParkDto.slug || this.generateSlug(carParkName);
+    const masterCarParkCode = this.generateCarParkCode();
 
-    // Check if the car park code exists in the db
     const masterCarParkInDb = await this.masterCarParkRepository.findOne({
-      where: { carParkCode },
+      where: { masterCarParkCode },
     });
     if (masterCarParkInDb) {
-      throw new BadRequestException('Master car park code already exists');
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_CODE_ALREADY_EXISTS.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    
+
     const masterCarPark = this.masterCarParkRepository.create({
       carParkName,
-      totalCarSpace,
       carParkType,
-      location,
-      lat,
-      lang,
-      description,
-      carParkCode,
-      slug,
-      operatingHours,
-      tenantEmailCheck,
-      geolocation,
-      event,
-      eventDate,
-      eventExpiryDate,
-      status,
+      masterCarParkCode,
+      status: ParkingSpotStatus.ACTIVE,
     });
     return await this.masterCarParkRepository.save(masterCarPark);
   }
@@ -87,7 +65,10 @@ export class MasterCarParkService {
   async update(id: string, updateMasterCarParkDto: UpdateMasterCarParkRequest) {
     const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
     if (!masterCarPark) {
-      throw new BadRequestException('Master car park not found');
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     Object.assign(masterCarPark, updateMasterCarParkDto);
@@ -95,17 +76,23 @@ export class MasterCarParkService {
   }
 
   async remove(id: string) {
-    const masterCarPark = await this.masterCarParkRepository.findOne({ 
+    const masterCarPark = await this.masterCarParkRepository.findOne({
       where: { id },
       relations: ['subCarParks']
     });
-    
+
     if (!masterCarPark) {
-      throw new BadRequestException('Master car park not found');
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (masterCarPark.subCarParks && masterCarPark.subCarParks.length > 0) {
-      throw new BadRequestException('Cannot delete master car park with existing sub car parks');
+      throw new CustomException(
+        ErrorCode.CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     await this.masterCarParkRepository.remove(masterCarPark);
@@ -116,28 +103,36 @@ export class MasterCarParkService {
     try {
       const masterCarPark = await this.findOne({ where: { id } });
       if (!masterCarPark) {
-        throw new BadRequestException('Master car park not found');
+        throw new CustomException(
+          ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const qrData = {
         masterCarParkId: masterCarPark.id,
-        carParkCode: masterCarPark.carParkCode,
+        masterCarParkCode: masterCarPark.masterCarParkCode,
         carParkName: masterCarPark.carParkName,
-        location: masterCarPark.location,
         type: 'master'
       };
 
       const qrCodeDataURL = await QRCode.toDataURL(JSON.stringify(qrData));
       return qrCodeDataURL;
     } catch (error) {
-      throw new BadRequestException('Failed to generate QR code');
+      throw new CustomException(
+        ErrorCode.QR_CODE_GENERATION_FAILED.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
   async getStatistics(id: string) {
     const masterCarPark = await this.findOne({ where: { id } });
     if (!masterCarPark) {
-      throw new BadRequestException('Master car park not found');
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const totalSubCarParks = masterCarPark.subCarParks?.length || 0;
@@ -150,7 +145,6 @@ export class MasterCarParkService {
       totalSubCarParks,
       totalSpaces,
       activeSubCarParks,
-      utilizationRate: totalSpaces > 0 ? (totalSpaces / masterCarPark.totalCarSpace) * 100 : 0
     };
   }
 

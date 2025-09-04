@@ -30,25 +30,13 @@ export class MasterCarParkSeederService {
 
       if (!existingMasterCarPark) {
         // Generate car park code and slug
-        const carParkCode = this.generateCarParkCode();
-        const slug = this.generateSlug(masterCarParkData.carParkName);
+        const masterCarParkCode = this.generateCarParkCode();
+        // const slug = this.generateSlug(masterCarParkData.carParkName);
 
         const masterCarPark = this.masterCarParkRepository.create({
           carParkName: masterCarParkData.carParkName,
-          totalCarSpace: masterCarParkData.totalCarSpace,
           carParkType: masterCarParkData.carParkType,
-          location: masterCarParkData.location,
-          lat: masterCarParkData.lat,
-          lang: masterCarParkData.lang,
-          description: masterCarParkData.description,
-          carParkCode: carParkCode,
-          slug: slug,
-          operatingHours: masterCarParkData.operatingHours,
-          tenantEmailCheck: masterCarParkData.tenantEmailCheck,
-          geolocation: masterCarParkData.geolocation,
-          event: masterCarParkData.event,
-          eventDate: masterCarParkData.eventDate,
-          eventExpiryDate: masterCarParkData.eventExpiryDate,
+          masterCarParkCode: masterCarParkCode,
           status: masterCarParkData.status,
         });
 
@@ -66,11 +54,11 @@ export class MasterCarParkSeederService {
     return `${prefix}${randomSuffix}`;
   }
 
-  private generateSlug(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .trim();
-  }
+  // private generateSlug(name: string): string {
+  //   return name
+  //     .toLowerCase()
+  //     .replace(/[^\w\s-]/g, '')
+  //     .replace(/\s+/g, '-')
+  //     .trim();
+  // }
 }

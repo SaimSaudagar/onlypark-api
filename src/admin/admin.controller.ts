@@ -14,15 +14,6 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Create admin' })
-  @ApiResponse({
-    status: 201,
-    description: 'Admin created successfully',
-    type: AdminResponseDto
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
   @AllowedRoles(UserType.ADMIN)
   @RequirePermissions(AdminPermission.USER_CREATE)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
@@ -31,14 +22,6 @@ export class AdminController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all admins' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of admins retrieved successfully',
-    type: [AdminResponseDto]
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
   @AllowedRoles(UserType.ADMIN)
   @RequirePermissions(AdminPermission.USER_LIST)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
@@ -47,15 +30,6 @@ export class AdminController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get admin by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Admin retrieved successfully',
-    type: AdminResponseDto
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 404, description: 'Admin not found' })
   @AllowedRoles(UserType.ADMIN)
   @RequirePermissions(AdminPermission.USER_VIEW)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
@@ -64,16 +38,6 @@ export class AdminController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update admin' })
-  @ApiResponse({
-    status: 200,
-    description: 'Admin updated successfully',
-    type: AdminResponseDto
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 404, description: 'Admin not found' })
   @AllowedRoles(UserType.ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
@@ -82,14 +46,6 @@ export class AdminController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete admin' })
-  @ApiResponse({
-    status: 200,
-    description: 'Admin deleted successfully'
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 404, description: 'Admin not found' })
   @AllowedRoles(UserType.ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)

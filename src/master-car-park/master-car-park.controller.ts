@@ -33,14 +33,11 @@ export class MasterCarParkController {
   constructor(private readonly masterCarParkService: MasterCarParkService) {}
 
   @Get()
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_LIST, CarparkManagerPermission.CAR_PARK_LIST)
   findAll() {
     return this.masterCarParkService.findAll();
   }
 
   @Get(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
   findOne(@Param('id') id: string) {
     return this.masterCarParkService.findOne({ where: { id } });
@@ -66,7 +63,6 @@ export class MasterCarParkController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_CREATE, CarparkManagerPermission.CAR_PARK_CREATE)
   create(@Body() createMasterCarParkDto: CreateMasterCarParkRequest) {
     return this.masterCarParkService.create(createMasterCarParkDto);
   }
