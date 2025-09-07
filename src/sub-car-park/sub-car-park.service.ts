@@ -388,13 +388,6 @@ export class SubCarParkService {
       eventExpiryDate: subCarPark.eventExpiryDate,
       status: subCarPark.status,
       masterCarParkId: subCarPark.masterCarParkId,
-      masterCarPark: subCarPark.masterCarPark ? {
-        id: subCarPark.masterCarPark.id,
-        carParkName: subCarPark.masterCarPark.carParkName,
-        masterCarParkCode: subCarPark.masterCarPark.masterCarParkCode,
-        carParkType: subCarPark.masterCarPark.carParkType,
-        status: subCarPark.masterCarPark.status,
-      } : undefined,
       tenancies: subCarPark.tenancies?.map(tenancy => ({
         id: tenancy.id,
         tenantName: tenancy.tenantName,

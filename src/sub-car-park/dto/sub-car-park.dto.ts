@@ -110,8 +110,7 @@ export class SubCarParkResponse {
   eventExpiryDate?: Date;
   status: ParkingSpotStatus;
   masterCarParkId: string;
-  masterCarPark?: MasterCarPark;
-  tenancies?: Tenancy[];
+  tenancies?: TenancyResponse[];
 }
 
 export class MasterCarPark {
@@ -122,7 +121,7 @@ export class MasterCarPark {
   status: string;
 }
 
-export class Tenancy {
+export class TenancyResponse {
   id: string;
   tenantName: string;
   tenantEmail: string;
@@ -159,17 +158,15 @@ export class SubCarParkCreateResponse {
   subCarParkCode: string;
   status: ParkingSpotStatus;
   masterCarParkId: string;
-  tenancies: {
-    id: string;
-    tenantName: string;
-    tenantEmail: string;
-  }[];
-  whitelistCompanies: {
-    id: string;
-    companyName: string;
-    email: string;
-  }[];
+  tenancies: TenancyResponse[];
+  whitelistCompanies: WhitelistCompanyResponse[];
   createdAt: Date;
+}
+
+export class WhitelistCompanyResponse {
+  id: string;
+  companyName: string;
+  email: string;
 }
 
 export class SubCarParkUpdateResponse {
