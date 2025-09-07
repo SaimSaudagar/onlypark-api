@@ -8,7 +8,7 @@ import {
   CreateMasterCarParkResponse,
   FindMasterCarParkRequest,
   FindMasterCarParkResponse,
-} from './dto/master-car-park.dto';
+} from './master-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
 import { ParkingSpotStatus } from '../common/enums';

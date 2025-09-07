@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsIn } from 'class-validator';
-import { CarParkType, ParkingSpotStatus } from '../../common/enums';
-import { ApiGetBaseRequest } from '../../common/types';
+import { CarParkType, ParkingSpotStatus } from '../common/enums';
+import { ApiGetBaseRequest } from '../common/types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMasterCarParkRequest {

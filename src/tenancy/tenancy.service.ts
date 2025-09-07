@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository, QueryRunner, FindOptionsOrder, FindOptionsWhere, ILike, Or } from 'typeorm';
 import { Tenancy } from './entities/tenancy.entity';
-import { CreateTenancyRequest, CreateTenancyResponse, FindTenancyRequest, FindTenancyResponse } from './dto/tenancy.dto';
+import { CreateTenancyRequest, CreateTenancyResponse, FindTenancyRequest, FindTenancyResponse } from './tenancy.dto';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { ApiGetBaseResponse } from '../common/types';

@@ -31,7 +31,7 @@ import {
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
   SubCarParkRequest,
-} from './dto/sub-car-park.dto';
+} from './sub-car-park.dto';
 
 @ApiTags('SubCarPark')
 @Controller({ path: 'sub-car-park', version: '1' })

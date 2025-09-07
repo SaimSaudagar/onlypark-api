@@ -20,7 +20,7 @@ import {
   CreateMasterCarParkResponse,
   UpdateMasterCarParkRequest,
   FindMasterCarParkRequest,
-} from './dto/master-car-park.dto';
+} from './master-car-park.dto';
 
 @ApiTags('MasterCarPark')
 @Controller({ path: 'master-car-park', version: '1' })

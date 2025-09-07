@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsOptional, IsEnum, IsBoolean, IsUUID, IsEmail, MinLength, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AdminAccessLevel, AdminStatus, UserType } from '../../common/enums';
+import { AdminAccessLevel, AdminStatus, UserType } from '../common/enums';
 import { Type } from 'class-transformer';
 
 export class CreateAdminDto {

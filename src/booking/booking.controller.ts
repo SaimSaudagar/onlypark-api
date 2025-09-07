@@ -26,7 +26,7 @@ import {
   BookingCreateResponse,
   BookingUpdateResponse,
   BookingDeleteResponse,
-} from './dto/booking.dto';
+} from './booking.dto';
 
 @ApiTags('Booking')
 @JwtAuthGuardWithApiBearer()

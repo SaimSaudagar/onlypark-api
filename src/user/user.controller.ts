@@ -27,7 +27,7 @@ import {
   UpdateUserAddressRequest,
   UpdateUserDto,
   UpdateUserProfileRequest,
-} from './dto/user.dto';
+} from './user.dto';
 
 @ApiTags('User')
 @Controller({ path: 'user', version: '1' })

@@ -12,7 +12,7 @@ import {
   SubCarParkDeleteResponse,
   SubCarParkRequest,
   FindSubCarParkResponse,
-} from './dto/sub-car-park.dto';
+} from './sub-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
 import { CustomException } from '../common/exceptions/custom.exception';
@@ -53,7 +53,7 @@ export class SubCarParkService {
       tenancies,
       whitelistCompanies,
     } = request;
-
+    console.log(request);
     if (carSpace <= 0) {
       throw new CustomException(
         ErrorCode.INVALID_CAR_SPACE.key,

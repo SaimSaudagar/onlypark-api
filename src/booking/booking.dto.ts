@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional, IsDateString, IsEnum } from "class-validator";
-import { BookingStatus } from "../../common/enums";
+import { BookingStatus } from "../common/enums";
 
 export class CreateBookingRequest {
     @IsNotEmpty()

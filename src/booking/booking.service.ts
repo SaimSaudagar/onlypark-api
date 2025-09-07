@@ -14,7 +14,7 @@ import {
   BookingDeleteResponse,
   TenancySummary,
   SubCarParkSummary,
-} from './dto/booking.dto';
+} from './booking.dto';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';

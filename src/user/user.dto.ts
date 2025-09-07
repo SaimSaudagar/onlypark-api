@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray } from 'class-validator';
-import { UserType, AddressType, UserStatus } from '../../common/enums';
-import { ApiGetBaseRequest, ApiGetBaseResponse } from '../../common';
+import { UserType, AddressType, UserStatus } from '../common/enums';
+import { ApiGetBaseRequest, ApiGetBaseResponse } from '../common';
 
 export class CreateUserRequest {
   @IsNotEmpty()

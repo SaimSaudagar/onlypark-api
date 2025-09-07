@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TenancyService } from './tenancy.service';
-import { CreateTenancyRequest, FindTenancyRequest, FindTenancyResponse } from './dto/tenancy.dto';
+import { CreateTenancyRequest, FindTenancyRequest, FindTenancyResponse } from './tenancy.dto';
 import { ApiGetBaseResponse } from '../common/types';
 
 @ApiTags('Tenancy')

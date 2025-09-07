@@ -9,7 +9,7 @@ import {
   UpdateNotificationTokenRequest,
   UpdateUserDto,
   UpdateUserProfileRequest,
-} from './dto/user.dto';
+} from './user.dto';
 import { AdminService } from '../admin/admin.service';
 import { CarparkManagerService } from '../carpark-manager/carpark-manager.service';
 import { PatrolOfficerService } from '../patrol-officer/patrol-officer.service';

@@ -6,7 +6,7 @@ import { RoleGuard, AllowedRoles } from '../auth/guards/roles.guard';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
 import { UserType, AdminPermission } from '../common/enums';
-import { CreateAdminDto, UpdateAdminDto, AdminResponseDto } from './dto/admin.dto';
+import { CreateAdminDto, UpdateAdminDto, AdminResponseDto } from './admin.dto';
 
 @ApiTags('Admin')
 @Controller({ path: 'admin', version: '1' })

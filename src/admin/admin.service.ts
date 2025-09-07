@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
 import { AdminAccessLevel, AdminStatus } from '../common/enums';
-import { CreateAdminDto, UpdateAdminDto } from './dto/admin.dto';
+import { CreateAdminDto, UpdateAdminDto } from './admin.dto';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 
