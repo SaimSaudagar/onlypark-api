@@ -4,14 +4,14 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateCarMakeRequest {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  carMakeName: string;
 }
 
-export class UpdateCarMakeRequest extends PartialType(CreateCarMakeRequest) {}
+export class UpdateCarMakeRequest extends PartialType(CreateCarMakeRequest) { }
 
 export interface GetCarMakeResponse {
   id: string;
-  name: string;
+  carMakeName: string;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,20 +1,16 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('black_list_reg')
 @Auditable()
-export class BlacklistReg {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class BlacklistReg extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   regNo: string;
@@ -27,12 +23,6 @@ export class BlacklistReg {
 
   @Column({ type: 'varchar', nullable: true })
   comments: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.blacklists)
   @JoinColumn({ name: 'subCarParkId' })

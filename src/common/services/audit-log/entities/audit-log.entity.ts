@@ -1,15 +1,12 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
 } from 'typeorm';
 import { AuditAction } from '../../../enums';
+import { BaseEntity } from '../../../entities/base.entity';
 
 @Entity('audit_logs')
-export class AuditLog {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class AuditLog extends BaseEntity {
 
   @Column()
   entityName: string;
@@ -31,7 +28,4 @@ export class AuditLog {
 
   @Column({ nullable: true })
   userId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
 }

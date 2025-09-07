@@ -1,31 +1,21 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
 import { RolePermission } from '../../role/entities/role-permission.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('permissions')
 @Auditable()
-export class Permission {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Permission extends BaseEntity {
 
   @Column({ type: 'varchar', unique: true, nullable: false })
   name: string;
 
   @Column({ type: 'varchar', nullable: true })
   description: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(() => RolePermission, (rolePermission) => rolePermission.permission)
   rolePermissions: RolePermission[];

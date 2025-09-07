@@ -1,9 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   OneToOne,
   BeforeInsert,
@@ -13,11 +10,11 @@ import * as bcrypt from 'bcrypt';
 import { UserStatus, UserType } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
 import { UserRole } from './user-role.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
+
 @Entity('users')
 @Auditable()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class User extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   name: string;
@@ -61,11 +58,6 @@ export class User {
   })
   status: UserStatus;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   userRoles: UserRole[];
 

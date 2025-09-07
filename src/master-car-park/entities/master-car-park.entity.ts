@@ -1,9 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   JoinColumn,
 } from 'typeorm';
@@ -13,12 +10,11 @@ import {
 } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('master_car_park')
 @Auditable()
-export class MasterCarPark {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class MasterCarPark extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   carParkName: string;
@@ -39,12 +35,6 @@ export class MasterCarPark {
     default: ParkingSpotStatus.ACTIVE,
   })
   status: ParkingSpotStatus;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.masterCarPark)
   @JoinColumn({ name: 'subCarParkIds' })

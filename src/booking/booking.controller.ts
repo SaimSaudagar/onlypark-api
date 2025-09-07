@@ -18,6 +18,15 @@ import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
 import { UserType, AdminPermission, UserPermission, CarparkManagerPermission, PatrolOfficerPermission } from '../common/enums';
 import { BookingService } from './booking.service';
+import {
+  CreateBookingRequest,
+  UpdateBookingRequest,
+  BookingResponse,
+  BookingListResponse,
+  BookingCreateResponse,
+  BookingUpdateResponse,
+  BookingDeleteResponse,
+} from './dto/booking.dto';
 
 @ApiTags('Booking')
 @JwtAuthGuardWithApiBearer()
@@ -29,29 +38,33 @@ export class BookingController {
   @Get()
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   @RequirePermissions(AdminPermission.BOOKING_LIST, CarparkManagerPermission.BOOKING_LIST)
-  findAll() {
+  findAll(): Promise<BookingListResponse[]> {
     return this.bookingService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  findOne(@Param('id') id: string): Promise<BookingResponse | null> {
     return this.bookingService.findOne({ where: { id } });
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createDto: any) {
-    return this.bookingService.create(createDto);
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  create(@Body() request: CreateBookingRequest): Promise<BookingCreateResponse> {
+    return this.bookingService.create(request);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDto: any) {
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  update(@Param('id') id: string, @Body() updateDto: UpdateBookingRequest): Promise<BookingUpdateResponse> {
     return this.bookingService.update(id, updateDto);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  remove(@Param('id') id: string): Promise<BookingDeleteResponse> {
     return this.bookingService.remove(id);
   }
 }

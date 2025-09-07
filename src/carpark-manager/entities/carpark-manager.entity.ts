@@ -1,21 +1,17 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToOne,
   JoinColumn,
 } from 'typeorm';
 import { CarparkManagerLevel, CarparkManagerStatus } from '../../common/enums';
 import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('carpark_manager')
 @Auditable()
-export class CarparkManager {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class CarparkManager extends BaseEntity {
 
   @Column({ type: 'varchar', unique: true, nullable: false })
   managerCode: string;
@@ -60,13 +56,6 @@ export class CarparkManager {
     default: CarparkManagerStatus.ACTIVE,
   })
   status: CarparkManagerStatus;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })

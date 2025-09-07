@@ -1,21 +1,17 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToOne,
   JoinColumn,
 } from 'typeorm';
 import { AdminAccessLevel, AdminStatus } from '../../common/enums';
 import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('admin')
 @Auditable()
-export class Admin {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Admin extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   lastLoginAt: Date;
@@ -29,12 +25,6 @@ export class Admin {
     default: AdminStatus.ACTIVE,
   })
   status: AdminStatus;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })

@@ -28,6 +28,7 @@ import { SubCarParkModule } from './sub-car-park/sub-car-park.module';
 
 import { TenancyModule } from './tenancy/tenancy.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
+import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
@@ -102,6 +103,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
 
     TenancyModule,
     WhitelistModule,
+    WhitelistCompanyModule,
     BlacklistModule,
     InfringementModule,
     PatrolOfficerModule,

@@ -1,29 +1,14 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { Infringement } from '../../infringement/entities/infringement.entity';
 import { Auditable } from '../../common';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('car_make')
 @Auditable()
-export class CarMake {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class CarMake extends BaseEntity {
 
   @Column({ type: 'varchar', unique: true, nullable: false })
-  name: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @OneToMany(() => Infringement, (infringement) => infringement.carMake)
-  infringements: Infringement[];
+  carMakeName: string;
 }

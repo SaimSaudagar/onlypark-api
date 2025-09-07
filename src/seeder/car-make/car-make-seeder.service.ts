@@ -25,12 +25,12 @@ export class CarMakeSeederService {
 
     for (const carMakeData of carMakes) {
       const existingCarMake = await this.carMakeRepository.findOne({
-        where: { name: carMakeData.name },
+        where: { carMakeName: carMakeData.name },
       });
 
       if (!existingCarMake) {
         const carMake = this.carMakeRepository.create({
-          name: carMakeData.name,
+          carMakeName: carMakeData.name,
         });
 
         await this.carMakeRepository.save(carMake);

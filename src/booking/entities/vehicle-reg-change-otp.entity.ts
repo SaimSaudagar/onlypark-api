@@ -1,20 +1,16 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { Booking } from './booking.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('vehicle_reg_change_otps')
 @Auditable()
-export class VehicleRegChangeOtp {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class VehicleRegChangeOtp extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   email: string;
@@ -34,13 +30,6 @@ export class VehicleRegChangeOtp {
   @Column({ type: 'timestamp', nullable: false })
   expiresAt: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  
   @ManyToOne(() => Booking, (booking) => booking.vehicleRegChangeOtps)
   @JoinColumn({ name: 'bookingId' })
   booking: Booking;

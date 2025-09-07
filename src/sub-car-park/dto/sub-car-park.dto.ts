@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail } from 'class-validator';
 import { ParkingSpotStatus } from '../../common/enums';
+import { ApiGetBaseRequest } from '../../common/types';
 
 export class CreateSubCarParkRequest {
   @IsNotEmpty()
@@ -58,6 +59,10 @@ export class CreateSubCarParkRequest {
   @IsOptional()
   @IsArray()
   tenancies?: TenancyRequest[];
+
+  @IsOptional()
+  @IsArray()
+  whitelistCompanies?: WhitelistCompanyRequest[];
 }
 
 export class TenancyRequest {
@@ -70,8 +75,24 @@ export class TenancyRequest {
   tenantEmail: string;
 }
 
+export class WhitelistCompanyRequest {
+  @IsNotEmpty()
+  @IsString()
+  companyName: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
 export class UpdateSubCarParkRequest extends PartialType(CreateSubCarParkRequest) { }
 
+
+export class SubCarParkRequest extends ApiGetBaseRequest {
+  @IsString()
+  @IsOptional()
+  name?: string;
+}
 export class SubCarParkResponse {
   id: string;
   carParkName: string;
@@ -138,7 +159,16 @@ export class SubCarParkCreateResponse {
   subCarParkCode: string;
   status: ParkingSpotStatus;
   masterCarParkId: string;
-  tenancyCount: number;
+  tenancies: {
+    id: string;
+    tenantName: string;
+    tenantEmail: string;
+  }[];
+  whitelistCompanies: {
+    id: string;
+    companyName: string;
+    email: string;
+  }[];
   createdAt: Date;
 }
 
@@ -151,12 +181,9 @@ export class SubCarParkUpdateResponse {
   status: ParkingSpotStatus;
   masterCarParkId: string;
   updatedAt: Date;
-  message: string;
 }
 
 export class SubCarParkDeleteResponse {
   id: string;
   carParkName: string;
-  message: string;
-  deletedAt: Date;
 }

@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators';
-import { AuthenticatedUser } from '../common';
+import { ApiGetBaseResponse, AuthenticatedUser } from '../common';
 import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -29,6 +29,7 @@ import {
   SubCarParkCreateResponse,
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
+  SubCarParkRequest,
 } from './dto/sub-car-park.dto';
 
 @ApiTags('SubCarPark')
@@ -40,8 +41,8 @@ export class SubCarParkController {
 
   @Get()
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  findAll(): Promise<SubCarParkResponse[]> {
-    return this.subCarParkService.findAll();
+  findAll(request: SubCarParkRequest): Promise<ApiGetBaseResponse<SubCarParkResponse>> {
+    return this.subCarParkService.findAll(request);
   }
 
   @Get('master/:masterCarParkId')

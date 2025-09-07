@@ -1,9 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
@@ -16,15 +13,15 @@ import { MasterCarPark } from '../../master-car-park/entities/master-car-park.en
 import { Booking } from '../../booking/entities/booking.entity';
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { Whitelist } from '../../whitelist/entities/whitelist.entity';
+import { WhitelistCompany } from '../../whitelist-company/entities/whitelist-company.entity';
 import { BlacklistReg } from '../../blacklist/entities/blacklist-reg.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
 import { Infringement } from '../../infringement/entities/infringement.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('sub_car_park')
 @Auditable()
-export class SubCarPark {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class SubCarPark extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   carParkName: string;
@@ -75,12 +72,6 @@ export class SubCarPark {
   })
   status: ParkingSpotStatus;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @ManyToOne(() => MasterCarPark, (masterCarPark) => masterCarPark.subCarParks)
   @JoinColumn({ name: 'masterCarParkId' })
   masterCarPark: MasterCarPark;
@@ -108,6 +99,13 @@ export class SubCarPark {
 
   @Column({ type: 'varchar', nullable: true })
   whitelistIds: string[];
+
+  @OneToMany(() => WhitelistCompany, (whitelistCompany) => whitelistCompany.subCarPark)
+  @JoinColumn({ name: 'whitelistCompanyIds' })
+  whitelistCompanies: WhitelistCompany[];
+
+  @Column({ type: 'varchar', nullable: true })
+  whitelistCompanyIds: string[];
 
   @OneToMany(() => BlacklistReg, (blacklist) => blacklist.subCarPark)
   @JoinColumn({ name: 'blacklistIds' })

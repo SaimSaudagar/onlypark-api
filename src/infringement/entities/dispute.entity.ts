@@ -1,22 +1,17 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { DisputeStatus } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
 import { Infringement } from './infringement.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('disputes')
 @Auditable()
-export class Dispute {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Dispute extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   carSpotId: string;
@@ -76,16 +71,6 @@ export class Dispute {
   })
   status: DisputeStatus;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
-
-  
   @ManyToOne(() => Infringement, (infringement) => infringement.disputes)
   @JoinColumn({ name: 'ticketNumber' })
   infringement: Infringement;

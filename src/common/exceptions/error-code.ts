@@ -1,4 +1,4 @@
-export class ErrorCode {
+export class  ErrorCode {
   // General Errors
   public static readonly CLIENT_ERROR = {
     key: 'CLIENT_ERROR',
@@ -54,10 +54,23 @@ export class ErrorCode {
     message: 'Number of permits per registration must be greater than 0',
   };
 
+
+  public static readonly COMPANY_NAME_AND_EMAIL_REQUIRED = {
+    key: 'COMPANY_NAME_AND_EMAIL_REQUIRED',
+    code: 'COMPANY_NAME_AND_EMAIL_REQUIRED',
+    message: 'Company name and email are required',
+  };
+
   public static readonly INVALID_TENANCY_DATA = {
     key: 'INVALID_TENANCY_DATA',
     code: 'INVALID_TENANCY_DATA',
     message: 'Tenant name and email are required',
+  };
+
+  public static readonly TENANT_NOT_FOUND = {
+    key: 'TENANT_NOT_FOUND',
+    code: 'TENANT_NOT_FOUND',
+    message: 'Tenant not found',
   };
 
   public static readonly TENANT_ALREADY_EXISTS = {
@@ -238,6 +251,18 @@ export class ErrorCode {
     message: 'Blacklist entry not found',
   };
 
+  public static readonly WHITELIST_COMPANY_NOT_FOUND = {
+    key: 'WHITELIST_COMPANY_NOT_FOUND',
+    code: 'WHITELIST_COMPANY_NOT_FOUND',
+    message: 'Whitelist company not found',
+  };
+
+  public static readonly WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS = {
+    key: 'WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS',
+    code: 'WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS',
+    message: 'Company with this email already exists in this car park',
+  };
+
   public static readonly TOKEN_REQUIRED = {
     key: 'TOKEN_REQUIRED',
     code: 'TOKEN_REQUIRED',
@@ -315,6 +340,42 @@ export class ErrorCode {
     key: 'BOOKING_TIME_CONFLICT',
     code: 'BOOKING_TIME_CONFLICT',
     message: 'Booking time conflicts with existing booking',
+  };
+
+  public static readonly INVALID_BOOKING_DATES = {
+    key: 'INVALID_BOOKING_DATES',
+    code: 'INVALID_BOOKING_DATES',
+    message: 'Start time must be before end time',
+  };
+
+  public static readonly BOOKING_PAST_DATE = {
+    key: 'BOOKING_PAST_DATE',
+    code: 'BOOKING_PAST_DATE',
+    message: 'Cannot create booking for past dates',
+  };
+
+  public static readonly BOOKING_DURATION_EXCEEDED = {
+    key: 'BOOKING_DURATION_EXCEEDED',
+    code: 'BOOKING_DURATION_EXCEEDED',
+    message: 'Booking duration exceeds maximum allowed time',
+  };
+
+  public static readonly BOOKING_CAPACITY_EXCEEDED = {
+    key: 'BOOKING_CAPACITY_EXCEEDED',
+    code: 'BOOKING_CAPACITY_EXCEEDED',
+    message: 'No available spaces for the requested time',
+  };
+
+  public static readonly BOOKING_ALREADY_CANCELLED = {
+    key: 'BOOKING_ALREADY_CANCELLED',
+    code: 'BOOKING_ALREADY_CANCELLED',
+    message: 'Booking has already been cancelled',
+  };
+
+  public static readonly BOOKING_ALREADY_COMPLETED = {
+    key: 'BOOKING_ALREADY_COMPLETED',
+    code: 'BOOKING_ALREADY_COMPLETED',
+    message: 'Booking has already been completed',
   };
 
   // Geolocation Errors

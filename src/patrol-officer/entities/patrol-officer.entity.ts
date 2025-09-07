@@ -1,9 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToOne,
   JoinColumn,
   ManyToOne,
@@ -11,12 +8,11 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Auditable } from '../../common/decorators';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('patrol_officer')
 @Auditable()
-export class PatrolOfficer {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class PatrolOfficer extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   officerName: string;
@@ -26,12 +22,6 @@ export class PatrolOfficer {
 
   @Column({ type: 'varchar', default: 'active' })
   status: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })

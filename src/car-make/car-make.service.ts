@@ -17,12 +17,12 @@ export class CarMakeService {
     private carMakeRepository: Repository<CarMake>,
   ) { }
 
-  async create(carMakeDto: CreateCarMakeRequest): Promise<CarMake> {
-    const { name } = carMakeDto;
+  async create(request: CreateCarMakeRequest): Promise<CarMake> {
+    const { carMakeName } = request;
 
     // check if the car make exists in the db
     const carMakeInDb = await this.carMakeRepository.findOne({
-      where: { name },
+      where: { carMakeName: carMakeName },
     });
     if (carMakeInDb) {
       throw new CustomException(
@@ -32,7 +32,7 @@ export class CarMakeService {
     }
 
     const carMake = this.carMakeRepository.create({
-      name,
+          carMakeName: carMakeName,
     });
     return await this.carMakeRepository.save(carMake);
   }

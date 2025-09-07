@@ -2,9 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
   ManyToOne,
   JoinColumn,
   OneToMany,
@@ -16,11 +13,11 @@ import { InfringementPenalty } from './infringement-penalty.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Dispute } from './dispute.entity';
 import { CarMake } from '../../car-make/entities/car-make.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('infringements')
 @Auditable()
-export class Infringement {
-  @PrimaryGeneratedColumn('increment')
+export class Infringement extends BaseEntity {
   ticketNumber: number;
 
   @Column({ type: 'date', nullable: false })
@@ -63,20 +60,9 @@ export class Infringement {
   @Column({ type: 'boolean', default: false })
   fifteenDayEmail: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
-
-
   @ManyToOne(() => InfringementReason, (reason) => reason.infringements)
   @JoinColumn({ name: 'reasonId' })
   reason: InfringementReason;
-  
 
   @ManyToOne(() => InfringementPenalty, (penalty) => penalty.infringements)
   @JoinColumn({ name: 'penaltyId' })

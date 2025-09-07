@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, QueryRunner } from 'typeorm';
 import { MasterCarPark } from './entities/master-car-park.entity';
 import {
   CreateMasterCarParkRequest,
@@ -57,7 +57,9 @@ export class MasterCarParkService {
   async findOne(options?: FindOneOptions<MasterCarPark>): Promise<MasterCarPark> {
     const masterCarPark = await this.masterCarParkRepository.findOne({
       ...options,
-      relations: ['subCarParks'],
+      relations: {
+        subCarParks: true,
+      },
     });
     return masterCarPark;
   }
