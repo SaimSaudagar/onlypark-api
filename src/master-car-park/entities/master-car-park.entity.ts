@@ -37,9 +37,5 @@ export class MasterCarPark extends BaseEntity {
   status: ParkingSpotStatus;
 
   @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.masterCarPark)
-  @JoinColumn({ name: 'subCarParkIds' })
   subCarParks: SubCarPark[];
-
-  @Column({ type: 'varchar', nullable: true })
-  subCarParkIds: string[];
 }

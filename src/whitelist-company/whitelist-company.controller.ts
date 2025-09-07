@@ -15,37 +15,18 @@ import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { WhitelistCompanyService } from './whitelist-company.service';
 import {
     CreateWhitelistCompanyDto,
+    FindWhitelistCompanyRequest,
     UpdateWhitelistCompanyDto,
-    WhitelistCompanyResponseDto
 } from './whitelist-company.dto';
 
 @ApiTags('Whitelist Company')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'whitelist-company', version: '1' })
 export class WhitelistCompanyController {
     constructor(private readonly whitelistCompanyService: WhitelistCompanyService) { }
 
     @Get()
-    findAll(
-        @Query('subCarParkId') subCarParkId?: string,
-        @Query('tenancyId') tenancyId?: string,
-        @Query('isActive') isActive?: string,
-    ) {
-        const options: any = {};
-
-        if (subCarParkId) {
-            options.where = { ...options.where, subCarParkId };
-        }
-
-        if (tenancyId) {
-            options.where = { ...options.where, tenancyId };
-        }
-
-        if (isActive !== undefined) {
-            options.where = { ...options.where, isActive: isActive === 'true' };
-        }
-
-        return this.whitelistCompanyService.findAll(options);
+    findAll(@Query() request: FindWhitelistCompanyRequest) {
+        return this.whitelistCompanyService.findAll(request);
     }
 
     @Get(':id')

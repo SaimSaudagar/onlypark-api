@@ -7,6 +7,7 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { ConfigKeys, DependencyInjectionKeys } from './common/configs';
 import { AppExceptionFilter } from './common/exceptions/app-exception.filter';
 import { RequestContextService } from './common/services/request-context/request-context.service';
+import { ExceptionUtils } from './common/utils/exception.utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -46,6 +47,8 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
+      exceptionFactory: (errors) => ExceptionUtils.handleNestException(errors),
+      stopAtFirstError: true,
     }),
   );
 

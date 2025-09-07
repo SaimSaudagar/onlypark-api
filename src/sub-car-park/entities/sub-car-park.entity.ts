@@ -80,44 +80,20 @@ export class SubCarPark extends BaseEntity {
   masterCarParkId: string;
 
   @OneToMany(() => Booking, (booking) => booking.subCarPark)
-  @JoinColumn({ name: 'bookingIds' })
   bookings: Booking[];
 
-  @Column({ type: 'varchar', nullable: true })
-  bookingIds: string[];
-
   @OneToMany(() => Tenancy, (tenancy) => tenancy.subCarPark)
-  @JoinColumn({ name: 'tenancyIds' })
   tenancies: Tenancy[];
 
-  @Column({ type: 'varchar', nullable: true })
-  tenancyIds: string[];
-
   @OneToMany(() => Whitelist, (whitelist) => whitelist.subCarPark)
-  @JoinColumn({ name: 'whitelistIds' })
   whitelists: Whitelist[];
 
-  @Column({ type: 'varchar', nullable: true })
-  whitelistIds: string[];
-
   @OneToMany(() => WhitelistCompany, (whitelistCompany) => whitelistCompany.subCarPark)
-  @JoinColumn({ name: 'whitelistCompanyIds' })
   whitelistCompanies: WhitelistCompany[];
 
-  @Column({ type: 'varchar', nullable: true })
-  whitelistCompanyIds: string[];
-
   @OneToMany(() => BlacklistReg, (blacklist) => blacklist.subCarPark)
-  @JoinColumn({ name: 'blacklistIds' })
   blacklists: BlacklistReg[];
 
-  @Column({ type: 'varchar', nullable: true })
-  blacklistIds: string[];
-
   @OneToMany(() => PatrolOfficer, (officer) => officer.subCarParks)
-  @JoinColumn({ name: 'patrolOfficerIds' })
   patrolOfficers: PatrolOfficer[];
-
-  @Column({ type: 'varchar', nullable: true })
-  patrolOfficerIds: string[];
 }

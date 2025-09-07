@@ -8,20 +8,21 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { TenancyService } from './tenancy.service';
+import { CreateTenancyRequest, FindTenancyRequest, FindTenancyResponse } from './dto/tenancy.dto';
+import { ApiGetBaseResponse } from '../common/types';
 
 @ApiTags('Tenancy')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'tenancy', version: '1' })
 export class TenancyController {
-  constructor(private readonly tenancyService: TenancyService) {}
+  constructor(private readonly tenancyService: TenancyService) { }
 
   @Get()
-  findAll() {
-    return this.tenancyService.findAll();
+  findAll(@Query() request: FindTenancyRequest): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
+    return this.tenancyService.findAll(request);
   }
 
   @Get(':id')
@@ -31,8 +32,8 @@ export class TenancyController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createDto: any) {
-    return this.tenancyService.create(createDto);
+  create(@Body() request: CreateTenancyRequest) {
+    return this.tenancyService.create(request);
   }
 
   @Patch(':id')

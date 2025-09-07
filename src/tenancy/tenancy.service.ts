@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, QueryRunner } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, QueryRunner, FindOptionsOrder, FindOptionsWhere, ILike, Or } from 'typeorm';
 import { Tenancy } from './entities/tenancy.entity';
-import { TenancyRequest } from './dto/tenancy.dto';
+import { CreateTenancyRequest, CreateTenancyResponse, FindTenancyRequest, FindTenancyResponse } from './dto/tenancy.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { ApiGetBaseResponse } from '../common/types';
 
 @Injectable()
 export class TenancyService {
@@ -11,35 +14,104 @@ export class TenancyService {
     private tenancyRepository: Repository<Tenancy>,
   ) { }
 
-  async create(request: Tenancy): Promise<Tenancy> {
+  async create(request: CreateTenancyRequest): Promise<Tenancy> {
     const entity = this.tenancyRepository.create(request);
     const savedEntity = await this.tenancyRepository.save(entity);
     return savedEntity as unknown as Tenancy;
   }
 
-  async createBulk(request: Tenancy[]): Promise<Tenancy[]> {
-    const entities = this.tenancyRepository.create(request);
-    const savedEntities = await this.tenancyRepository.save(entities);
-    return savedEntities as unknown as Tenancy[];
-  }
+  async createBulk(request: CreateTenancyRequest[], queryRunner: QueryRunner): Promise<CreateTenancyResponse[]> {
+    for (const tenant of request) {
+      if (!tenant.tenantName || !tenant.tenantEmail) {
+        throw new CustomException(
+          ErrorCode.INVALID_TENANCY_DATA.key,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-  async createBulkWithTransaction(request: TenancyRequest[], queryRunner: QueryRunner): Promise<Tenancy[]> {
-    if (request.length === 0) {
-      return [];
+      const existingTenant = await this.findOne({ where: { tenantEmail: tenant.tenantEmail } });
+
+      if (existingTenant) {
+        throw new CustomException(
+          ErrorCode.TENANT_ALREADY_EXISTS.key,
+          HttpStatus.BAD_REQUEST,
+          { tenantEmail: tenant.tenantEmail },
+        );
+      }
     }
     const result = await queryRunner.manager
       .createQueryBuilder()
       .insert()
       .into(Tenancy)
-      .values(request)
+      .values(request.map(tenant => ({
+        tenantName: tenant.tenantName,
+        tenantEmail: tenant.tenantEmail,
+        subCarParkId: tenant.subCarParkId,
+      })))
       .returning('*')
       .execute();
 
-    return result as unknown as Tenancy[];
+    const response = result.raw.map(item => ({
+      id: item.id,
+      tenantName: item.tenantName,
+      tenantEmail: item.tenantEmail,
+      subCarParkId: item.subCarParkId,
+    }));
+
+    return response;
   }
 
-  async findAll(options?: FindManyOptions<Tenancy>): Promise<Tenancy[]> {
-    return await this.tenancyRepository.find(options);
+  async findAll(request: FindTenancyRequest): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
+    const { pageNo, pageSize, sortField, sortOrder, tenantName, tenantEmail, search } = request;
+    const skip = (pageNo - 1) * pageSize;
+    const take = pageSize;
+    console.log(request);
+    let whereOptions: FindOptionsWhere<Tenancy>[] = [];
+    const orderOptions: FindOptionsOrder<Tenancy> = {};
+
+    if (tenantName) {
+      whereOptions.push({ tenantName: ILike(`%${tenantName}%`) });
+    }
+
+    if (tenantEmail) {
+      whereOptions.push({ tenantEmail: ILike(`%${tenantEmail}%`) });
+    }
+    if (search) {
+      whereOptions = [
+        { tenantName: ILike(`%${search}%`) },
+        { tenantEmail: ILike(`%${search}%`) }
+      ];
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    const options: FindManyOptions<Tenancy> = {
+      skip,
+      take,
+      where: whereOptions,
+      order: orderOptions,
+    };
+
+    const [tenancies, totalItems] = await this.tenancyRepository.findAndCount(options);
+
+    const response = tenancies.map(tenant => ({
+      id: tenant.id,
+      tenantName: tenant.tenantName,
+      tenantEmail: tenant.tenantEmail,
+      subCarParkId: tenant.subCarParkId,
+    }));
+
+    return {
+      rows: response,
+      pagination: {
+        size: pageSize,
+        page: pageNo,
+        totalPages: Math.ceil(totalItems / pageSize),
+        totalItems,
+      },
+    }
   }
 
   async findOne(options?: FindOneOptions<Tenancy>): Promise<Tenancy> {

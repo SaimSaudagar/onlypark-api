@@ -30,7 +30,4 @@ export class Tenancy extends BaseEntity {
 
   @OneToMany(() => Whitelist, (whitelist) => whitelist.tenancy)
   whitelists: Whitelist[];
-
-  @Column({ type: 'varchar', nullable: true })
-  whitelistIds: string[];
 }

@@ -17,8 +17,8 @@ import {
   CreateCarMakeRequest,
   UpdateCarMakeRequest,
 } from './car-make.dto';
-import { RoleGuard } from 'src/auth/guards/roles.guard';
-import { PermissionsGuard } from 'src/common/guards/permission.guard';
+import { RoleGuard } from '../auth/guards/roles.guard';
+import { PermissionsGuard } from '../common/guards/permission.guard';
 
 @ApiTags('CarMake')
 @Controller({ path: 'car-make', version: '1' })

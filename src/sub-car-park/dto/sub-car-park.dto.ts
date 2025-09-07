@@ -85,15 +85,14 @@ export class WhitelistCompanyRequest {
   email: string;
 }
 
-export class UpdateSubCarParkRequest extends PartialType(CreateSubCarParkRequest) { }
-
+export class UpdateSubCarParkRequest extends CreateSubCarParkRequest { }
 
 export class SubCarParkRequest extends ApiGetBaseRequest {
   @IsString()
   @IsOptional()
   name?: string;
 }
-export class SubCarParkResponse {
+export class FindSubCarParkResponse {
   id: string;
   carParkName: string;
   carSpace: number;
@@ -111,6 +110,7 @@ export class SubCarParkResponse {
   status: ParkingSpotStatus;
   masterCarParkId: string;
   tenancies?: TenancyResponse[];
+  whitelistCompanies?: WhitelistCompanyResponse[];
 }
 
 export class MasterCarPark {
@@ -160,7 +160,6 @@ export class SubCarParkCreateResponse {
   masterCarParkId: string;
   tenancies: TenancyResponse[];
   whitelistCompanies: WhitelistCompanyResponse[];
-  createdAt: Date;
 }
 
 export class WhitelistCompanyResponse {
@@ -177,7 +176,8 @@ export class SubCarParkUpdateResponse {
   subCarParkCode: string;
   status: ParkingSpotStatus;
   masterCarParkId: string;
-  updatedAt: Date;
+  tenancies: TenancyResponse[];
+  whitelistCompanies: WhitelistCompanyResponse[];
 }
 
 export class SubCarParkDeleteResponse {

@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, QueryRunner } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, QueryRunner, Like, ILike, FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 import { MasterCarPark } from './entities/master-car-park.entity';
 import {
   CreateMasterCarParkRequest,
   UpdateMasterCarParkRequest,
+  CreateMasterCarParkResponse,
+  FindMasterCarParkRequest,
+  FindMasterCarParkResponse,
 } from './dto/master-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
-import { ParkingSpotStatus } from 'src/common/enums';
+import { ParkingSpotStatus } from '../common/enums';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
+import { ApiGetBaseResponse } from '../common/types';
 
 @Injectable()
 export class MasterCarParkService {
@@ -20,20 +24,20 @@ export class MasterCarParkService {
     private masterCarParkRepository: Repository<MasterCarPark>,
   ) { }
 
-  async create(masterCarParkDto: CreateMasterCarParkRequest): Promise<MasterCarPark> {
+  async create(masterCarParkDto: CreateMasterCarParkRequest): Promise<CreateMasterCarParkResponse> {
     const {
       carParkName,
       carParkType,
     } = masterCarParkDto;
 
-    const masterCarParkCode = this.generateCarParkCode();
+    const masterCarParkCode = await this.generateCarParkCode();
 
-    const masterCarParkInDb = await this.masterCarParkRepository.findOne({
-      where: { masterCarParkCode },
+    const carParkNameInDb = await this.masterCarParkRepository.findOne({
+      where: { carParkName },
     });
-    if (masterCarParkInDb) {
+    if (carParkNameInDb) {
       throw new CustomException(
-        ErrorCode.MASTER_CAR_PARK_CODE_ALREADY_EXISTS.key,
+        ErrorCode.MASTER_CAR_PARK_NAME_ALREADY_EXISTS.key,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -44,14 +48,71 @@ export class MasterCarParkService {
       masterCarParkCode,
       status: ParkingSpotStatus.ACTIVE,
     });
-    return await this.masterCarParkRepository.save(masterCarPark);
+    const savedMasterCarPark = await this.masterCarParkRepository.save(masterCarPark);
+
+    const response = new CreateMasterCarParkResponse();
+    response.id = savedMasterCarPark.id;
+    response.carParkName = savedMasterCarPark.carParkName;
+    response.carParkType = savedMasterCarPark.carParkType;
+    response.masterCarParkCode = savedMasterCarPark.masterCarParkCode;
+    response.status = savedMasterCarPark.status;
+
+    return response;
   }
 
-  async findAll(options?: FindManyOptions<MasterCarPark>): Promise<MasterCarPark[]> {
-    return await this.masterCarParkRepository.find({
-      ...options,
-      relations: ['subCarParks'],
-    });
+  async findAll(request: FindMasterCarParkRequest): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+    const { pageNo, pageSize, sortField, sortOrder, carParkName } = request;
+    const skip = (pageNo - 1) * pageSize;
+    const take = pageSize;
+
+    const whereOptions: FindOptionsWhere<MasterCarPark> = {};
+    const orderOptions: FindOptionsOrder<MasterCarPark> = {};
+
+    if (carParkName) {
+      whereOptions.carParkName = ILike(`%${carParkName}%`);
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    const query: FindManyOptions<MasterCarPark> = {
+      where: whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarParks: true,
+      },
+      skip,
+      take,
+    };
+
+    const [masterCarParks, totalItems] = await this.masterCarParkRepository.findAndCount(query);
+
+
+    let response: FindMasterCarParkResponse[] = [];
+    response = masterCarParks.map(masterCarPark => ({
+      id: masterCarPark.id,
+      carParkName: masterCarPark.carParkName,
+      carParkType: masterCarPark.carParkType,
+      masterCarParkCode: masterCarPark.masterCarParkCode,
+      status: masterCarPark.status,
+      subCarParks: masterCarPark.subCarParks?.map(subCarPark => ({
+        id: subCarPark.id,
+        carParkName: subCarPark.carParkName,
+        carSpace: subCarPark.carSpace,
+        status: subCarPark.status,
+      })),
+    }));
+
+    return {
+      rows: response,
+      pagination: {
+        size: pageSize,
+        page: pageNo,
+        totalPages: Math.ceil(totalItems / pageSize),
+        totalItems,
+      },
+    }
   }
 
   async findOne(options?: FindOneOptions<MasterCarPark>): Promise<MasterCarPark> {
@@ -150,9 +211,17 @@ export class MasterCarParkService {
     };
   }
 
-  private generateCarParkCode(): string {
+  private async generateCarParkCode(): Promise<string> {
     const prefix = 'MC';
     const randomSuffix = crypto.randomBytes(3).toString('hex').toUpperCase();
+
+    const carParkCodeInDb = await this.masterCarParkRepository.findOne({
+      where: { masterCarParkCode: `${prefix}${randomSuffix}` },
+    });
+    if (carParkCodeInDb) {
+      return this.generateCarParkCode();
+    }
+
     return `${prefix}${randomSuffix}`;
   }
 

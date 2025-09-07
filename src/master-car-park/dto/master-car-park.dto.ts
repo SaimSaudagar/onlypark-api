@@ -1,6 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsIn } from 'class-validator';
 import { CarParkType, ParkingSpotStatus } from '../../common/enums';
+import { ApiGetBaseRequest } from '../../common/types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMasterCarParkRequest {
   @IsNotEmpty()
@@ -12,28 +14,33 @@ export class CreateMasterCarParkRequest {
   carParkType: CarParkType;
 }
 
-export class UpdateMasterCarParkRequest extends PartialType(CreateMasterCarParkRequest) {}
+export class UpdateMasterCarParkRequest extends PartialType(CreateMasterCarParkRequest) { }
 
-export interface GetMasterCarParkResponse {
+export class CreateMasterCarParkResponse {
   id: string;
   carParkName: string;
-  totalCarSpace: number;
   carParkType: CarParkType;
-  location: string;
-  lat: number;
-  lang: number;
-  description?: string;
-  subCarParkCode: string;
-  freeHours?: number;
-  operatingHours?: number;
-  tenantEmailCheck: boolean;
-  geolocation: boolean;
-  event: boolean;
-  eventDate?: Date;
-  eventExpiryDate?: Date;
+  masterCarParkCode: string;
   status: ParkingSpotStatus;
-  createdAt: Date;
-  updatedAt: Date;
+}
+
+export class FindMasterCarParkRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  carParkName?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsIn(['carParkName'])
+  sortField?: string;
+}
+
+export class FindMasterCarParkResponse {
+  id: string;
+  carParkName: string;
+  masterCarParkCode: string;
+  carParkType: CarParkType;
+  status: ParkingSpotStatus;
   subCarParks?: SubCarParkSummary[];
 }
 
@@ -41,6 +48,5 @@ export interface SubCarParkSummary {
   id: string;
   carParkName: string;
   carSpace: number;
-  spotType: string;
-  status: string;
+  status: ParkingSpotStatus;
 }

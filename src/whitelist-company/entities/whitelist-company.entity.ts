@@ -9,7 +9,7 @@ import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 
-@Entity('whitelistcompany')
+@Entity('whitelist_company')
 @Auditable()
 export class WhitelistCompany extends BaseEntity {
     @Column({ type: 'varchar', nullable: false })

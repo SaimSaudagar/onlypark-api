@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import * as Sentry from '@sentry/nestjs';
+import * as handlebars from 'handlebars';
 import { ApiResponse } from '../types';
 import { ErrorCode } from './error-code';
 import { CustomException, NestCustomException } from './custom.exception';
@@ -75,6 +76,11 @@ export class AppExceptionFilter implements ExceptionFilter {
       result.statusCode = exception.getStatus();
       result.code = exception.code;
       result.message = exception.message;
+
+      if (exception.data && Object.keys(exception.data).length > 0) {
+        const compiledTemplate = handlebars.compile(result.message);
+        result.message = compiledTemplate(exception.data);
+      }
     } else if (exception instanceof HttpException) {
       result.statusCode = exception.getStatus();
       result.code = null;

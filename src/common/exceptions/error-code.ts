@@ -1,4 +1,4 @@
-export class  ErrorCode {
+export class ErrorCode {
   // General Errors
   public static readonly CLIENT_ERROR = {
     key: 'CLIENT_ERROR',
@@ -76,7 +76,7 @@ export class  ErrorCode {
   public static readonly TENANT_ALREADY_EXISTS = {
     key: 'TENANT_ALREADY_EXISTS',
     code: 'TENANT_ALREADY_EXISTS',
-    message: 'Tenant with {tenantEmail} already exists',
+    message: 'Tenant with {{tenantEmail}} already exists',
   };
 
   public static readonly NOT_SPECIFIED = {
@@ -183,6 +183,12 @@ export class  ErrorCode {
     key: 'CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS',
     code: 'CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS',
     message: 'Cannot delete master car park with existing sub car parks',
+  };
+
+  public static readonly MASTER_CAR_PARK_NAME_ALREADY_EXISTS = {
+    key: 'MASTER_CAR_PARK_NAME_ALREADY_EXISTS',
+    code: 'MASTER_CAR_PARK_NAME_ALREADY_EXISTS',
+    message: 'Master car park name already exists',
   };
 
   public static readonly SUB_CAR_PARK_CODE_ALREADY_EXISTS = {

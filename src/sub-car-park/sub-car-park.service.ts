@@ -5,13 +5,13 @@ import { SubCarPark } from './entities/sub-car-park.entity';
 import {
   CreateSubCarParkRequest,
   UpdateSubCarParkRequest,
-  SubCarParkResponse,
   SubCarParkAvailabilityResponse,
   QrCodeResponse,
   SubCarParkCreateResponse,
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
   SubCarParkRequest,
+  FindSubCarParkResponse,
 } from './dto/sub-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
@@ -35,7 +35,7 @@ export class SubCarParkService {
     private dataSource: DataSource,
   ) { }
 
-  async create(subCarParkDto: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse> {
+  async create(request: CreateSubCarParkRequest, id?: string): Promise<SubCarParkCreateResponse | SubCarParkUpdateResponse> {
     const {
       masterCarParkId,
       carParkName,
@@ -52,7 +52,7 @@ export class SubCarParkService {
       description,
       tenancies,
       whitelistCompanies,
-    } = subCarParkDto;
+    } = request;
 
     if (carSpace <= 0) {
       throw new CustomException(
@@ -134,161 +134,302 @@ export class SubCarParkService {
         );
       }
 
-      const existingSubCarPark = await queryRunner.manager
-        .createQueryBuilder(SubCarPark, 'subCarPark')
-        .where('subCarPark.carParkName = :carParkName', { carParkName })
-        .andWhere('subCarPark.masterCarParkId = :masterCarParkId', { masterCarParkId })
-        .getOne();
-
-      if (existingSubCarPark) {
-        throw new CustomException(
-          ErrorCode.SUB_CAR_PARK_NAME_ALREADY_EXISTS.key,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      let subCarParkCode: string;
-      let isCodeUnique = false;
-      let attempts = 0;
-      const maxAttempts = 10;
-
-      while (!isCodeUnique && attempts < maxAttempts) {
-        subCarParkCode = this.generateCarParkCode();
-        const existingCode = await queryRunner.manager
+      // If id is provided, this is an update operation
+      if (id) {
+        const existingSubCarPark = await queryRunner.manager
           .createQueryBuilder(SubCarPark, 'subCarPark')
-          .where('subCarPark.subCarParkCode = :code', { code: subCarParkCode })
+          .where('subCarPark.id = :id', { id })
           .getOne();
 
-        if (!existingCode) {
-          isCodeUnique = true;
+        if (!existingSubCarPark) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+            HttpStatus.BAD_REQUEST,
+          );
         }
-        attempts++;
-      }
 
-      if (!isCodeUnique) {
-        throw new CustomException(
-          ErrorCode.SUB_CAR_PARK_CODE_GENERATION_FAILED.key,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+        // Check if car park name already exists for a different sub car park
+        const duplicateNameCheck = await queryRunner.manager
+          .createQueryBuilder(SubCarPark, 'subCarPark')
+          .where('subCarPark.carParkName = :carParkName', { carParkName })
+          .andWhere('subCarPark.masterCarParkId = :masterCarParkId', { masterCarParkId })
+          .andWhere('subCarPark.id != :id', { id })
+          .getOne();
 
-      const subCarParkResult = await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(SubCarPark)
-        .values({
+        if (duplicateNameCheck) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NAME_ALREADY_EXISTS.key,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        // Update existing sub car park
+        const updateData = {
           carParkName,
           carSpace,
           location,
           lat,
           lang,
           description,
-          subCarParkCode,
           freeHours,
           tenantEmailCheck: tenantEmailCheck ?? false,
           noOfPermitsPerRegNo,
           event: event ?? false,
           eventDate: eventDateObj,
           eventExpiryDate: eventExpiryDateObj,
-          status: ParkingSpotStatus.ACTIVE,
           masterCarParkId: masterCarParkExists.id,
-          tenancyIds: [],
-        })
-        .returning('*')
-        .execute();
+        };
 
-      const savedSubCarPark = subCarParkResult.raw[0] as SubCarPark;
+        await queryRunner.manager
+          .createQueryBuilder()
+          .update(SubCarPark)
+          .set(updateData)
+          .where('id = :id', { id })
+          .execute();
 
-      let tenanciesIds: string[] = [];
-      if (tenancies && tenancies.length > 0) {
-        for (const tenant of tenancies) {
-          if (!tenant.tenantName || !tenant.tenantEmail) {
-            throw new CustomException(
-              ErrorCode.INVALID_TENANCY_DATA.key,
-              HttpStatus.BAD_REQUEST,
-            );
+        const updatedSubCarPark = await queryRunner.manager
+          .createQueryBuilder(SubCarPark, 'subCarPark')
+          .where('subCarPark.id = :id', { id })
+          .getOne();
+
+        // Handle tenancies update
+        let savedTenancies = [];
+
+        // Get existing tenancies for this sub car park
+        const existingTenancies = await queryRunner.manager
+          .createQueryBuilder()
+          .select('*')
+          .from('tenancies', 'tenancy')
+          .where('tenancy.subCarParkId = :subCarParkId', { subCarParkId: id })
+          .getRawMany();
+
+        if (tenancies && tenancies.length > 0) {
+          // Find tenancies to delete (existing ones not in the request)
+          const requestTenantEmails = tenancies.map(tenant => tenant.tenantEmail);
+          const tenanciesToDelete = existingTenancies.filter(
+            existing => !requestTenantEmails.includes(existing.tenantEmail)
+          );
+
+          // Delete tenancies that are not in the request
+          if (tenanciesToDelete.length > 0) {
+            for (const tenantToDelete of tenanciesToDelete) {
+              await this.tenancyService.remove(tenantToDelete.id);
+            }
           }
 
-          const existingTenant = await this.tenancyService.findOne({ where: { tenantEmail: tenant.tenantEmail } });
+          // Find tenancies to create (new ones not in existing)
+          const existingTenantEmails = existingTenancies.map(tenant => tenant.tenantEmail);
+          const tenanciesToCreate = tenancies.filter(
+            tenant => !existingTenantEmails.includes(tenant.tenantEmail)
+          );
 
-          if (existingTenant) {
-            throw new CustomException(
-              ErrorCode.TENANT_ALREADY_EXISTS.key,
-              HttpStatus.BAD_REQUEST,
-              { tenantEmail: tenant.tenantEmail },
-            );
+          // Create new tenancies
+          if (tenanciesToCreate.length > 0) {
+            const tenanciesWithSubCarPark = tenanciesToCreate.map(tenant => {
+              return {
+                tenantName: tenant.tenantName,
+                tenantEmail: tenant.tenantEmail,
+                subCarParkId: id,
+              };
+            });
+
+            savedTenancies = await this.tenancyService.createBulk(tenanciesWithSubCarPark, queryRunner);
+          }
+
+          // Get all current tenancies (existing + newly created)
+          const allCurrentTenancies = await queryRunner.manager
+            .createQueryBuilder()
+            .select('*')
+            .from('tenancies', 'tenancy')
+            .where('tenancy.subCarParkId = :subCarParkId', { subCarParkId: id })
+            .getRawMany();
+
+          savedTenancies = allCurrentTenancies;
+        } else {
+          // If no tenancies in request, delete all existing ones
+          if (existingTenancies.length > 0) {
+            for (const tenantToDelete of existingTenancies) {
+              await this.tenancyService.remove(tenantToDelete.id);
+            }
           }
         }
 
-        const tenanciesWithSubCarParkId = tenancies.map(tenant => {
-          return {
-            tenantName: tenant.tenantName,
-            tenantEmail: tenant.tenantEmail,
-            subCarParkId: savedSubCarPark.id,
-          };
-        });
+        // Handle whitelist companies update
+        let savedWhitelistCompanies = [];
 
-        const createdTenancies = await this.tenancyService.createBulkWithTransaction(tenanciesWithSubCarParkId, queryRunner);
-        tenanciesIds = createdTenancies.map((tenant) => tenant.id);
-      }
-
-      let whitelistCompanyIds: string[] = [];
-      if (whitelistCompanies && whitelistCompanies.length > 0) {
-        const createdWhitelistCompanies = await this.whitelistCompanyService.createBulkWithTransaction(
-          whitelistCompanies,
-          savedSubCarPark.id,
-          queryRunner
-        );
-
-        whitelistCompanyIds = createdWhitelistCompanies.map(company => company.id);
-
-        await queryRunner.manager
+        // Get existing whitelist companies for this sub car park
+        const existingWhitelistCompanies = await queryRunner.manager
           .createQueryBuilder()
-          .update(SubCarPark)
-          .set({ whitelistCompanyIds })
-          .where('id = :id', { id: savedSubCarPark.id })
-          .execute();
-      }
+          .select('*')
+          .from('whitelist_company', 'whitelist_company')
+          .where('whitelist_company.subCarParkId = :subCarParkId', { subCarParkId: id })
+          .getRawMany();
 
-      if (tenanciesIds.length > 0) {
+        if (whitelistCompanies && whitelistCompanies.length > 0) {
+          // Find whitelist companies to delete (existing ones not in the request)
+          const requestCompanyEmails = whitelistCompanies.map(company => company.email);
+          const companiesToDelete = existingWhitelistCompanies.filter(
+            existing => !requestCompanyEmails.includes(existing.email)
+          );
+
+          // Delete whitelist companies that are not in the request
+          if (companiesToDelete.length > 0) {
+            for (const companyToDelete of companiesToDelete) {
+              await this.whitelistCompanyService.remove(companyToDelete.id);
+            }
+          }
+
+          // Find whitelist companies to create (new ones not in existing)
+          const existingCompanyEmails = existingWhitelistCompanies.map(company => company.email);
+          const companiesToCreate = whitelistCompanies.filter(
+            company => !existingCompanyEmails.includes(company.email)
+          );
+
+          // Create new whitelist companies
+          if (companiesToCreate.length > 0) {
+            const whitelistCompaniesWithSubCarPark = companiesToCreate.map(company => {
+              return {
+                companyName: company.companyName,
+                email: company.email,
+                subCarParkId: id,
+              };
+            });
+            savedWhitelistCompanies = await this.whitelistCompanyService.createBulk(
+              whitelistCompaniesWithSubCarPark,
+              queryRunner
+            );
+          }
+
+          // Get all current whitelist companies (existing + newly created)
+          const allCurrentWhitelistCompanies = await queryRunner.manager
+            .createQueryBuilder()
+            .select('*')
+            .from('whitelist_company', 'whitelist_company')
+            .where('whitelist_company.subCarParkId = :subCarParkId', { subCarParkId: id })
+            .getRawMany();
+
+          savedWhitelistCompanies = allCurrentWhitelistCompanies;
+        } else {
+          // If no whitelist companies in request, delete all existing ones
+          if (existingWhitelistCompanies.length > 0) {
+            for (const companyToDelete of existingWhitelistCompanies) {
+              await this.whitelistCompanyService.remove(companyToDelete.id);
+            }
+          }
+        }
+
+        await queryRunner.commitTransaction();
+        return {
+          id: updatedSubCarPark.id,
+          carParkName: updatedSubCarPark.carParkName,
+          carSpace: updatedSubCarPark.carSpace,
+          location: updatedSubCarPark.location,
+          subCarParkCode: updatedSubCarPark.subCarParkCode,
+          status: updatedSubCarPark.status,
+          masterCarParkId: updatedSubCarPark.masterCarParkId,
+          tenancies: savedTenancies.map(tenant => ({ id: tenant.id, tenantName: tenant.tenantName, tenantEmail: tenant.tenantEmail })),
+          whitelistCompanies: savedWhitelistCompanies.map(company => ({ id: company.id, companyName: company.companyName, email: company.email })),
+        };
+      } else {
+        // This is a create operation
+        const existingSubCarPark = await queryRunner.manager
+          .createQueryBuilder(SubCarPark, 'subCarPark')
+          .where('subCarPark.carParkName = :carParkName', { carParkName })
+          .andWhere('subCarPark.masterCarParkId = :masterCarParkId', { masterCarParkId })
+          .getOne();
+
+        if (existingSubCarPark) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NAME_ALREADY_EXISTS.key,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        let subCarParkCode: string;
+        subCarParkCode = await this.generateCarParkCode();
         await queryRunner.manager
+          .createQueryBuilder(SubCarPark, 'subCarPark')
+          .where('subCarPark.subCarParkCode = :code', { code: subCarParkCode })
+          .getOne();
+
+        const subCarParkResult = await queryRunner.manager
           .createQueryBuilder()
-          .update(SubCarPark)
-          .set({ tenancyIds: tenanciesIds })
-          .where('id = :id', { id: savedSubCarPark.id })
+          .insert()
+          .into(SubCarPark)
+          .values({
+            carParkName,
+            carSpace,
+            location,
+            lat,
+            lang,
+            description,
+            subCarParkCode,
+            freeHours,
+            tenantEmailCheck: tenantEmailCheck ?? false,
+            noOfPermitsPerRegNo,
+            event: event ?? false,
+            eventDate: eventDateObj,
+            eventExpiryDate: eventExpiryDateObj,
+            status: ParkingSpotStatus.ACTIVE,
+            masterCarParkId: masterCarParkExists.id,
+          })
+          .returning('*')
           .execute();
+
+        const savedSubCarPark = subCarParkResult.raw[0];
+
+        let savedTenancies = [];
+        if (tenancies && tenancies.length > 0) {
+          const tenanciesWithSubCarPark = tenancies.map(tenant => {
+            return {
+              tenantName: tenant.tenantName,
+              tenantEmail: tenant.tenantEmail,
+              subCarParkId: savedSubCarPark.id,
+            };
+          });
+
+          savedTenancies = await this.tenancyService.createBulk(tenanciesWithSubCarPark, queryRunner);
+        }
+
+        let savedWhitelistCompanies = [];
+        if (whitelistCompanies && whitelistCompanies.length > 0) {
+          const whitelistCompaniesWithSubCarPark = whitelistCompanies.map(company => {
+            return {
+              companyName: company.companyName,
+              email: company.email,
+              subCarParkId: savedSubCarPark.id,
+            };
+          });
+          savedWhitelistCompanies = await this.whitelistCompanyService.createBulk(
+            whitelistCompaniesWithSubCarPark,
+            queryRunner
+          );
+        }
+
+        await queryRunner.commitTransaction();
+        return {
+          id: savedSubCarPark.id,
+          carParkName: savedSubCarPark.carParkName,
+          carSpace: savedSubCarPark.carSpace,
+          location: savedSubCarPark.location,
+          subCarParkCode: savedSubCarPark.subCarParkCode,
+          status: savedSubCarPark.status,
+          masterCarParkId: savedSubCarPark.masterCarParkId,
+          tenancies: savedTenancies.map(tenant => ({ id: tenant.id, tenantName: tenant.tenantName, tenantEmail: tenant.tenantEmail })),
+          whitelistCompanies: savedWhitelistCompanies.map(company => ({ id: company.id, companyName: company.companyName, email: company.email })),
+        };
       }
-
-      await queryRunner.commitTransaction();
-
-      const savedTenancies = await this.tenancyService.findAll({ where: { id: In(tenanciesIds) } });
-      const savedWhitelistCompanies = await this.whitelistCompanyService.findAll({ where: { id: In(whitelistCompanyIds) } });
-
-      return {
-        id: savedSubCarPark.id,
-        carParkName: savedSubCarPark.carParkName,
-        carSpace: savedSubCarPark.carSpace,
-        location: savedSubCarPark.location,
-        subCarParkCode: savedSubCarPark.subCarParkCode,
-        status: savedSubCarPark.status,
-        masterCarParkId: savedSubCarPark.masterCarParkId,
-        tenancies: savedTenancies.map(tenant => ({ id: tenant.id, tenantName: tenant.tenantName, tenantEmail: tenant.tenantEmail })),
-        whitelistCompanies: savedWhitelistCompanies.map(company => ({ id: company.id, companyName: company.companyName, email: company.email })),
-        createdAt: savedSubCarPark.createdAt,
-      };
 
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new CustomException(
-        ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      console.error('SubCarParkService.create error:', error);
+      throw error;
     } finally {
       await queryRunner.release();
     }
   }
 
-  async findAll(request: SubCarParkRequest): Promise<ApiGetBaseResponse<SubCarParkResponse>> {
+  async findAll(request: SubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
     const { pageNo, pageSize, sortField, sortOrder, name } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
@@ -305,7 +446,6 @@ export class SubCarParkService {
     }
 
     const [subCarParks, totalItems] = await this.subCarParkRepository.findAndCount({
-      ...request,
       skip,
       take,
       relations: {
@@ -358,12 +498,13 @@ export class SubCarParkService {
     };
   }
 
-  async findOne(options?: FindOneOptions<SubCarPark>): Promise<SubCarParkResponse> {
+  async findOne(options?: FindOneOptions<SubCarPark>): Promise<FindSubCarParkResponse> {
     const subCarPark = await this.subCarParkRepository.findOne({
       ...options,
       relations: {
         masterCarPark: true,
         tenancies: true,
+        whitelistCompanies: true,
       },
     });
 
@@ -393,15 +534,21 @@ export class SubCarParkService {
         tenantName: tenancy.tenantName,
         tenantEmail: tenancy.tenantEmail,
       })) || [],
+      whitelistCompanies: subCarPark.whitelistCompanies?.map(company => ({
+        id: company.id,
+        companyName: company.companyName,
+        email: company.email,
+      })) || [],
     };
   }
 
-  async findByMasterCarPark(masterCarParkId: string): Promise<SubCarParkResponse[]> {
+  async findByMasterCarPark(masterCarParkId: string): Promise<FindSubCarParkResponse[]> {
     const subCarParks = await this.subCarParkRepository.find({
       where: { masterCarParkId },
       relations: {
         masterCarPark: true,
         tenancies: true,
+        whitelistCompanies: true,
       },
     });
 
@@ -429,6 +576,11 @@ export class SubCarParkService {
         id: tenancy.id,
         tenantName: tenancy.tenantName,
         tenantEmail: tenancy.tenantEmail,
+      })) || [],
+      whitelistCompanies: subCarPark.whitelistCompanies?.map(company => ({
+        id: company.id,
+        companyName: company.companyName,
+        email: company.email,
       })) || [],
     }));
   }
@@ -486,6 +638,15 @@ export class SubCarParkService {
     Object.assign(subCarPark, updateSubCarParkDto);
     const updatedSubCarPark = await this.subCarParkRepository.save(subCarPark);
 
+    // Fetch the updated sub car park with relations
+    const subCarParkWithRelations = await this.subCarParkRepository.findOne({
+      where: { id },
+      relations: {
+        tenancies: true,
+        whitelistCompanies: true,
+      },
+    });
+
     return {
       id: updatedSubCarPark.id,
       carParkName: updatedSubCarPark.carParkName,
@@ -494,7 +655,16 @@ export class SubCarParkService {
       subCarParkCode: updatedSubCarPark.subCarParkCode,
       status: updatedSubCarPark.status,
       masterCarParkId: updatedSubCarPark.masterCarParkId,
-      updatedAt: updatedSubCarPark.updatedAt,
+      tenancies: subCarParkWithRelations?.tenancies?.map(tenant => ({
+        id: tenant.id,
+        tenantName: tenant.tenantName,
+        tenantEmail: tenant.tenantEmail,
+      })) || [],
+      whitelistCompanies: subCarParkWithRelations?.whitelistCompanies?.map(company => ({
+        id: company.id,
+        companyName: company.companyName,
+        email: company.email,
+      })) || [],
     };
   }
 
@@ -605,9 +775,18 @@ export class SubCarParkService {
     };
   }
 
-  private generateCarParkCode(): string {
+  private async generateCarParkCode(): Promise<string> {
     const prefix = 'SC';
     const randomSuffix = crypto.randomBytes(3).toString('hex').toUpperCase();
+
+    const carParkCodeInDb = await this.subCarParkRepository.findOne({
+      where: { subCarParkCode: `${prefix}${randomSuffix}` },
+    });
+
+    if (carParkCodeInDb) {
+      return await this.generateCarParkCode();
+    }
+
     return `${prefix}${randomSuffix}`;
   }
 

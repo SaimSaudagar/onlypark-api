@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsOptional, IsUUID, IsBoolean, IsEmail } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
+import { ApiGetBaseRequest } from '../common/types';
 
 export class CreateWhitelistCompanyDto {
     @IsNotEmpty()
@@ -16,17 +16,32 @@ export class CreateWhitelistCompanyDto {
     subCarParkId: string;
 }
 
-export class UpdateWhitelistCompanyDto extends PartialType(CreateWhitelistCompanyDto) { }
-
-export class WhitelistCompanyResponseDto {
+export class CreateWhitelistCompanyResponse {
     id: string;
     companyName: string;
     email: string;
-    createdAt: Date;
-    updatedAt: Date;
-    subCarPark?: {
-        id: string;
-        name: string;
-        code: string;
-    };
+    subCarParkId: string;
+}
+
+export class UpdateWhitelistCompanyDto extends PartialType(CreateWhitelistCompanyDto) { }
+
+export class FindWhitelistCompanyRequest extends ApiGetBaseRequest {
+    @IsOptional()
+    @IsString()
+    companyName?: string;
+
+    @IsOptional()
+    @IsEmail()
+    email?: string;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
+}
+
+export class FindWhitelistCompanyResponse {
+    id: string;
+    companyName: string;
+    email: string;
+    subCarParkId: string;
 }

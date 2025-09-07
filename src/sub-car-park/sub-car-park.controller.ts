@@ -9,6 +9,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators';
@@ -23,7 +24,7 @@ import { SubCarParkService } from './sub-car-park.service';
 import {
   CreateSubCarParkRequest,
   UpdateSubCarParkRequest,
-  SubCarParkResponse,
+  FindSubCarParkResponse,
   SubCarParkAvailabilityResponse,
   QrCodeResponse,
   SubCarParkCreateResponse,
@@ -33,27 +34,24 @@ import {
 } from './dto/sub-car-park.dto';
 
 @ApiTags('SubCarPark')
-@JwtAuthGuardWithApiBearer()
-@UseGuards(RoleGuard, PermissionsGuard)
 @Controller({ path: 'sub-car-park', version: '1' })
 export class SubCarParkController {
   constructor(private readonly subCarParkService: SubCarParkService) { }
 
   @Get()
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  findAll(request: SubCarParkRequest): Promise<ApiGetBaseResponse<SubCarParkResponse>> {
+  findAll(@Query() request: SubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
     return this.subCarParkService.findAll(request);
   }
 
   @Get('master/:masterCarParkId')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  findByMasterCarPark(@Param('masterCarParkId') masterCarParkId: string): Promise<SubCarParkResponse[]> {
+  findByMasterCarPark(@Param('masterCarParkId') masterCarParkId: string): Promise<FindSubCarParkResponse[]> {
     return this.subCarParkService.findByMasterCarPark(masterCarParkId);
   }
 
   @Get(':id')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  findOne(@Param('id') id: string): Promise<SubCarParkResponse> {
+  findOne(@Param('id') id: string): Promise<FindSubCarParkResponse> {
     return this.subCarParkService.findOne({ where: { id } });
   }
 
@@ -74,7 +72,6 @@ export class SubCarParkController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   create(@Body() createSubCarParkDto: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse> {
     return this.subCarParkService.create(createSubCarParkDto);
   }
@@ -84,9 +81,9 @@ export class SubCarParkController {
   @RequirePermissions(AdminPermission.CAR_PARK_EDIT, CarparkManagerPermission.CAR_PARK_EDIT)
   update(
     @Param('id') id: string,
-    @Body() updateSubCarParkDto: UpdateSubCarParkRequest,
+    @Body() request: UpdateSubCarParkRequest,
   ): Promise<SubCarParkUpdateResponse> {
-    return this.subCarParkService.update(id, updateSubCarParkDto);
+    return this.subCarParkService.create(request, id);
   }
 
   @Delete(':id')

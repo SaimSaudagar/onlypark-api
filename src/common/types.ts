@@ -310,7 +310,6 @@ export interface HealthCheckResult {
   details?: Record<string, any>;
 }
 
-// API Base Request and Response Classes
 export class ApiGetBaseRequest {
   @ApiProperty({ required: false })
   @IsOptional()

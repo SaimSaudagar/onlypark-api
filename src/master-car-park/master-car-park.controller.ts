@@ -8,33 +8,28 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from '../common/decorators';
-import { AuthenticatedUser } from '../common';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
-import { PermissionsGuard } from '../common/guards/permission.guard';
 import { UserType, AdminPermission, CarparkManagerPermission } from '../common/enums';
 import { MasterCarParkService } from './master-car-park.service';
 import {
   CreateMasterCarParkRequest,
+  CreateMasterCarParkResponse,
   UpdateMasterCarParkRequest,
+  FindMasterCarParkRequest,
 } from './dto/master-car-park.dto';
 
 @ApiTags('MasterCarPark')
-@JwtAuthGuardWithApiBearer()
-@UseGuards(RoleGuard, PermissionsGuard)
 @Controller({ path: 'master-car-park', version: '1' })
 export class MasterCarParkController {
-  constructor(private readonly masterCarParkService: MasterCarParkService) {}
+  constructor(private readonly masterCarParkService: MasterCarParkService) { }
 
   @Get()
-  findAll() {
-    return this.masterCarParkService.findAll();
+  findAll(@Query() request: FindMasterCarParkRequest) {
+    return this.masterCarParkService.findAll(request);
   }
 
   @Get(':id')
@@ -62,8 +57,7 @@ export class MasterCarParkController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  create(@Body() createMasterCarParkDto: CreateMasterCarParkRequest) {
+  create(@Body() createMasterCarParkDto: CreateMasterCarParkRequest): Promise<CreateMasterCarParkResponse> {
     return this.masterCarParkService.create(createMasterCarParkDto);
   }
 

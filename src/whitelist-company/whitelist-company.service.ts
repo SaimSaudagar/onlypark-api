@@ -1,9 +1,9 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, QueryRunner } from 'typeorm';
+import { FindOneOptions, Repository, QueryRunner, FindOptionsWhere, ILike, FindOptionsOrder } from 'typeorm';
 import { WhitelistCompany } from './entities/whitelist-company.entity';
-import { CreateWhitelistCompanyDto, UpdateWhitelistCompanyDto } from './whitelist-company.dto';
-import { CustomException, ErrorCode } from '../common';
+import { CreateWhitelistCompanyDto, CreateWhitelistCompanyResponse, FindWhitelistCompanyRequest, FindWhitelistCompanyResponse, UpdateWhitelistCompanyDto } from './whitelist-company.dto';
+import { ApiGetBaseResponse, CustomException, ErrorCode } from '../common';
 
 @Injectable()
 export class WhitelistCompanyService {
@@ -14,7 +14,6 @@ export class WhitelistCompanyService {
 
     async create(createDto: CreateWhitelistCompanyDto): Promise<WhitelistCompany> {
         try {
-            // Check if company with same email already exists
             const existingCompany = await this.whitelistCompanyRepository.findOne({
                 where: { email: createDto.email, subCarParkId: createDto.subCarParkId }
             });
@@ -40,17 +39,60 @@ export class WhitelistCompanyService {
         }
     }
 
-    async findAll(options?: FindManyOptions<WhitelistCompany>): Promise<WhitelistCompany[]> {
-        try {
-            return await this.whitelistCompanyRepository.find({
-                ...options,
-                relations: ['subCarPark', 'tenancy'],
-            });
-        } catch (error) {
-            throw new CustomException(
-                ErrorCode.SERVER_ERROR.key,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+    async findAll(request: FindWhitelistCompanyRequest): Promise<ApiGetBaseResponse<FindWhitelistCompanyResponse>> {
+        const { companyName, email, pageNo, pageSize, sortField, sortOrder, search } = request;
+        const skip = (pageNo - 1) * pageSize;
+        const take = pageSize;
+
+
+
+        let whereOptions: FindOptionsWhere<WhitelistCompany>[] = [];
+        const orderOptions: FindOptionsOrder<WhitelistCompany> = {};
+
+        if (companyName) {
+            whereOptions.push({ companyName: ILike(`%${companyName}%`) });
+        }
+
+        if (email) {
+            whereOptions.push({ email: ILike(`%${email}%`) });
+        }
+
+        if (search) {
+            whereOptions = [
+                { companyName: ILike(`%${search}%`) },
+                { email: ILike(`%${search}%`) }
+            ];
+        }
+
+        if (sortField) {
+            orderOptions[sortField] = sortOrder;
+        }
+
+        const [whitelistCompanies, totalItems] = await this.whitelistCompanyRepository.findAndCount({
+            relations: {
+                subCarPark: true,
+            },
+            skip,
+            take,
+            order: orderOptions,
+            where: whereOptions,
+        });
+
+        const response = whitelistCompanies.map(whitelistCompany => ({
+            id: whitelistCompany.id,
+            companyName: whitelistCompany.companyName,
+            email: whitelistCompany.email,
+            subCarParkId: whitelistCompany.subCarParkId,
+        }));
+
+        return {
+            rows: response,
+            pagination: {
+                size: pageSize,
+                page: pageNo,
+                totalPages: Math.ceil(totalItems / pageSize),
+                totalItems,
+            },
         }
     }
 
@@ -58,7 +100,9 @@ export class WhitelistCompanyService {
         try {
             const company = await this.whitelistCompanyRepository.findOne({
                 ...options,
-                relations: ['subCarPark', 'tenancy'],
+                relations: {
+                    subCarPark: true,
+                },
             });
 
             if (!company) {
@@ -200,11 +244,11 @@ export class WhitelistCompanyService {
         return !!existingCompany;
     }
 
-    async createBulkWithTransaction(companies: any[], subCarParkId: string, queryRunner: QueryRunner): Promise<WhitelistCompany[]> {
-        const createdCompanies: WhitelistCompany[] = [];
+    async createBulk(request: CreateWhitelistCompanyDto[], queryRunner: QueryRunner): Promise<CreateWhitelistCompanyResponse[]> {
+        const createdWhitelistCompanies: CreateWhitelistCompanyResponse[] = [];
 
-        for (const company of companies) {
-            const emailExists = await this.checkEmailExists(company.email, subCarParkId);
+        for (const company of request) {
+            const emailExists = await this.checkEmailExists(company.email, company.subCarParkId);
 
             if (emailExists) {
                 throw new CustomException(
@@ -221,15 +265,20 @@ export class WhitelistCompanyService {
                 .values({
                     companyName: company.companyName,
                     email: company.email,
-                    subCarParkId: subCarParkId,
+                    subCarParkId: company.subCarParkId,
                 })
                 .returning('*')
                 .execute();
 
-            const savedWhitelistCompany = result.raw[0] as WhitelistCompany;
-            createdCompanies.push(savedWhitelistCompany);
+            const savedWhitelistCompany = result.raw[0];
+            createdWhitelistCompanies.push(savedWhitelistCompany);
         }
 
-        return createdCompanies;
+        return createdWhitelistCompanies.map(company => ({
+            id: company.id,
+            companyName: company.companyName,
+            email: company.email,
+            subCarParkId: company.subCarParkId,
+        }));
     }
 }

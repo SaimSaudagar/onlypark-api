@@ -31,9 +31,5 @@ export class PatrolOfficer extends BaseEntity {
   userId: string;
 
   @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.patrolOfficers)
-  @JoinColumn({ name: 'subCarParkIds' })
   subCarParks: SubCarPark[];
-
-  @Column({ type: 'varchar', nullable: true })
-  subCarParkIds: string[];
 }
