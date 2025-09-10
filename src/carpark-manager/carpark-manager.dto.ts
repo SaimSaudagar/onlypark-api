@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, IsUUID } from 'class-validator';
 import { CarparkManagerLevel, CarparkManagerStatus } from '../common/enums';
 
 export class CreateCarparkManagerRequest {
@@ -12,7 +12,7 @@ export class CreateCarparkManagerRequest {
   managerCode: string;
 
   @IsOptional()
-  assignedCarParks?: string[];
+  subCarParks?: SubCarParkRequest[];
 
   @IsOptional()
   @IsEnum(CarparkManagerLevel)
@@ -35,13 +35,19 @@ export class CreateCarparkManagerRequest {
   certifications?: string;
 }
 
-export class UpdateCarparkManagerRequest extends PartialType(CreateCarparkManagerRequest) {}
+export class SubCarParkRequest {
+  @IsNotEmpty()
+  @IsUUID()
+  id: string;
+}
+
+export class UpdateCarparkManagerRequest extends PartialType(CreateCarparkManagerRequest) { }
 
 export interface GetCarparkManagerResponse {
   id: string;
   userId: string;
   managerCode: string;
-  assignedCarParks?: string[];
+  subCarParks?: string[];
   level?: CarparkManagerLevel;
   status?: CarparkManagerStatus;
   yearsOfExperience?: number;

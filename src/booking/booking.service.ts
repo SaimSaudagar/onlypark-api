@@ -12,8 +12,6 @@ import {
   BookingCreateResponse,
   BookingUpdateResponse,
   BookingDeleteResponse,
-  TenancySummary,
-  SubCarParkSummary,
 } from './booking.dto';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';

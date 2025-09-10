@@ -18,6 +18,7 @@ import { BlacklistReg } from '../../blacklist/entities/blacklist-reg.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
 import { Infringement } from '../../infringement/entities/infringement.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { CarparkManager } from 'src/carpark-manager/entities/carpark-manager.entity';
 
 @Entity('sub_car_park')
 @Auditable()
@@ -96,4 +97,11 @@ export class SubCarPark extends BaseEntity {
 
   @OneToMany(() => PatrolOfficer, (officer) => officer.subCarParks)
   patrolOfficers: PatrolOfficer[];
+
+  @ManyToOne(() => CarparkManager, (carparkManager) => carparkManager.subCarParks)
+  @JoinColumn({ name: 'carparkManagerId' })
+  carparkManager: CarparkManager;
+
+  @Column({ type: 'varchar', nullable: false })
+  carparkManagerId: string;
 }

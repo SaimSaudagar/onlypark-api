@@ -70,10 +70,10 @@ export class BookingResponse {
     email: string;
     vehicleReg: string;
     tenancyId: string;
-    tenancy?: TenancySummary;
+    tenancy?: TenancyResponse;
     subCarParkCode: string;
     subCarParkId: string;
-    subCarPark?: SubCarParkSummary;
+    subCarPark?: SubCarParkResponse;
     property: string;
     startTime: string;
     endTime: string;
@@ -82,13 +82,13 @@ export class BookingResponse {
     updatedAt: Date;
 }
 
-export class TenancySummary {
+export class TenancyResponse {
     id: string;
     tenantName: string;
     tenantEmail: string;
 }
 
-export class SubCarParkSummary {
+export class SubCarParkResponse {
     id: string;
     carParkName: string;
     subCarParkCode: string;

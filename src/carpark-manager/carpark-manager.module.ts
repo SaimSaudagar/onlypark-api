@@ -10,4 +10,4 @@ import { CarparkManager } from './entities/carpark-manager.entity';
   providers: [CarparkManagerService],
   exports: [CarparkManagerService],
 })
-export class CarparkManagerModule {}
+export class CarparkManagerModule { }

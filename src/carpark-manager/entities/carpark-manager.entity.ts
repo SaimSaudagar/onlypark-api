@@ -3,11 +3,13 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { CarparkManagerLevel, CarparkManagerStatus } from '../../common/enums';
 import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 
 @Entity('carpark_manager')
 @Auditable()
@@ -16,8 +18,8 @@ export class CarparkManager extends BaseEntity {
   @Column({ type: 'varchar', unique: true, nullable: false })
   managerCode: string;
 
-  @Column({ type: 'json', nullable: false })
-  assignedCarParks: object;
+  @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.carparkManager)
+  subCarParks: SubCarPark[];
 
   @Column({ type: 'varchar', nullable: true })
   region: string;

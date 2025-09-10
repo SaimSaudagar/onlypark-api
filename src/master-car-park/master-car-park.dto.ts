@@ -41,10 +41,10 @@ export class FindMasterCarParkResponse {
   masterCarParkCode: string;
   carParkType: CarParkType;
   status: ParkingSpotStatus;
-  subCarParks?: SubCarParkSummary[];
+  subCarParks?: SubCarParkResponse[];
 }
 
-export interface SubCarParkSummary {
+export interface SubCarParkResponse {
   id: string;
   carParkName: string;
   carSpace: number;

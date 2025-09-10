@@ -332,7 +332,7 @@ export class Migrations1757280216838 implements MigrationInterface {
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "managerCode" character varying NOT NULL,
-                "assignedCarParks" json NOT NULL,
+                "subCarParks" json NOT NULL,
                 "region" character varying,
                 "contactNumber" character varying,
                 "emergencyContact" character varying,

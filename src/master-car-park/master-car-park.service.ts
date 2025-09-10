@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, QueryRunner, Like, ILike, FindOptionsOrder, FindOptionsWhere } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository, QueryRunner, Like, ILike, FindOptionsOrder, FindOptionsWhere, DataSource, In } from 'typeorm';
 import { MasterCarPark } from './entities/master-car-park.entity';
 import {
   CreateMasterCarParkRequest,
@@ -11,18 +11,37 @@ import {
 } from './master-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
-import { ParkingSpotStatus } from '../common/enums';
+import { ParkingSpotStatus, UserType } from '../common/enums';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
 import { ApiGetBaseResponse } from '../common/types';
+import { BaseService } from '../common/base.service';
+import { ConfigService } from '@nestjs/config';
+import { RequestContextService } from '../common/services/request-context/request-context.service';
+import { UserService } from '../user/user.service';
+import { CarparkManagerService } from '../carpark-manager/carpark-manager.service';
+import { PatrolOfficerService } from 'src/patrol-officer/patrol-officer.service';
 
 @Injectable()
-export class MasterCarParkService {
+export class MasterCarParkService extends BaseService {
   constructor(
     @InjectRepository(MasterCarPark)
     private masterCarParkRepository: Repository<MasterCarPark>,
-  ) { }
+    requestContextService: RequestContextService,
+    configService: ConfigService,
+    datasource: DataSource,
+    private readonly userService: UserService,
+    private readonly carparkManagerService: CarparkManagerService,
+    private readonly patrolOfficerService: PatrolOfficerService,
+  ) {
+    super(
+      requestContextService,
+      configService,
+      datasource,
+      MasterCarParkService.name,
+    );
+  }
 
   async create(masterCarParkDto: CreateMasterCarParkRequest): Promise<CreateMasterCarParkResponse> {
     const {
@@ -67,6 +86,12 @@ export class MasterCarParkService {
 
     const whereOptions: FindOptionsWhere<MasterCarPark> = {};
     const orderOptions: FindOptionsOrder<MasterCarPark> = {};
+
+    const subCarParks = await this.getsubCarParks();
+
+    if (subCarParks) {
+      whereOptions.id = In(subCarParks);
+    }
 
     if (carParkName) {
       whereOptions.carParkName = ILike(`%${carParkName}%`);
@@ -231,5 +256,20 @@ export class MasterCarParkService {
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')
       .trim();
+  }
+
+  private async getsubCarParks() {
+    const userId = this.authenticatedUser.id;
+    const user = await this.userService.findOne({ where: { id: userId } });
+
+    if (user.type === UserType.CARPARK_MANAGER) {
+      const carparkManager = await this.carparkManagerService.findOne({ where: { id: userId } });
+      return Object.keys(carparkManager.subCarParks);
+    }
+
+    if (user.type === UserType.PATROL_OFFICER) {
+      const patrolOfficer = await this.patrolOfficerService.findOne({ where: { id: userId } });
+      return Object.keys(patrolOfficer.subCarParks);
+    }
   }
 }
