@@ -70,7 +70,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
         logging: process.env.NODE_ENV === 'development',
-        ssl: true,
+        ssl: { rejectUnauthorized: false },
         timezone: 'Z',
       }),
       inject: [ConfigService],
