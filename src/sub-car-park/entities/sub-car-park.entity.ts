@@ -16,9 +16,8 @@ import { Whitelist } from '../../whitelist/entities/whitelist.entity';
 import { WhitelistCompany } from '../../whitelist-company/entities/whitelist-company.entity';
 import { BlacklistReg } from '../../blacklist/entities/blacklist-reg.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
-import { Infringement } from '../../infringement/entities/infringement.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
-import { CarparkManager } from 'src/carpark-manager/entities/carpark-manager.entity';
+import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
 
 @Entity('sub_car_park')
 @Auditable()

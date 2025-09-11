@@ -21,7 +21,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestContextService } from '../common/services/request-context/request-context.service';
 import { UserService } from '../user/user.service';
 import { CarparkManagerService } from '../carpark-manager/carpark-manager.service';
-import { PatrolOfficerService } from 'src/patrol-officer/patrol-officer.service';
+import { PatrolOfficerService } from '../patrol-officer/patrol-officer.service';
 
 @Injectable()
 export class MasterCarParkService extends BaseService {
