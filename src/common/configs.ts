@@ -5,7 +5,7 @@ export class ConfigKeys {
   public static readonly DB_PORT = 'DB_PORT';
   public static readonly DB_USER = 'DB_USER';
   public static readonly DB_PASSWORD = 'DB_PASSWORD';
-
+  public static readonly SSL_ENABLED = 'SSL_ENABLED';
   // JWT Configuration
   public static readonly JWT_SECRET = 'JWT_SECRET';
   public static readonly JWT_EXPIRATION_TIME = 'JWT_EXPIRATION_TIME';
