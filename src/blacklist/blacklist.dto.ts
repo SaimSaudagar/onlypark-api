@@ -1,20 +1,59 @@
-import { IsString, IsOptional } from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
+import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate } from 'class-validator';
+import { ApiGetBaseRequest } from 'src/common';
 
-export class CreateBlacklistDto {
+export class CreateBlacklistRequest {
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  masterCarParkId: string;
+
   @IsString()
+  @IsNotEmpty()
   regNo: string;
 
   @IsString()
+  @IsNotEmpty()
   email: string;
-
-  @IsOptional()
-  @IsString()
-  subCarParkCode?: string;
 
   @IsOptional()
   @IsString()
   comments?: string;
 }
+export class CreateBlacklistResponse {
+  id: string;
+  regNo: string;
+  email: string;
+  comments: string;
+}
 
-export class UpdateBlacklistDto extends PartialType(CreateBlacklistDto) { }
+export class UpdateBlacklistRequest extends CreateBlacklistRequest { }
+
+export class UpdateBlacklistResponse extends CreateBlacklistResponse { }
+
+export class FindBlacklistRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsDate()
+  dateFrom?: Date;
+
+  @IsOptional()
+  @IsDate()
+  dateTo?: Date;
+}
+
+export class FindBlacklistResponse {
+  id: string;
+  regNo: string;
+  email: string;
+  createdAt: Date;
+  masterCarPark: {
+    id: string;
+    masterCarParkName: string;
+  };
+}

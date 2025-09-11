@@ -1,8 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as FormData from 'form-data';
 import Mailgun from 'mailgun.js';
 import { SendEmailRequest, SendEmailResponse } from './email.service';
+import { CustomException } from '../../exceptions/custom.exception';
+import { ErrorCode } from '../../exceptions/error-code';
 
 @Injectable()
 export class MailgunService {
@@ -68,7 +70,11 @@ export class MailgunService {
 
         } catch (error) {
             this.logger.error(`Failed to send email to ${request.to}: ${error.message}`);
-            response.errorMessage = error.message;
+            throw new CustomException(
+                ErrorCode.EMAIL_SEND_FAILED.key,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                { email: request.to, error: error.message }
+            );
         }
 
         return response;

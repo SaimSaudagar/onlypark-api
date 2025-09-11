@@ -19,7 +19,6 @@ import { ApiGetBaseResponse } from '../common/types';
 import { BaseService } from '../common/base.service';
 import { ConfigService } from '@nestjs/config';
 import { RequestContextService } from '../common/services/request-context/request-context.service';
-import { UserService } from '../user/user.service';
 import { CarparkManagerService } from '../carpark-manager/carpark-manager.service';
 import { PatrolOfficerService } from '../patrol-officer/patrol-officer.service';
 
@@ -31,7 +30,6 @@ export class MasterCarParkService extends BaseService {
     requestContextService: RequestContextService,
     configService: ConfigService,
     datasource: DataSource,
-    private readonly userService: UserService,
     private readonly carparkManagerService: CarparkManagerService,
     private readonly patrolOfficerService: PatrolOfficerService,
   ) {
@@ -150,6 +148,11 @@ export class MasterCarParkService extends BaseService {
     return masterCarPark;
   }
 
+  async exists(id: string): Promise<MasterCarPark> {
+    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
+    return masterCarPark;
+  }
+
   async update(id: string, updateMasterCarParkDto: UpdateMasterCarParkRequest) {
     const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
     if (!masterCarPark) {
@@ -259,16 +262,17 @@ export class MasterCarParkService extends BaseService {
   }
 
   private async getsubCarParks() {
-    const userId = this.authenticatedUser.id;
-    const user = await this.userService.findOne({ where: { id: userId } });
+    const user = this.authenticatedUser;
 
-    if (user.type === UserType.CARPARK_MANAGER) {
-      const carparkManager = await this.carparkManagerService.findOne({ where: { id: userId } });
+    const userType = user?.userType ?? UserType.ADMIN;
+
+    if (userType === UserType.CARPARK_MANAGER) {
+      const carparkManager = await this.carparkManagerService.findOne({ where: { id: user.id } });
       return Object.keys(carparkManager.subCarParks);
     }
 
-    if (user.type === UserType.PATROL_OFFICER) {
-      const patrolOfficer = await this.patrolOfficerService.findOne({ where: { id: userId } });
+    if (userType === UserType.PATROL_OFFICER) {
+      const patrolOfficer = await this.patrolOfficerService.findOne({ where: { id: user.id } });
       return Object.keys(patrolOfficer.subCarParks);
     }
   }

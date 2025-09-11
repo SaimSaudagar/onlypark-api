@@ -36,6 +36,17 @@ export class CreateUserRequest {
   blacklist?: string[];
 }
 
+export class CreateUserResponse {
+  id: string;
+  name: string;
+  email: string;
+  type: UserType;
+  phoneNumber: string;
+  image: string;
+  passwordResetToken: string;
+  passwordResetExpires: Date;
+}
+
 export class UpdateUserDto extends PartialType(CreateUserRequest) { }
 
 export class UpdateUserProfileRequest {

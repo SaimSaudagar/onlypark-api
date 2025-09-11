@@ -8,11 +8,12 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { BlacklistService } from './blacklist.service';
-import { CreateBlacklistDto, UpdateBlacklistDto } from './blacklist.dto';
+import { CreateBlacklistRequest, FindBlacklistRequest, UpdateBlacklistRequest } from './blacklist.dto';
 
 @ApiTags('Blacklist')
 @JwtAuthGuardWithApiBearer()
@@ -21,8 +22,8 @@ export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) { }
 
   @Get()
-  findAll() {
-    return this.blacklistService.findAll();
+  findAll(@Query() request: FindBlacklistRequest) {
+    return this.blacklistService.findAll(request);
   }
 
   @Get(':id')
@@ -32,13 +33,13 @@ export class BlacklistController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createBlacklistDto: CreateBlacklistDto) {
-    return this.blacklistService.create(createBlacklistDto);
+  create(@Body() request: CreateBlacklistRequest) {
+    return this.blacklistService.create(request);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlacklistDto: UpdateBlacklistDto) {
-    return this.blacklistService.update(id, updateBlacklistDto);
+  @Patch()
+  update(@Body() request: UpdateBlacklistRequest) {
+    return this.blacklistService.update(request);
   }
 
   @Delete(':id')

@@ -5,7 +5,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { CarparkManagerLevel, CarparkManagerStatus } from '../../common/enums';
+import { CarparkManagerStatus } from '../../common/enums';
 import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
@@ -29,13 +29,6 @@ export class CarparkManager extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: true })
   emergencyContact: string;
-
-  @Column({
-    type: 'enum',
-    enum: CarparkManagerLevel,
-    default: CarparkManagerLevel.SENIOR,
-  })
-  managerLevel: CarparkManagerLevel;
 
   @Column({ type: 'boolean', default: true })
   canManagePatrolOfficers: boolean;

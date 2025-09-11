@@ -4,14 +4,6 @@ import { ApiGetBaseRequest } from "../common/types";
 export class FindTenancyRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsString()
-  tenantName?: string;
-
-  @IsOptional()
-  @IsEmail()
-  tenantEmail?: string;
-
-  @IsOptional()
-  @IsString()
   search?: string;
 }
 

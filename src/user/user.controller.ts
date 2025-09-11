@@ -69,8 +69,8 @@ export class UserController {
   // @AllowedRoles(UserType.ADMIN)
   // @RequirePermissions(AdminPermission.USER_CREATE)
   // @UseGuards(RoleGuard, PermissionsGuard)
-  async create(@Body() createUserDto: CreateUserRequest) {
-    return this.userService.create(createUserDto);
+  async create(@Body() request: CreateUserRequest) {
+    return this.userService.create(request);
   }
 
   @Put('profile')

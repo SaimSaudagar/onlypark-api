@@ -1,8 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TemplateEngineService } from '../template-engine/template-engine.service';
 import { TemplateKeys } from '../../constants/template-keys';
 import { MailgunService } from './mailgun.service';
+import { CustomException } from '../../exceptions/custom.exception';
+import { ErrorCode } from '../../exceptions/error-code';
 
 export interface SendEmailRequest {
   to: string;
@@ -44,14 +46,25 @@ export class EmailService {
 
       if (result.sent) {
         this.logger.log(`Email sent successfully to ${to}: ${subject}`);
+        return result;
       } else {
         this.logger.error(`Failed to send email to ${to}: ${result.errorMessage}`);
+        throw new CustomException(
+          ErrorCode.EMAIL_SEND_FAILED.key,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { email: to, error: result.errorMessage }
+        );
       }
-
-      return result;
     } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
       this.logger.error(`Failed to send email: ${error.message}`);
-      return { sent: false, errorMessage: error.message };
+      throw new CustomException(
+        ErrorCode.EMAIL_SEND_FAILED.key,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { email: request.to, error: error.message }
+      );
     }
   }
 
@@ -82,8 +95,15 @@ export class EmailService {
         senderName: 'OnlyPark',
       });
     } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
       this.logger.error(`Failed to send user registration email: ${error.message}`);
-      return { sent: false, errorMessage: error.message };
+      throw new CustomException(
+        ErrorCode.EMAIL_SEND_FAILED.key,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { email: to, error: error.message }
+      );
     }
   }
 }

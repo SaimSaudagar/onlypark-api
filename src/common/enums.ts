@@ -1,14 +1,14 @@
 // User Management Enums
 export enum UserType {
-  ADMIN = 'ADMIN',
-  CARPARK_MANAGER = 'CARPARK_MANAGER',
-  PATROL_OFFICER = 'PATROL_OFFICER',
+  ADMIN = 'admin',
+  CARPARK_MANAGER = 'carpark_manager',
+  PATROL_OFFICER = 'patrol_officer',
 }
 
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  SUSPENDED = 'Suspended',
 }
 
 export enum AdminAccessLevel {
@@ -18,47 +18,53 @@ export enum AdminAccessLevel {
 }
 
 export enum AdminStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-}
-
-export enum CarparkManagerLevel {
-  SENIOR = 'senior',
-  JUNIOR = 'junior',
-  TRAINEE = 'trainee',
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  SUSPENDED = 'Suspended',
 }
 
 export enum CarparkManagerStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  SUSPENDED = 'Suspended',
+}
+
+export enum PatrolOfficerStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  SUSPENDED = 'Suspended',
 }
 
 // Booking System Enums
 export enum BookingType {
-  USER = 'user',
-  WHITELIST = 'whitelist',
-  SCHEDULE = 'schedule',
-  VISITOR = 'visitor',
-  WHITELABELED = 'whitelabeled',
+  USER = 'User',
+  WHITELIST = 'Whitelist',
+  SCHEDULE = 'Schedule',
+  VISITOR = 'Visitor',
+  WHITELABELED = 'Whitelabeled',
 }
 
 export enum BookingStatus {
   ACTIVE = 'Active',
   EXPIRED = 'Expired',
-  CHECKOUT = 'checkout',
+  CHECKOUT = 'Checkout',
 }
 
 // Parking Spot Enums
 export enum ParkingSpotType {
-  PARENT = 'parent',
-  CHILD = 'child',
+  PARENT = 'Parent',
+  CHILD = 'Child',
 }
 
 export enum ParkingSpotStatus {
   ACTIVE = 'Active',
   DISABLED = 'Disabled',
+}
+
+export enum BlacklistStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  SUSPENDED = 'Suspended',
 }
 
 export enum CarParkType {
@@ -67,24 +73,24 @@ export enum CarParkType {
 }
 
 export enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  MAINTENANCE = 'maintenance',
-  OUT_OF_ORDER = 'out_of_order',
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  MAINTENANCE = 'Maintenance',
+  OUT_OF_ORDER = 'Out of Order',
 }
 
 // Infringement System Enums
 export enum InfringementStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  DISPUTED = 'disputed',
-  CANCELLED = 'cancelled',
+  PENDING = 'Pending',
+  PAID = 'Paid',
+  DISPUTED = 'Disputed',
+  CANCELLED = 'Cancelled',
 }
 
 export enum DisputeStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
+  PENDING = 'Pending',
+  APPROVED = 'Approved',
+  REJECTED = 'Rejected',
 }
 
 // Audit System Enums
@@ -121,12 +127,6 @@ export enum Environment {
   PROD = 'PROD',
 }
 
-// Localization Enums
-export enum Locale {
-  ENGLISH = 'en',
-  ARABIC = 'ar',
-}
-
 // Notification Enums
 export enum NotificationEvent {
   BOOKING_CONFIRMATION = 'BOOKING_CONFIRMATION',
@@ -142,10 +142,10 @@ export enum NotificationEvent {
 
 // Payment Enums
 export enum PaymentStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  REFUNDED = 'refunded',
+  PENDING = 'Pending',
+  COMPLETED = 'Completed',
+  FAILED = 'Failed',
+  REFUNDED = 'Refunded',
 }
 
 export enum PaymentMethod {
@@ -163,9 +163,9 @@ export enum FileType {
 
 // Gender Enum
 export enum Gender {
-  MALE = 'male',
-  FEMALE = 'female',
-  OTHER = 'other',
+  MALE = 'Male',
+  FEMALE = 'Female',
+  OTHER = 'Other',
 }
 
 // OTP Types
@@ -212,13 +212,13 @@ export enum StorageType {
 
 // Queue Job Types
 export enum QueueJobType {
-  EMAIL_NOTIFICATION = 'email_notification',
-  SMS_NOTIFICATION = 'sms_notification',
-  PUSH_NOTIFICATION = 'push_notification',
-  BOOKING_EXPIRY_CHECK = 'booking_expiry_check',
-  INFRINGEMENT_REMINDER = 'infringement_reminder',
-  GENERATE_QR_CODE = 'generate_qr_code',
-  PAYMENT_PROCESSING = 'payment_processing',
+  EMAIL_NOTIFICATION = 'EMAIL_NOTIFICATION',
+  SMS_NOTIFICATION = 'SMS_NOTIFICATION', 
+  PUSH_NOTIFICATION = 'PUSH_NOTIFICATION',
+  BOOKING_EXPIRY_CHECK = 'BOOKING_EXPIRY_CHECK',
+  INFRINGEMENT_REMINDER = 'INFRINGEMENT_REMINDER',
+  GENERATE_QR_CODE = 'GENERATE_QR_CODE',
+  PAYMENT_PROCESSING = 'PAYMENT_PROCESSING',
 }
 
 // Sorting Enums

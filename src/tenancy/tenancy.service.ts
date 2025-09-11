@@ -62,20 +62,12 @@ export class TenancyService {
   }
 
   async findAll(request: FindTenancyRequest): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
-    const { pageNo, pageSize, sortField, sortOrder, tenantName, tenantEmail, search } = request;
+    const { pageNo, pageSize, sortField, sortOrder, search } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
     console.log(request);
     let whereOptions: FindOptionsWhere<Tenancy>[] = [];
     const orderOptions: FindOptionsOrder<Tenancy> = {};
-
-    if (tenantName) {
-      whereOptions.push({ tenantName: ILike(`%${tenantName}%`) });
-    }
-
-    if (tenantEmail) {
-      whereOptions.push({ tenantEmail: ILike(`%${tenantEmail}%`) });
-    }
     if (search) {
       whereOptions = [
         { tenantName: ILike(`%${search}%`) },

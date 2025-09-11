@@ -1,10 +1,11 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus } from '../common';
+import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus } from '../common';
 import { User } from './entities/user.entity';
 import {
   CreateUserRequest,
+  CreateUserResponse,
   GetProfileResponse,
   UpdateNotificationTokenRequest,
   UpdateUserDto,
@@ -19,6 +20,11 @@ import { BlacklistService } from '../blacklist/blacklist.service';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { DataSource } from 'typeorm';
+import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity';
+import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
+import { Admin } from '../admin/entities/admin.entity';
+import { Whitelist } from '../whitelist/entities/whitelist.entity';
+import { BlacklistReg } from '../blacklist/entities/blacklist-reg.entity';
 
 @Injectable()
 export class UserService {
@@ -35,7 +41,7 @@ export class UserService {
     private dataSource: DataSource,
   ) { }
 
-  async create(userDto: CreateUserRequest): Promise<User> {
+  async create(userDto: CreateUserRequest): Promise<CreateUserResponse> {
     const { name, email, type, phoneNumber, image, whitelist, blacklist } = userDto;
 
     // Check if user already exists
@@ -69,30 +75,31 @@ export class UserService {
         passwordResetExpires,
       });
 
-      const savedUser = await queryRunner.manager.create(User, user);
+      const savedUser = await queryRunner.manager.save(User, user);
 
       if (type === UserType.ADMIN) {
-        await queryRunner.manager.create('Admin', {
+        await queryRunner.manager.save(Admin, {
           userId: savedUser.id,
-          status: 'active',
+          status: AdminStatus.ACTIVE,
         });
       } else if (type === UserType.CARPARK_MANAGER) {
-        await queryRunner.manager.create('CarparkManager', {
+        await queryRunner.manager.save(CarparkManager, {
           userId: savedUser.id,
           managerCode: savedUser.id,
-          subCarParks: {},
-          status: 'active',
+          subCarParks: [],
+          status: CarparkManagerStatus.ACTIVE,
         });
       } else if (type === UserType.PATROL_OFFICER) {
-        await queryRunner.manager.create('PatrolOfficer', {
+        await queryRunner.manager.save(PatrolOfficer, {
           userId: savedUser.id,
+          status: PatrolOfficerStatus.ACTIVE,
         });
       }
 
       // Create whitelist entries if provided
       if (whitelist && whitelist.length > 0) {
         for (const vehicleReg of whitelist) {
-          await queryRunner.manager.create('Whitelist', {
+          await queryRunner.manager.save(Whitelist, {
             vehicalRegistration: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,
@@ -103,7 +110,7 @@ export class UserService {
       // Create blacklist entries if provided
       if (blacklist && blacklist.length > 0) {
         for (const vehicleReg of blacklist) {
-          await queryRunner.manager.create('BlacklistReg', {
+          await queryRunner.manager.save(BlacklistReg, {
             regNo: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,
@@ -116,9 +123,8 @@ export class UserService {
       // Send registration email
       const passwordSetupUrl = `${this.configService.get('APP_URL')}/auth/setup-password?token=${passwordResetToken}`;
 
-      let emailResult;
       try {
-        emailResult = await this.emailService.sendUserRegistrationEmail(
+        await this.emailService.sendUserRegistrationEmail(
           savedUser.email,
           savedUser.name,
           savedUser.email,
@@ -127,21 +133,22 @@ export class UserService {
           passwordSetupUrl,
         );
       } catch (emailError) {
-        // Log email error but don't fail the transaction
         console.error(`Failed to send email to ${savedUser.email}: ${emailError.message}`);
-        emailResult = { sent: false, errorMessage: emailError.message };
-      }
-
-      // If email fails, log the error but don't rollback the transaction
-      // since the user was created successfully
-      if (!emailResult.sent) {
-        console.error(`Failed to send email to ${savedUser.email}: ${emailResult.errorMessage}`);
       }
 
       // Commit transaction
       await queryRunner.commitTransaction();
 
-      return savedUser;
+      return {
+        id: savedUser.id,
+        name: savedUser.name,
+        email: savedUser.email,
+        type: savedUser.type,
+        phoneNumber: savedUser.phoneNumber,
+        image: savedUser.image,
+        passwordResetToken: savedUser.passwordResetToken,
+        passwordResetExpires: savedUser.passwordResetExpires,
+      };
     } catch (error) {
       // Rollback transaction on any error
       await queryRunner.rollbackTransaction();
@@ -275,7 +282,7 @@ export class UserService {
     user.passwordResetExpires = null;
     user.emailVerifiedAt = new Date();
 
-    await this.usersRepository.create(user);
+    await this.usersRepository.save(user);
     return true;
   }
 }
