@@ -20,7 +20,7 @@ export class PermissionService {
 
   async create(createPermissionDto: CreatePermissionRequest): Promise<GetPermissionResponse> {
     const permission = this.permissionRepository.create(createPermissionDto);
-    const savedPermission = await this.permissionRepository.save(permission);
+    const savedPermission = await this.permissionRepository.create(permission);
     return {
       id: savedPermission.id,
       name: savedPermission.name,
@@ -68,7 +68,7 @@ export class PermissionService {
       );
     }
 
-    const updatedPermission = await this.permissionRepository.save({
+    const updatedPermission = await this.permissionRepository.create({
       ...permission,
       ...updatePermissionDto,
     });

@@ -16,7 +16,7 @@ export class TenancyService {
 
   async create(request: CreateTenancyRequest): Promise<Tenancy> {
     const entity = this.tenancyRepository.create(request);
-    const savedEntity = await this.tenancyRepository.save(entity);
+    const savedEntity = await this.tenancyRepository.create(entity);
     return savedEntity as unknown as Tenancy;
   }
 
@@ -122,7 +122,7 @@ export class TenancyService {
     const entity = await this.tenancyRepository.findOne({ where: { id } });
     if (entity) {
       Object.assign(entity, request);
-      return await this.tenancyRepository.save(entity);
+      return await this.tenancyRepository.create(entity);
     }
     return null;
   }

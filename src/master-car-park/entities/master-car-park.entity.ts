@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   OneToMany,
-  JoinColumn,
 } from 'typeorm';
 import {
   CarParkType,
@@ -11,6 +10,7 @@ import {
 import { Auditable } from '../../common/decorators';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { BlacklistReg } from '../../blacklist/entities/blacklist-reg.entity';
 
 @Entity('master_car_park')
 @Auditable()
@@ -38,4 +38,7 @@ export class MasterCarPark extends BaseEntity {
 
   @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.masterCarPark)
   subCarParks: SubCarPark[];
+
+  @OneToMany(() => BlacklistReg, (blacklist) => blacklist.masterCarPark)
+  blacklists: BlacklistReg[];
 }

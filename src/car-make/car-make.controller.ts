@@ -23,7 +23,7 @@ import { PermissionsGuard } from '../common/guards/permission.guard';
 @ApiTags('CarMake')
 @Controller({ path: 'car-make', version: '1' })
 export class CarMakeController {
-  constructor(private readonly carMakeService: CarMakeService) {}
+  constructor(private readonly carMakeService: CarMakeService) { }
 
   @Get()
   findAll() {

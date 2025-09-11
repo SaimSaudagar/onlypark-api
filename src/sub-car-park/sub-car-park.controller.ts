@@ -80,10 +80,9 @@ export class SubCarParkController {
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   @RequirePermissions(AdminPermission.CAR_PARK_EDIT, CarparkManagerPermission.CAR_PARK_EDIT)
   update(
-    @Param('id') id: string,
     @Body() request: UpdateSubCarParkRequest,
   ): Promise<SubCarParkUpdateResponse> {
-    return this.subCarParkService.create(request, id);
+    return this.subCarParkService.create(request);
   }
 
   @Delete(':id')

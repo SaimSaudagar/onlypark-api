@@ -28,7 +28,7 @@ import {
 @JwtAuthGuardWithApiBearer()
 @Controller({ path: 'role', version: '1' })
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(private readonly roleService: RoleService) { }
 
   @Get()
   @AllowedRoles(UserType.ADMIN)

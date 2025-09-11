@@ -50,15 +50,15 @@ export class RolePermissionSeederService {
 
       // Clear existing permissions and assign new ones
       await this.rolePermissionRepository.delete({ rolesId: role.id });
-      
+
       const rolePermissions = permissions.map(permission => {
         const rolePermission = new RolePermission();
         rolePermission.rolesId = role.id;
         rolePermission.permissionsId = permission.id;
         return rolePermission;
       });
-      
-      await this.rolePermissionRepository.save(rolePermissions);
+
+      await this.rolePermissionRepository.create(rolePermissions);
 
       this.logger.log(
         `Assigned ${permissions.length} permissions to role ${rolePermissionData.role}`,

@@ -40,7 +40,7 @@ export class MasterCarParkSeederService {
           status: masterCarParkData.status,
         });
 
-        await this.masterCarParkRepository.save(masterCarPark);
+        await this.masterCarParkRepository.create(masterCarPark);
         this.logger.log(`Master Car Park ${masterCarParkData.carParkName} seeded`);
       } else {
         this.logger.log(`Master Car Park ${masterCarParkData.carParkName} already exists`);

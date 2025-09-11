@@ -17,7 +17,7 @@ import { OutstandingRegistrationService } from './outstanding-registration.servi
 @JwtAuthGuardWithApiBearer()
 @Controller({ path: 'outstanding-registration', version: '1' })
 export class OutstandingRegistrationController {
-  constructor(private readonly outstandingRegistrationService: OutstandingRegistrationService) {}
+  constructor(private readonly outstandingRegistrationService: OutstandingRegistrationService) { }
 
   @Get()
   findAll() {

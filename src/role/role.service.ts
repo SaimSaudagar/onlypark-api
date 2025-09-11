@@ -55,10 +55,10 @@ export class RoleService {
         return rolePermission;
       });
 
-      await this.rolePermissionRepository.save(rolePermissions);
+      await this.rolePermissionRepository.create(rolePermissions);
     }
 
-    await this.roleRepository.save(role);
+    await this.roleRepository.create(role);
     return role;
   }
 
@@ -88,7 +88,7 @@ export class RoleService {
     }
 
     Object.assign(role, updateRoleDto);
-    return await this.roleRepository.save(role);
+    return await this.roleRepository.create(role);
   }
 
   remove(id: string) {

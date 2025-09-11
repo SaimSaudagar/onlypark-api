@@ -9,7 +9,7 @@ export class AuditLogService {
   constructor(
     @InjectRepository(AuditLog)
     private auditLogRepository: Repository<AuditLog>,
-  ) {}
+  ) { }
 
   async createAuditLog(params: {
     entityName: string;
@@ -20,6 +20,6 @@ export class AuditLogService {
     userId: string;
   }): Promise<AuditLog> {
     const auditLog = this.auditLogRepository.create(params);
-    return await this.auditLogRepository.save(auditLog);
+    return await this.auditLogRepository.create(auditLog);
   }
 }

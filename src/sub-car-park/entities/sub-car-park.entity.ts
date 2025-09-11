@@ -14,7 +14,6 @@ import { Booking } from '../../booking/entities/booking.entity';
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { Whitelist } from '../../whitelist/entities/whitelist.entity';
 import { WhitelistCompany } from '../../whitelist-company/entities/whitelist-company.entity';
-import { BlacklistReg } from '../../blacklist/entities/blacklist-reg.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
@@ -44,7 +43,7 @@ export class SubCarPark extends BaseEntity {
   @Column({ type: 'varchar', unique: true, nullable: false })
   subCarParkCode: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   freeHours: number;
 
   @Column({ type: 'int', nullable: true })
@@ -91,9 +90,6 @@ export class SubCarPark extends BaseEntity {
   @OneToMany(() => WhitelistCompany, (whitelistCompany) => whitelistCompany.subCarPark)
   whitelistCompanies: WhitelistCompany[];
 
-  @OneToMany(() => BlacklistReg, (blacklist) => blacklist.subCarPark)
-  blacklists: BlacklistReg[];
-
   @OneToMany(() => PatrolOfficer, (officer) => officer.subCarParks)
   patrolOfficers: PatrolOfficer[];
 
@@ -101,6 +97,6 @@ export class SubCarPark extends BaseEntity {
   @JoinColumn({ name: 'carparkManagerId' })
   carparkManager: CarparkManager;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   carparkManagerId: string;
 }

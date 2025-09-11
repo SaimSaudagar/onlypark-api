@@ -17,7 +17,7 @@ import { PatrolOfficerService } from './patrol-officer.service';
 @JwtAuthGuardWithApiBearer()
 @Controller({ path: 'patrol-officer', version: '1' })
 export class PatrolOfficerController {
-  constructor(private readonly patrolOfficerService: PatrolOfficerService) {}
+  constructor(private readonly patrolOfficerService: PatrolOfficerService) { }
 
   @Get()
   findAll() {

@@ -8,11 +8,11 @@ export class OutstandingRegistrationService {
   constructor(
     @InjectRepository(OutstandingRegistration)
     private outstandingRegistrationRepository: Repository<OutstandingRegistration>,
-  ) {}
+  ) { }
 
   async create(createDto: any): Promise<OutstandingRegistration> {
     const entity = this.outstandingRegistrationRepository.create(createDto);
-    const savedEntity = await this.outstandingRegistrationRepository.save(entity);
+    const savedEntity = await this.outstandingRegistrationRepository.create(entity);
     return savedEntity as unknown as OutstandingRegistration;
   }
 
@@ -28,7 +28,7 @@ export class OutstandingRegistrationService {
     const entity = await this.outstandingRegistrationRepository.findOne({ where: { id } });
     if (entity) {
       Object.assign(entity, updateDto);
-      return await this.outstandingRegistrationRepository.save(entity);
+      return await this.outstandingRegistrationRepository.create(entity);
     }
     return null;
   }

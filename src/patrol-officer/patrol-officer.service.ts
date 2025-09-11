@@ -8,11 +8,11 @@ export class PatrolOfficerService {
   constructor(
     @InjectRepository(PatrolOfficer)
     private patrolOfficerRepository: Repository<PatrolOfficer>,
-  ) {}
+  ) { }
 
   async create(createDto: any): Promise<PatrolOfficer> {
     const entity = this.patrolOfficerRepository.create(createDto);
-    const savedEntity = await this.patrolOfficerRepository.save(entity);
+    const savedEntity = await this.patrolOfficerRepository.create(entity);
     return savedEntity as unknown as PatrolOfficer;
   }
 
@@ -28,7 +28,7 @@ export class PatrolOfficerService {
     const entity = await this.patrolOfficerRepository.findOne({ where: { id } });
     if (entity) {
       Object.assign(entity, updateDto);
-      return await this.patrolOfficerRepository.save(entity);
+      return await this.patrolOfficerRepository.create(entity);
     }
     return null;
   }

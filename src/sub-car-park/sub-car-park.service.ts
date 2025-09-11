@@ -35,8 +35,9 @@ export class SubCarParkService {
     private dataSource: DataSource,
   ) { }
 
-  async create(request: CreateSubCarParkRequest, id?: string): Promise<SubCarParkCreateResponse | SubCarParkUpdateResponse> {
+  async create(request: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse | SubCarParkUpdateResponse> {
     const {
+      id,
       masterCarParkId,
       carParkName,
       location,
@@ -636,7 +637,7 @@ export class SubCarParkService {
     }
 
     Object.assign(subCarPark, updateSubCarParkDto);
-    const updatedSubCarPark = await this.subCarParkRepository.save(subCarPark);
+    const updatedSubCarPark = await this.subCarParkRepository.create(subCarPark);
 
     // Fetch the updated sub car park with relations
     const subCarParkWithRelations = await this.subCarParkRepository.findOne({
@@ -675,7 +676,6 @@ export class SubCarParkService {
         bookings: true,
         tenancies: true,
         whitelists: true,
-        blacklists: true,
       },
     });
 

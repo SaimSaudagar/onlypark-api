@@ -69,22 +69,22 @@ export class UserService {
         passwordResetExpires,
       });
 
-      const savedUser = await queryRunner.manager.save(User, user);
+      const savedUser = await queryRunner.manager.create(User, user);
 
       if (type === UserType.ADMIN) {
-        await queryRunner.manager.save('Admin', {
+        await queryRunner.manager.create('Admin', {
           userId: savedUser.id,
           status: 'active',
         });
       } else if (type === UserType.CARPARK_MANAGER) {
-        await queryRunner.manager.save('CarparkManager', {
+        await queryRunner.manager.create('CarparkManager', {
           userId: savedUser.id,
           managerCode: savedUser.id,
           subCarParks: {},
           status: 'active',
         });
       } else if (type === UserType.PATROL_OFFICER) {
-        await queryRunner.manager.save('PatrolOfficer', {
+        await queryRunner.manager.create('PatrolOfficer', {
           userId: savedUser.id,
         });
       }
@@ -92,7 +92,7 @@ export class UserService {
       // Create whitelist entries if provided
       if (whitelist && whitelist.length > 0) {
         for (const vehicleReg of whitelist) {
-          await queryRunner.manager.save('Whitelist', {
+          await queryRunner.manager.create('Whitelist', {
             vehicalRegistration: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,
@@ -103,7 +103,7 @@ export class UserService {
       // Create blacklist entries if provided
       if (blacklist && blacklist.length > 0) {
         for (const vehicleReg of blacklist) {
-          await queryRunner.manager.save('BlacklistReg', {
+          await queryRunner.manager.create('BlacklistReg', {
             regNo: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,
@@ -166,7 +166,7 @@ export class UserService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const userToBeUpdated = await this.usersRepository.create(updateUserDto);
-    const updatedUser = await this.usersRepository.save(userToBeUpdated);
+    const updatedUser = await this.usersRepository.create(userToBeUpdated);
     return updatedUser;
   }
 
@@ -275,7 +275,7 @@ export class UserService {
     user.passwordResetExpires = null;
     user.emailVerifiedAt = new Date();
 
-    await this.usersRepository.save(user);
+    await this.usersRepository.create(user);
     return true;
   }
 }

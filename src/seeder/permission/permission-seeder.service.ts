@@ -34,7 +34,7 @@ export class PermissionSeederService {
           description: permissionData.description,
         });
 
-        await this.permissionRepository.save(permission);
+        await this.permissionRepository.create(permission);
         this.logger.log(`Permission ${permissionData.name} seeded`);
       } else {
         this.logger.log(`Permission ${permissionData.name} already exists`);

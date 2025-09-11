@@ -140,7 +140,7 @@ export class BookingService {
       status: BookingStatus.ACTIVE,
     });
 
-    const savedBooking = await this.bookingRepository.save(booking);
+    const savedBooking = await this.bookingRepository.create(booking);
 
     return {
       id: savedBooking.id,
@@ -277,7 +277,7 @@ export class BookingService {
     }
 
     Object.assign(booking, updateDto);
-    const updatedBooking = await this.bookingRepository.save(booking);
+    const updatedBooking = await this.bookingRepository.create(booking);
 
     return {
       id: updatedBooking.id,

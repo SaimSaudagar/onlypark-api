@@ -33,7 +33,7 @@ export class CarMakeSeederService {
           carMakeName: carMakeData.name,
         });
 
-        await this.carMakeRepository.save(carMake);
+        await this.carMakeRepository.create(carMake);
         this.logger.log(`Car Make ${carMakeData.name} seeded`);
       } else {
         this.logger.log(`Car Make ${carMakeData.name} already exists`);

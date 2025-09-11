@@ -1,9 +1,13 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail, ValidateIf } from 'class-validator';
 import { ParkingSpotStatus } from '../common/enums';
 import { ApiGetBaseRequest } from '../common/types';
 
 export class CreateSubCarParkRequest {
+  @IsOptional()
+  @IsUUID()
+  id?: string;
+
   @IsNotEmpty()
   @IsUUID()
   masterCarParkId: string;
@@ -48,11 +52,13 @@ export class CreateSubCarParkRequest {
   @IsBoolean()
   event?: boolean;
 
-  @IsOptional()
+  @ValidateIf((o) => o.event === true)
+  @IsNotEmpty()
   @IsDateString()
   eventDate?: string;
 
-  @IsOptional()
+  @ValidateIf((o) => o.event === true)
+  @IsNotEmpty()
   @IsDateString()
   eventExpiryDate?: string;
 

@@ -34,7 +34,7 @@ export class RoleSeederService {
           description: roleData.description,
         });
 
-        await this.roleRepository.save(role);
+        await this.roleRepository.create(role);
         this.logger.log(`Role ${roleData.name} seeded`);
       } else {
         this.logger.log(`Role ${roleData.name} already exists`);

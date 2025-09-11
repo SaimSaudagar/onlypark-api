@@ -8,11 +8,11 @@ export class WhitelistService {
   constructor(
     @InjectRepository(Whitelist)
     private whitelistRepository: Repository<Whitelist>,
-  ) {}
+  ) { }
 
   async create(createDto: any): Promise<Whitelist> {
     const entity = this.whitelistRepository.create(createDto);
-    const savedEntity = await this.whitelistRepository.save(entity);
+    const savedEntity = await this.whitelistRepository.create(entity);
     return savedEntity as unknown as Whitelist;
   }
 
@@ -28,7 +28,7 @@ export class WhitelistService {
     const entity = await this.whitelistRepository.findOne({ where: { id } });
     if (entity) {
       Object.assign(entity, updateDto);
-      return await this.whitelistRepository.save(entity);
+      return await this.whitelistRepository.create(entity);
     }
     return null;
   }

@@ -26,7 +26,7 @@ export class WhitelistCompanyService {
             }
 
             const entity = this.whitelistCompanyRepository.create(createDto);
-            const savedEntity = await this.whitelistCompanyRepository.save(entity);
+            const savedEntity = await this.whitelistCompanyRepository.create(entity);
             return savedEntity;
         } catch (error) {
             if (error instanceof CustomException) {
@@ -156,7 +156,7 @@ export class WhitelistCompanyService {
             }
 
             Object.assign(entity, updateDto);
-            const updatedEntity = await this.whitelistCompanyRepository.save(entity);
+            const updatedEntity = await this.whitelistCompanyRepository.create(entity);
             return updatedEntity;
         } catch (error) {
             if (error instanceof CustomException) {
@@ -220,7 +220,7 @@ export class WhitelistCompanyService {
                 );
             }
 
-            const updatedEntity = await this.whitelistCompanyRepository.save(entity);
+            const updatedEntity = await this.whitelistCompanyRepository.create(entity);
             return updatedEntity;
         } catch (error) {
             if (error instanceof CustomException) {

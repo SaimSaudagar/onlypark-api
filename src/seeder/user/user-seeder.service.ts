@@ -47,7 +47,7 @@ export class UserSeederService {
           status: userData.status,
         });
 
-        const savedUser = await this.userRepository.save(user);
+        const savedUser = await this.userRepository.create(user);
 
         // Assign role based on user type
         await this.assignRoleToUser(savedUser, userData.type);
@@ -96,7 +96,7 @@ export class UserSeederService {
       const userRole = new UserRole();
       userRole.usersId = user.id;
       userRole.rolesId = role.id;
-      await this.userRoleRepository.save(userRole);
+      await this.userRoleRepository.create(userRole);
     } else {
       this.logger.warn(`Role ${roleName} not found for user ${user.email}`);
     }

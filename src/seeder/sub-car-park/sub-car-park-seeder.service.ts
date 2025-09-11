@@ -63,7 +63,7 @@ export class SubCarParkSeederService {
           masterCarParkId: masterCarPark.id,
         });
 
-        await this.subCarParkRepository.save(subCarPark);
+        await this.subCarParkRepository.create(subCarPark);
         this.logger.log(`Sub Car Park ${subCarParkData.carParkName} seeded under ${subCarParkData.masterCarParkName}`);
       } else {
         this.logger.log(`Sub Car Park ${subCarParkData.carParkName} already exists`);

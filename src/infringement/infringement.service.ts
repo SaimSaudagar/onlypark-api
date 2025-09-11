@@ -23,7 +23,7 @@ export class InfringementService {
       ticketDate: new Date(infringementDto.ticketDate),
       dueDate: infringementDto.dueDate ? new Date(infringementDto.dueDate) : undefined,
     });
-    return await this.infringementRepository.save(infringement);
+    return await this.infringementRepository.create(infringement);
   }
 
   async findAll(options?: FindManyOptions<Infringement>): Promise<Infringement[]> {
@@ -55,7 +55,7 @@ export class InfringementService {
     }
 
     Object.assign(infringement, updateInfringementDto);
-    return await this.infringementRepository.save(infringement);
+    return await this.infringementRepository.create(infringement);
   }
 
   remove(id: string) {

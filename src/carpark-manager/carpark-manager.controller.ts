@@ -21,7 +21,7 @@ import {
 @JwtAuthGuardWithApiBearer()
 @Controller({ path: 'carpark-manager', version: '1' })
 export class CarparkManagerController {
-  constructor(private readonly carparkManagerService: CarparkManagerService) {}
+  constructor(private readonly carparkManagerService: CarparkManagerService) { }
 
   @Get()
   findAll() {

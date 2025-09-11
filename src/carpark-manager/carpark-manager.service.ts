@@ -33,7 +33,7 @@ export class CarparkManagerService {
     const { subCarParks, ...entityData } = carparkManagerDto;
 
     const carparkManager = this.carparkManagerRepository.create(entityData);
-    return await this.carparkManagerRepository.save(carparkManager);
+    return await this.carparkManagerRepository.create(carparkManager);
   }
 
   async findAll(options?: FindManyOptions<CarparkManager>): Promise<CarparkManager[]> {
@@ -55,7 +55,7 @@ export class CarparkManagerService {
     }
 
     Object.assign(carparkManager, updateCarparkManagerDto);
-    return await this.carparkManagerRepository.save(carparkManager);
+    return await this.carparkManagerRepository.create(carparkManager);
   }
 
   remove(id: string) {

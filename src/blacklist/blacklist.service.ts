@@ -16,7 +16,7 @@ export class BlacklistService {
 
   async create(createBlacklistDto: CreateBlacklistDto): Promise<BlacklistReg> {
     const entity = this.blacklistRepository.create(createBlacklistDto);
-    return await this.blacklistRepository.save(entity);
+    return await this.blacklistRepository.create(entity);
   }
 
   async findAll(options?: FindManyOptions<BlacklistReg>): Promise<BlacklistReg[]> {
@@ -43,7 +43,7 @@ export class BlacklistService {
       );
     }
 
-    const updatedEntity = await this.blacklistRepository.save({
+    const updatedEntity = await this.blacklistRepository.create({
       ...entity,
       ...updateBlacklistDto,
     });

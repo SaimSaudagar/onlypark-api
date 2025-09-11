@@ -32,9 +32,9 @@ export class CarMakeService {
     }
 
     const carMake = this.carMakeRepository.create({
-          carMakeName: carMakeName,
+      carMakeName: carMakeName,
     });
-    return await this.carMakeRepository.save(carMake);
+    return await this.carMakeRepository.create(carMake);
   }
 
   async findAll(options?: FindManyOptions<CarMake>): Promise<CarMake[]> {
@@ -56,7 +56,7 @@ export class CarMakeService {
     }
 
     Object.assign(carMake, updateCarMakeDto);
-    return await this.carMakeRepository.save(carMake);
+    return await this.carMakeRepository.create(carMake);
   }
 
   remove(id: string) {

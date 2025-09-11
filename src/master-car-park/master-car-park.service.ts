@@ -67,7 +67,7 @@ export class MasterCarParkService extends BaseService {
       masterCarParkCode,
       status: ParkingSpotStatus.ACTIVE,
     });
-    const savedMasterCarPark = await this.masterCarParkRepository.save(masterCarPark);
+    const savedMasterCarPark = await this.masterCarParkRepository.create(masterCarPark);
 
     const response = new CreateMasterCarParkResponse();
     response.id = savedMasterCarPark.id;
@@ -160,7 +160,7 @@ export class MasterCarParkService extends BaseService {
     }
 
     Object.assign(masterCarPark, updateMasterCarParkDto);
-    return await this.masterCarParkRepository.save(masterCarPark);
+    return await this.masterCarParkRepository.create(masterCarPark);
   }
 
   async remove(id: string) {
