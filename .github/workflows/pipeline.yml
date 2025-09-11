@@ -1,0 +1,188 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: onlypark_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run tests
+      run: npm run test:cov
+      env:
+        DB_HOST_NAME: localhost
+        DB_PORT: 5432
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_NAME: onlypark_test
+        JWT_SECRET: test-secret
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        NODE_ENV: test
+
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+    - name: Create deployment package
+      run: |
+        mkdir -p deploy
+        cp -r dist deploy/
+        cp -r node_modules deploy/
+        cp package.json deploy/
+        cp package-lock.json deploy/
+        cp typeOrm.config.js deploy/
+        tar -czf onlypark-api.tar.gz -C deploy .
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_PORT || 22 }}
+        script: |
+          # Create backup of current deployment
+          if [ -d "/var/www/onlypark-api" ]; then
+            sudo mv /var/www/onlypark-api /var/www/onlypark-api.backup.$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          # Create new deployment directory
+          sudo mkdir -p /var/www/onlypark-api
+          sudo chown $USER:$USER /var/www/onlypark-api
+
+    - name: Upload and extract deployment package
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_PORT || 22 }}
+        source: "onlypark-api.tar.gz"
+        target: "/var/www/onlypark-api/"
+
+    - name: Finalize deployment
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_PORT || 22 }}
+        script: |
+          cd /var/www/onlypark-api
+          
+          # Extract the deployment package
+          tar -xzf onlypark-api.tar.gz
+          rm onlypark-api.tar.gz
+          
+          # Set proper permissions
+          sudo chown -R $USER:$USER /var/www/onlypark-api
+          chmod +x dist/main.js
+          
+          # Install PM2 if not already installed
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+          
+          # Stop existing application
+          pm2 stop onlypark-api || true
+          pm2 delete onlypark-api || true
+          
+          # Start the application
+          pm2 start dist/main.js --name onlypark-api --env production
+          pm2 save
+          pm2 startup
+          
+          # Run database migrations
+          cd /var/www/onlypark-api
+          npm run typeorm:run-migrations
+          
+          # Clean up old backups (keep last 5)
+          sudo find /var/www -name "onlypark-api.backup.*" -type d | sort | head -n -5 | sudo xargs rm -rf
+          
+          echo "Deployment completed successfully!"
+
+  notify:
+    needs: [test, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      if: github.ref == 'refs/heads/main'
+      run: |
+        if [ "${{ needs.deploy.result }}" == "success" ]; then
+          echo "✅ Deployment to EC2 completed successfully!"
+        else
+          echo "❌ Deployment to EC2 failed!"
+        fi
