@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1757625611827 implements MigrationInterface {
-    name = 'Migrations1757625611827'
+export class Migrations1757721219318 implements MigrationInterface {
+    name = 'Migrations1757721219318'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -137,10 +137,10 @@ export class Migrations1757625611827 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."users_type_enum" AS ENUM('ADMIN', 'CARPARK_MANAGER', 'PATROL_OFFICER')
+            CREATE TYPE "public"."users_type_enum" AS ENUM('admin', 'carpark_manager', 'patrol_officer')
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'suspended')
+            CREATE TYPE "public"."users_status_enum" AS ENUM('Active', 'Inactive', 'Suspended')
         `);
         await queryRunner.query(`
             CREATE TABLE "users" (
@@ -158,7 +158,7 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "image" character varying,
                 "passwordResetToken" character varying,
                 "passwordResetExpires" TIMESTAMP,
-                "status" "public"."users_status_enum" NOT NULL DEFAULT 'inactive',
+                "status" "public"."users_status_enum" NOT NULL DEFAULT 'Inactive',
                 CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )
@@ -179,10 +179,7 @@ export class Migrations1757625611827 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."carpark_manager_managerlevel_enum" AS ENUM('senior', 'junior', 'trainee')
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('active', 'inactive', 'suspended')
+            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('Active', 'Inactive', 'Suspended')
         `);
         await queryRunner.query(`
             CREATE TABLE "carpark_manager" (
@@ -194,13 +191,12 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "region" character varying,
                 "contactNumber" character varying,
                 "emergencyContact" character varying,
-                "managerLevel" "public"."carpark_manager_managerlevel_enum" NOT NULL DEFAULT 'senior',
                 "canManagePatrolOfficers" boolean NOT NULL DEFAULT true,
                 "canGenerateReports" boolean NOT NULL DEFAULT true,
                 "canManageTenancies" boolean NOT NULL DEFAULT true,
                 "lastLoginAt" TIMESTAMP,
                 "loginCount" integer NOT NULL DEFAULT '0',
-                "status" "public"."carpark_manager_status_enum" NOT NULL DEFAULT 'active',
+                "status" "public"."carpark_manager_status_enum" NOT NULL DEFAULT 'Active',
                 "userId" uuid,
                 CONSTRAINT "UQ_26f8c95d7844037a7799f38b225" UNIQUE ("managerCode"),
                 CONSTRAINT "REL_3bb5b79e3aa960a37de422f2f8" UNIQUE ("userId"),
@@ -223,7 +219,7 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "lang" numeric(11, 8) NOT NULL,
                 "description" text,
                 "subCarParkCode" character varying NOT NULL,
-                "freeHours" integer,
+                "freeHours" numeric(10, 2),
                 "noOfPermitsPerRegNo" integer,
                 "tenantEmailCheck" boolean NOT NULL DEFAULT false,
                 "geolocation" boolean NOT NULL DEFAULT false,
@@ -232,7 +228,7 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "eventExpiryDate" TIMESTAMP,
                 "status" "public"."sub_car_park_status_enum" NOT NULL DEFAULT 'Active',
                 "masterCarParkId" uuid NOT NULL,
-                "carparkManagerId" uuid NOT NULL,
+                "carparkManagerId" uuid,
                 CONSTRAINT "UQ_4587c51261deab65d55834ba3dd" UNIQUE ("subCarParkCode"),
                 CONSTRAINT "PK_381a7bfb60a409000107881f84b" PRIMARY KEY ("id")
             )
@@ -276,40 +272,13 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "penalty" character varying NOT NULL,
-                "stripeProductId" character varying,
+                "carParkName" character varying NOT NULL,
+                "penaltyName" character varying NOT NULL,
+                "stripePriceIdBeforeDue" character varying,
+                "stripePriceIdAfterDue" character varying,
+                "amountBeforeDue" numeric NOT NULL,
+                "amountAfterDue" numeric NOT NULL,
                 CONSTRAINT "PK_1ab6d1bb5e5b1ce2b2204bb3373" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."disputes_status_enum" AS ENUM('pending', 'approved', 'rejected')
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "disputes" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "carSpotId" character varying NOT NULL,
-                "firstName" character varying NOT NULL,
-                "lastName" character varying NOT NULL,
-                "companyName" character varying,
-                "address" text NOT NULL,
-                "state" character varying NOT NULL,
-                "zipCode" character varying NOT NULL,
-                "mobileNumber" character varying NOT NULL,
-                "email" character varying NOT NULL,
-                "carMake" character varying NOT NULL,
-                "model" character varying NOT NULL,
-                "regNo" character varying NOT NULL,
-                "paymentNoticeNo" character varying NOT NULL,
-                "appeal" text NOT NULL,
-                "responseReason" character varying,
-                "photos" json,
-                "responsePhotos" json,
-                "status" "public"."disputes_status_enum" NOT NULL DEFAULT 'pending',
-                "ticketNumber" uuid,
-                CONSTRAINT "PK_3c97580d01c1a4b0b345c42a107" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -324,7 +293,7 @@ export class Migrations1757625611827 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."infringements_status_enum" AS ENUM('pending', 'paid', 'disputed', 'cancelled')
+            CREATE TYPE "public"."infringements_status_enum" AS ENUM('Pending', 'Paid', 'Disputed', 'Waived')
         `);
         await queryRunner.query(`
             CREATE TABLE "infringements" (
@@ -332,25 +301,51 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "ticketDate" date NOT NULL,
-                "ticketTime" TIME NOT NULL,
-                "carPark" character varying NOT NULL,
-                "comment" text,
-                "regNo" character varying NOT NULL,
-                "carMakeID" uuid NOT NULL,
-                "status" "public"."infringements_status_enum" NOT NULL DEFAULT 'pending',
+                "ticketNumber" SERIAL,
+                "ticketDate" date,
+                "carParkName" character varying,
+                "comments" text,
+                "registrationNo" character varying NOT NULL,
                 "photos" json,
-                "amount" numeric(10, 2) NOT NULL,
-                "dueDate" date NOT NULL,
-                "sevenDayEmail" boolean NOT NULL DEFAULT false,
-                "fifteenDayEmail" boolean NOT NULL DEFAULT false,
+                "status" "public"."infringements_status_enum" NOT NULL DEFAULT 'Pending',
+                "dueDate" date,
                 "reasonId" uuid,
                 "penaltyId" uuid,
+                "carMakeId" uuid,
                 CONSTRAINT "PK_17d7ed648f5173f967afa8935d9" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."admin_status_enum" AS ENUM('active', 'inactive', 'suspended')
+            CREATE TYPE "public"."disputes_status_enum" AS ENUM('Pending', 'Approved', 'Rejected')
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "disputes" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "deletedAt" TIMESTAMP WITH TIME ZONE,
+                "infringementId" uuid NOT NULL,
+                "firstName" character varying NOT NULL,
+                "lastName" character varying NOT NULL,
+                "companyName" character varying,
+                "address" text NOT NULL,
+                "state" character varying NOT NULL,
+                "zipCode" character varying NOT NULL,
+                "mobileNumber" character varying NOT NULL,
+                "email" character varying NOT NULL,
+                "carMakeId" uuid,
+                "model" character varying NOT NULL,
+                "registrationNo" character varying NOT NULL,
+                "appeal" text NOT NULL,
+                "responseReason" character varying,
+                "photos" json,
+                "responsePhotos" json,
+                "status" "public"."disputes_status_enum" NOT NULL DEFAULT 'Pending',
+                CONSTRAINT "PK_3c97580d01c1a4b0b345c42a107" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."admin_status_enum" AS ENUM('Active', 'Inactive', 'Suspended')
         `);
         await queryRunner.query(`
             CREATE TABLE "admin" (
@@ -360,7 +355,7 @@ export class Migrations1757625611827 implements MigrationInterface {
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "lastLoginAt" TIMESTAMP,
                 "loginCount" integer NOT NULL DEFAULT '0',
-                "status" "public"."admin_status_enum" NOT NULL DEFAULT 'active',
+                "status" "public"."admin_status_enum" NOT NULL DEFAULT 'Active',
                 "userId" uuid,
                 CONSTRAINT "REL_f8a889c4362d78f056960ca6da" UNIQUE ("userId"),
                 CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id")
@@ -453,10 +448,6 @@ export class Migrations1757625611827 implements MigrationInterface {
             ADD CONSTRAINT "FK_5fa98054ac379a7f5212dd73c0b" FOREIGN KEY ("subCarParkId") REFERENCES "sub_car_park"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "disputes"
-            ADD CONSTRAINT "FK_e0acf76069b73d57e52a7b058a7" FOREIGN KEY ("ticketNumber") REFERENCES "infringements"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
             ALTER TABLE "infringements"
             ADD CONSTRAINT "FK_2b1544c4127691b967528a27676" FOREIGN KEY ("reasonId") REFERENCES "infringement_reason"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -466,7 +457,15 @@ export class Migrations1757625611827 implements MigrationInterface {
         `);
         await queryRunner.query(`
             ALTER TABLE "infringements"
-            ADD CONSTRAINT "FK_33b5e4167ff9c2033dc7af492e7" FOREIGN KEY ("carMakeID") REFERENCES "car_make"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_5b2b5a1a772554ab26fe596add0" FOREIGN KEY ("carMakeId") REFERENCES "car_make"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "disputes"
+            ADD CONSTRAINT "FK_ed5465b3d8921285e1bd5ef9e2d" FOREIGN KEY ("infringementId") REFERENCES "infringements"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "disputes"
+            ADD CONSTRAINT "FK_b11307ca42df7c64dbabb4cbf83" FOREIGN KEY ("carMakeId") REFERENCES "car_make"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "admin"
@@ -479,16 +478,19 @@ export class Migrations1757625611827 implements MigrationInterface {
             ALTER TABLE "admin" DROP CONSTRAINT "FK_f8a889c4362d78f056960ca6dad"
         `);
         await queryRunner.query(`
-            ALTER TABLE "infringements" DROP CONSTRAINT "FK_33b5e4167ff9c2033dc7af492e7"
+            ALTER TABLE "disputes" DROP CONSTRAINT "FK_b11307ca42df7c64dbabb4cbf83"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "disputes" DROP CONSTRAINT "FK_ed5465b3d8921285e1bd5ef9e2d"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "infringements" DROP CONSTRAINT "FK_5b2b5a1a772554ab26fe596add0"
         `);
         await queryRunner.query(`
             ALTER TABLE "infringements" DROP CONSTRAINT "FK_5e2a5e19a11d351474d5a55b910"
         `);
         await queryRunner.query(`
             ALTER TABLE "infringements" DROP CONSTRAINT "FK_2b1544c4127691b967528a27676"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "disputes" DROP CONSTRAINT "FK_e0acf76069b73d57e52a7b058a7"
         `);
         await queryRunner.query(`
             ALTER TABLE "whitelist_company" DROP CONSTRAINT "FK_5fa98054ac379a7f5212dd73c0b"
@@ -554,6 +556,12 @@ export class Migrations1757625611827 implements MigrationInterface {
             DROP TYPE "public"."admin_status_enum"
         `);
         await queryRunner.query(`
+            DROP TABLE "disputes"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."disputes_status_enum"
+        `);
+        await queryRunner.query(`
             DROP TABLE "infringements"
         `);
         await queryRunner.query(`
@@ -561,12 +569,6 @@ export class Migrations1757625611827 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "car_make"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "disputes"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."disputes_status_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "infringement_penalty"
@@ -591,9 +593,6 @@ export class Migrations1757625611827 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TYPE "public"."carpark_manager_status_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."carpark_manager_managerlevel_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "patrol_officer"
