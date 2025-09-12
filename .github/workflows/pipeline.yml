@@ -37,7 +37,7 @@ jobs:
             npm run typeorm:run-migrations
 
             echo "Running seeders..."
-            npm run seed:run
+            # npm run seed:run
 
             echo "Restarting app with PM2..."
             pm2 restart onlypark-api
