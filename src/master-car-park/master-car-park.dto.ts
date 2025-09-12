@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsIn } from 'class-validator';
 import { CarParkType, ParkingSpotStatus } from '../common/enums';
 import { ApiGetBaseRequest } from '../common/types';
@@ -14,8 +13,6 @@ export class CreateMasterCarParkRequest {
   carParkType: CarParkType;
 }
 
-export class UpdateMasterCarParkRequest extends PartialType(CreateMasterCarParkRequest) { }
-
 export class CreateMasterCarParkResponse {
   id: string;
   carParkName: string;
@@ -23,6 +20,22 @@ export class CreateMasterCarParkResponse {
   masterCarParkCode: string;
   status: ParkingSpotStatus;
 }
+
+export class UpdateMasterCarParkRequest extends CreateMasterCarParkRequest { }
+export class UpdateMasterCarParkStatusRequest {
+  @IsNotEmpty()
+  @IsEnum(ParkingSpotStatus)
+  status: ParkingSpotStatus;
+}
+
+export class UpdateMasterCarParkStatusResponse {
+  id: string;
+  status: ParkingSpotStatus;
+}
+
+
+export class UpdateMasterCarParkResponse extends CreateMasterCarParkResponse { }
+
 
 export class FindMasterCarParkRequest extends ApiGetBaseRequest {
   @IsOptional()
@@ -38,9 +51,12 @@ export class FindMasterCarParkRequest extends ApiGetBaseRequest {
 export class FindMasterCarParkResponse {
   id: string;
   carParkName: string;
-  masterCarParkCode: string;
+  carParkCode: string;
   carParkType: CarParkType;
   status: ParkingSpotStatus;
+}
+
+export class FindMasterCarParkByIdResponse extends FindMasterCarParkResponse {
   subCarParks?: SubCarParkResponse[];
 }
 

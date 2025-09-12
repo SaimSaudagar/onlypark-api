@@ -122,7 +122,7 @@ export class DisputeService {
         }
     }
 
-    async findOne(id: string): Promise<FindOneDisputeResponse> {
+    async findById(id: string): Promise<FindOneDisputeResponse> {
         const dispute = await this.disputeRepository.findOne({
             where: { id },
             relations: {

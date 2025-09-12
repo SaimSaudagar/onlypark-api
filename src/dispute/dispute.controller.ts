@@ -43,8 +43,8 @@ export class DisputeController {
     @Get(':id')
     @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
     @RequirePermissions(AdminPermission.DISPUTE_VIEW, CarparkManagerPermission.DISPUTE_VIEW, UserPermission.DISPUTE_VIEW, PatrolOfficerPermission.DISPUTE_VIEW)
-    findOne(@Param('id') id: string) {
-        return this.disputeService.findOne(id);
+    findById(@Param('id') id: string) {
+        return this.disputeService.findById(id);
     }
 
     @Post()

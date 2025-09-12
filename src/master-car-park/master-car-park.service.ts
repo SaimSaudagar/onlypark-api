@@ -8,6 +8,10 @@ import {
   CreateMasterCarParkResponse,
   FindMasterCarParkRequest,
   FindMasterCarParkResponse,
+  UpdateMasterCarParkStatusRequest,
+  UpdateMasterCarParkStatusResponse,
+  FindMasterCarParkByIdResponse,
+  UpdateMasterCarParkResponse,
 } from './master-car-park.dto';
 import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
@@ -117,7 +121,7 @@ export class MasterCarParkService extends BaseService {
       id: masterCarPark.id,
       carParkName: masterCarPark.carParkName,
       carParkType: masterCarPark.carParkType,
-      masterCarParkCode: masterCarPark.masterCarParkCode,
+      carParkCode: masterCarPark.masterCarParkCode,
       status: masterCarPark.status,
       subCarParks: masterCarPark.subCarParks?.map(subCarPark => ({
         id: subCarPark.id,
@@ -138,23 +142,8 @@ export class MasterCarParkService extends BaseService {
     }
   }
 
-  async findOne(options?: FindOneOptions<MasterCarPark>): Promise<MasterCarPark> {
-    const masterCarPark = await this.masterCarParkRepository.findOne({
-      ...options,
-      relations: {
-        subCarParks: true,
-      },
-    });
-    return masterCarPark;
-  }
-
-  async exists(id: string): Promise<MasterCarPark> {
-    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
-    return masterCarPark;
-  }
-
-  async update(id: string, updateMasterCarParkDto: UpdateMasterCarParkRequest) {
-    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
+  async findById(id: string): Promise<FindMasterCarParkByIdResponse> {
+    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id }, relations: { subCarParks: true } });
     if (!masterCarPark) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
@@ -162,14 +151,65 @@ export class MasterCarParkService extends BaseService {
       );
     }
 
-    Object.assign(masterCarPark, updateMasterCarParkDto);
-    return await this.masterCarParkRepository.create(masterCarPark);
+    return {
+      id: masterCarPark.id,
+      carParkName: masterCarPark.carParkName,
+      carParkCode: masterCarPark.masterCarParkCode,
+      carParkType: masterCarPark.carParkType,
+      status: masterCarPark.status,
+      subCarParks: masterCarPark.subCarParks?.map(subCarPark => ({
+        id: subCarPark.id,
+        carParkName: subCarPark.carParkName,
+        carSpace: subCarPark.carSpace,
+        status: subCarPark.status,
+      })),
+    };
+  }
+
+  async exists(id: string): Promise<boolean> {
+    const masterCarPark = await this.masterCarParkRepository.exists({ where: { id } });
+
+    return masterCarPark;
+  }
+
+  async update(id: string, request: UpdateMasterCarParkRequest): Promise<UpdateMasterCarParkResponse> {
+    const { carParkName, carParkType } = request;
+    const masterCarParkExists = await this.masterCarParkRepository.exists({ where: { id } });
+    if (!masterCarParkExists) {
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const masterCarParkNameInDb = await this.masterCarParkRepository.exists({ where: { carParkName } });
+    if (masterCarParkNameInDb) {
+      throw new CustomException(
+        ErrorCode.MASTER_CAR_PARK_NAME_ALREADY_EXISTS.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id } });
+    masterCarPark.carParkName = carParkName;
+    masterCarPark.carParkType = carParkType;
+    await this.masterCarParkRepository.save(masterCarPark);
+
+    return {
+      id: masterCarPark.id,
+      carParkName: masterCarPark.carParkName,
+      carParkType: masterCarPark.carParkType,
+      masterCarParkCode: masterCarPark.masterCarParkCode,
+      status: masterCarPark.status,
+    };
   }
 
   async remove(id: string) {
     const masterCarPark = await this.masterCarParkRepository.findOne({
       where: { id },
-      relations: ['subCarParks']
+      relations: {
+        subCarParks: true,
+      }
     });
 
     if (!masterCarPark) {
@@ -187,38 +227,11 @@ export class MasterCarParkService extends BaseService {
     }
 
     await this.masterCarParkRepository.remove(masterCarPark);
-    return { message: 'Master car park deleted successfully' };
   }
 
-  async generateQrCode(id: string): Promise<string> {
-    try {
-      const masterCarPark = await this.findOne({ where: { id } });
-      if (!masterCarPark) {
-        throw new CustomException(
-          ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const qrData = {
-        masterCarParkId: masterCarPark.id,
-        masterCarParkCode: masterCarPark.masterCarParkCode,
-        carParkName: masterCarPark.carParkName,
-        type: 'master'
-      };
-
-      const qrCodeDataURL = await QRCode.toDataURL(JSON.stringify(qrData));
-      return qrCodeDataURL;
-    } catch (error) {
-      throw new CustomException(
-        ErrorCode.QR_CODE_GENERATION_FAILED.key,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
-  async getStatistics(id: string) {
-    const masterCarPark = await this.findOne({ where: { id } });
+  async updateStatus(id: string, request: UpdateMasterCarParkStatusRequest): Promise<UpdateMasterCarParkStatusResponse> {
+    const { status } = request;
+    const masterCarPark = await this.masterCarParkRepository.findOne({ where: { id }, relations: { subCarParks: true } });
     if (!masterCarPark) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
@@ -226,17 +239,37 @@ export class MasterCarParkService extends BaseService {
       );
     }
 
-    const totalSubCarParks = masterCarPark.subCarParks?.length || 0;
-    const totalSpaces = masterCarPark.subCarParks?.reduce((sum, sub) => sum + sub.carSpace, 0) || 0;
-    const activeSubCarParks = masterCarPark.subCarParks?.filter(sub => sub.status === 'Active').length || 0;
+    const queryRunner = this.datasource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return {
-      masterCarParkId: masterCarPark.id,
-      masterCarParkName: masterCarPark.carParkName,
-      totalSubCarParks,
-      totalSpaces,
-      activeSubCarParks,
-    };
+    try {
+      // Update master car park status
+      masterCarPark.status = status;
+      await queryRunner.manager.save(masterCarPark);
+
+      // Update all sub-car parks status
+      if (masterCarPark.subCarParks && masterCarPark.subCarParks.length > 0) {
+        await queryRunner.manager
+          .createQueryBuilder()
+          .update('sub_car_park')
+          .set({ status })
+          .where('masterCarParkId = :masterCarParkId', { masterCarParkId: id })
+          .execute();
+      }
+
+      await queryRunner.commitTransaction();
+
+      return {
+        id: masterCarPark.id,
+        status: masterCarPark.status,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async generateCarParkCode(): Promise<string> {
@@ -251,14 +284,6 @@ export class MasterCarParkService extends BaseService {
     }
 
     return `${prefix}${randomSuffix}`;
-  }
-
-  private generateSlug(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .trim();
   }
 
   private async getsubCarParks() {

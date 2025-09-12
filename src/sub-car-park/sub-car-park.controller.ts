@@ -44,51 +44,31 @@ export class SubCarParkController {
   }
 
   @Get('master/:masterCarParkId')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   findByMasterCarPark(@Param('masterCarParkId') masterCarParkId: string): Promise<FindSubCarParkResponse[]> {
     return this.subCarParkService.findByMasterCarPark(masterCarParkId);
   }
 
   @Get(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
   findOne(@Param('id') id: string): Promise<FindSubCarParkResponse> {
     return this.subCarParkService.findOne({ where: { id } });
   }
 
-  @Get(':id/qr-code')
-  @HttpCode(HttpStatus.OK)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  async getQrCode(@Param('id') id: string): Promise<QrCodeResponse> {
-    return await this.subCarParkService.generateQrCode(id);
-  }
-
-  @Get(':id/availability')
-  @HttpCode(HttpStatus.OK)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  async getAvailability(@Param('id') id: string): Promise<SubCarParkAvailabilityResponse> {
-    return await this.subCarParkService.getAvailability(id);
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createSubCarParkDto: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse> {
-    return this.subCarParkService.create(createSubCarParkDto);
-  }
-
-  @Patch(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_EDIT, CarparkManagerPermission.CAR_PARK_EDIT)
-  update(
-    @Body() request: UpdateSubCarParkRequest,
-  ): Promise<SubCarParkUpdateResponse> {
+  create(@Body() request: CreateSubCarParkRequest): Promise<SubCarParkCreateResponse> {
     return this.subCarParkService.create(request);
   }
 
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() request: UpdateSubCarParkRequest,
+  ): Promise<SubCarParkUpdateResponse> {
+    return this.subCarParkService.update(id, request);
+  }
+
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_DELETE, CarparkManagerPermission.CAR_PARK_DELETE)
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string): Promise<SubCarParkDeleteResponse> {
     return this.subCarParkService.remove(id);
   }

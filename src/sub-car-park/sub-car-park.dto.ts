@@ -4,10 +4,6 @@ import { ParkingSpotStatus } from '../common/enums';
 import { ApiGetBaseRequest } from '../common/types';
 
 export class CreateSubCarParkRequest {
-  @IsOptional()
-  @IsUUID()
-  id?: string;
-
   @IsNotEmpty()
   @IsUUID()
   masterCarParkId: string;

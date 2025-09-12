@@ -42,7 +42,7 @@ export class SubCarParkSeederService {
           continue;
         }
 
-        // Generate car park code and slug
+        // Generate car park code
         const subCarParkCode = this.generateCarParkCode();
 
         const subCarPark = this.subCarParkRepository.create({

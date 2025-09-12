@@ -20,6 +20,10 @@ import {
   CreateMasterCarParkResponse,
   UpdateMasterCarParkRequest,
   FindMasterCarParkRequest,
+  UpdateMasterCarParkStatusRequest,
+  UpdateMasterCarParkResponse,
+  FindMasterCarParkByIdResponse,
+  UpdateMasterCarParkStatusResponse,
 } from './master-car-park.dto';
 
 @ApiTags('MasterCarPark')
@@ -33,47 +37,32 @@ export class MasterCarParkController {
   }
 
   @Get(':id')
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  findOne(@Param('id') id: string) {
-    return this.masterCarParkService.findOne({ where: { id } });
-  }
-
-  @Get(':id/qr-code')
-  @HttpCode(HttpStatus.OK)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  async getQrCode(@Param('id') id: string) {
-    const qrCode = await this.masterCarParkService.generateQrCode(id);
-    return { qrCode };
-  }
-
-  @Get(':id/statistics')
-  @HttpCode(HttpStatus.OK)
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_VIEW, CarparkManagerPermission.CAR_PARK_VIEW)
-  async getStatistics(@Param('id') id: string) {
-    return await this.masterCarParkService.getStatistics(id);
+  findById(@Param('id') id: string): Promise<FindMasterCarParkByIdResponse> {
+    return this.masterCarParkService.findById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createMasterCarParkDto: CreateMasterCarParkRequest): Promise<CreateMasterCarParkResponse> {
-    return this.masterCarParkService.create(createMasterCarParkDto);
+  create(@Body() request: CreateMasterCarParkRequest): Promise<CreateMasterCarParkResponse> {
+    return this.masterCarParkService.create(request);
   }
 
   @Patch(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-  @RequirePermissions(AdminPermission.CAR_PARK_EDIT, CarparkManagerPermission.CAR_PARK_EDIT)
   update(
     @Param('id') id: string,
-    @Body() updateMasterCarParkDto: UpdateMasterCarParkRequest,
-  ) {
-    return this.masterCarParkService.update(id, updateMasterCarParkDto);
+    @Body() request: UpdateMasterCarParkRequest,
+  ): Promise<UpdateMasterCarParkResponse> {
+    return this.masterCarParkService.update(id, request);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.masterCarParkService.remove(id);
+  }
+
+  @Patch('update-status/:id')
+  updateStatus(@Param('id') id: string, @Query() request: UpdateMasterCarParkStatusRequest): Promise<UpdateMasterCarParkStatusResponse> {
+    return this.masterCarParkService.updateStatus(id, request);
   }
 }

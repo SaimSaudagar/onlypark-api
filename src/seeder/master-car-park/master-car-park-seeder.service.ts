@@ -29,9 +29,8 @@ export class MasterCarParkSeederService {
       });
 
       if (!existingMasterCarPark) {
-        // Generate car park code and slug
+        // Generate car park code
         const masterCarParkCode = this.generateCarParkCode();
-        // const slug = this.generateSlug(masterCarParkData.carParkName);
 
         const masterCarPark = this.masterCarParkRepository.create({
           carParkName: masterCarParkData.carParkName,
