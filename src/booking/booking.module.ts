@@ -4,11 +4,11 @@ import { BookingController } from './booking.controller';
 import { BookingService } from './booking.service';
 import { Booking } from './entities/booking.entity';
 import { VehicleRegChangeOtp } from './entities/vehicle-reg-change-otp.entity';
-import { SubCarPark } from '../sub-car-park/entities/sub-car-park.entity';
-import { Tenancy } from '../tenancy/entities/tenancy.entity';
+import { TenancyModule } from '../tenancy/tenancy.module';
+import { SubCarParkModule } from '../sub-car-park/sub-car-park.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Booking, VehicleRegChangeOtp, SubCarPark, Tenancy])],
+  imports: [TypeOrmModule.forFeature([Booking, VehicleRegChangeOtp]), TenancyModule, SubCarParkModule],
   controllers: [BookingController],
   providers: [BookingService],
   exports: [BookingService],

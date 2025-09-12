@@ -16,7 +16,7 @@ import { RoleGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
-import { UserType, AdminPermission, UserPermission, CarparkManagerPermission, PatrolOfficerPermission } from '../common/enums';
+import { UserType, AdminPermission, CarparkManagerPermission } from '../common/enums';
 import { BookingService } from './booking.service';
 import {
   CreateBookingRequest,
@@ -57,8 +57,10 @@ export class BookingController {
 
   @Patch(':id')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-  update(@Param('id') id: string, @Body() updateDto: UpdateBookingRequest): Promise<BookingUpdateResponse> {
-    return this.bookingService.update(id, updateDto);
+  update(@Param('id') id: string, @Body() updateDto: UpdateBookingRequest)
+  // :Promise<BookingUpdateResponse> 
+  {
+    // return this.bookingService.update(id, updateDto);
   }
 
   @Delete(':id')

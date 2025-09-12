@@ -5,9 +5,9 @@ import { WhitelistService } from './whitelist.service';
 import { Whitelist } from './entities/whitelist.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Whitelist])],
-  controllers: [WhitelistController],
-  providers: [WhitelistService],
-  exports: [WhitelistService],
+    imports: [TypeOrmModule.forFeature([Whitelist])],
+    controllers: [WhitelistController],
+    providers: [WhitelistService],
+    exports: [WhitelistService],
 })
-export class WhitelistModule {}
+export class WhitelistModule { }

@@ -4,7 +4,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { AdminAccessLevel, AdminStatus } from '../../common/enums';
+import { AdminStatus } from '../../common/enums';
 import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';

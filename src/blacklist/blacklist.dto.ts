@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate } from 'class-validator';
-import { ApiGetBaseRequest } from 'src/common';
+import { ApiGetBaseRequest } from '../common';
 
 export class CreateBlacklistRequest {
   @IsUUID()

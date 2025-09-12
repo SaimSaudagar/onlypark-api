@@ -4,11 +4,17 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Infringement } from './entities/infringement.entity';
 import {
   CreateInfringementRequest,
+  CreateInfringementResponse,
+  GetTicketNumberRequest,
+  MarkAsWaivedResponse,
+  ScanInfringementRequest,
+  ScanInfringementResponse,
   UpdateInfringementRequest,
 } from './infringement.dto';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
+import { InfringementStatus } from 'src/common/enums';
 
 @Injectable()
 export class InfringementService {
@@ -17,13 +23,68 @@ export class InfringementService {
     private infringementRepository: Repository<Infringement>,
   ) { }
 
-  async create(infringementDto: CreateInfringementRequest): Promise<Infringement> {
-    const infringement = this.infringementRepository.create({
-      ...infringementDto,
-      ticketDate: new Date(infringementDto.ticketDate),
-      dueDate: infringementDto.dueDate ? new Date(infringementDto.dueDate) : undefined,
+  async scan(request: ScanInfringementRequest): Promise<ScanInfringementResponse> {
+    const { registrationNo } = request;
+
+    const infringement = await this.infringementRepository.save({
+      registrationNo,
     });
-    return await this.infringementRepository.create(infringement);
+
+    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo };
+  }
+
+  async create(request: CreateInfringementRequest | UpdateInfringementRequest): Promise<CreateInfringementResponse> {
+    const { id, carParkName, carMakeId, reasonId, penaltyId, photos, comments } = request;
+    // Calculate due date as 14 days from now at end of day
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14);
+    dueDate.setHours(23, 59, 59, 999); // Set to end of day
+
+    if (id) {
+      const existingInfringement = await this.infringementRepository.findOne({
+        where: { id }
+      });
+
+      if (!existingInfringement) {
+        throw new CustomException(
+          ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      Object.assign(existingInfringement, {
+        carParkName,
+        carMakeId,
+        reasonId,
+        penaltyId,
+        photos,
+        status: InfringementStatus.PENDING,
+        dueDate,
+        comments,
+      });
+
+      const updatedInfringement = await this.infringementRepository.save(existingInfringement);
+      return {
+        id: updatedInfringement.id,
+        ticketNumber: updatedInfringement.ticketNumber,
+        registrationNo: updatedInfringement.registrationNo,
+      };
+    }
+
+
+
+    const infringement = await this.infringementRepository.save({
+      carParkName,
+      carMakeId,
+      reasonId,
+      penaltyId,
+      photos,
+      status: InfringementStatus.PENDING,
+      dueDate,
+      comments,
+    });
+
+    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo: infringement.registrationNo };
   }
 
   async findAll(options?: FindManyOptions<Infringement>): Promise<Infringement[]> {
@@ -45,20 +106,7 @@ export class InfringementService {
     return infringement;
   }
 
-  async update(ticketNumber: string, updateInfringementDto: UpdateInfringementRequest) {
-    const infringement = await this.infringementRepository.findOne({ where: { ticketNumber: Number(ticketNumber) } });
-    if (!infringement) {
-      throw new CustomException(
-        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    Object.assign(infringement, updateInfringementDto);
-    return await this.infringementRepository.create(infringement);
-  }
-
-  remove(id: string) {
+  async remove(id: string) {
     const infringement = this.infringementRepository.findOne({ where: { ticketNumber: Number(id) } });
     if (!infringement) {
       throw new CustomException(
@@ -67,6 +115,36 @@ export class InfringementService {
       );
     }
 
-    return this.infringementRepository.delete(id);
+    return await this.infringementRepository.delete(id);
+  }
+
+  async markAsWaived(id: string): Promise<MarkAsWaivedResponse> {
+    const infringement = await this.infringementRepository.exists({ where: { id } });
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.infringementRepository.update(id, { status: InfringementStatus.WAIVED });
+
+    return {
+      id,
+      status: InfringementStatus.WAIVED,
+    };
+  }
+
+  async getInfringementId(request: GetTicketNumberRequest): Promise<string> {
+    const infringement = await this.infringementRepository.findOne({ where: { ticketNumber: request.ticketNumber, registrationNo: request.registrationNo } });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return infringement.id;
   }
 }

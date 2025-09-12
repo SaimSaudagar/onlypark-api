@@ -11,12 +11,6 @@ export enum UserStatus {
   SUSPENDED = 'Suspended',
 }
 
-export enum AdminAccessLevel {
-  FULL = 'full',
-  LIMITED = 'limited',
-  READ_ONLY = 'read_only',
-}
-
 export enum AdminStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
@@ -37,11 +31,11 @@ export enum PatrolOfficerStatus {
 
 // Booking System Enums
 export enum BookingType {
-  USER = 'User',
-  WHITELIST = 'Whitelist',
-  SCHEDULE = 'Schedule',
-  VISITOR = 'Visitor',
-  WHITELABELED = 'Whitelabeled',
+  SCAN_AND_STAY = 'Scan and Stay',
+  SELF_SERVE_PERMIT = 'Self Serve Permit',
+  SCHEDULED_PERMIT = 'Scheduled Permit',
+  SHORT_STAY_PERMIT = 'Short Stay Permit',
+  PERMANENT_PERMIT = 'Permanent Permit',
 }
 
 export enum BookingStatus {
@@ -84,7 +78,7 @@ export enum InfringementStatus {
   PENDING = 'Pending',
   PAID = 'Paid',
   DISPUTED = 'Disputed',
-  CANCELLED = 'Cancelled',
+  WAIVED = 'Waived',
 }
 
 export enum DisputeStatus {
@@ -184,11 +178,6 @@ export enum TemplateType {
   SMS = 'SMS',
 }
 
-export enum TemplateLanguage {
-  EN = 'EN',
-  AR = 'AR',
-}
-
 // Address Types
 export enum AddressType {
   PERMANENT = 'Permanent',
@@ -213,7 +202,7 @@ export enum StorageType {
 // Queue Job Types
 export enum QueueJobType {
   EMAIL_NOTIFICATION = 'EMAIL_NOTIFICATION',
-  SMS_NOTIFICATION = 'SMS_NOTIFICATION', 
+  SMS_NOTIFICATION = 'SMS_NOTIFICATION',
   PUSH_NOTIFICATION = 'PUSH_NOTIFICATION',
   BOOKING_EXPIRY_CHECK = 'BOOKING_EXPIRY_CHECK',
   INFRINGEMENT_REMINDER = 'INFRINGEMENT_REMINDER',

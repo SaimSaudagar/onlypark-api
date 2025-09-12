@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsOptional, IsEnum, IsBoolean, IsUUID, IsEmail, MinLength, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AdminAccessLevel, AdminStatus, UserType } from '../common/enums';
+import { AdminStatus, UserType } from '../common/enums';
 import { Type } from 'class-transformer';
 
 export class CreateAdminDto {
@@ -58,15 +58,6 @@ export class CreateAdminWithUserDto {
     @IsOptional()
     @IsString()
     department?: string;
-
-    @ApiPropertyOptional({
-        description: 'Access level for the admin',
-        enum: AdminAccessLevel,
-        default: AdminAccessLevel.FULL
-    })
-    @IsOptional()
-    @IsEnum(AdminAccessLevel)
-    accessLevel?: AdminAccessLevel = AdminAccessLevel.FULL;
 
     @ApiPropertyOptional({
         description: 'Whether admin can manage users',
@@ -126,13 +117,9 @@ export class QueryAdminDto {
     department?: string;
 
     @ApiPropertyOptional({
-        description: 'Filter by access level',
-        enum: AdminAccessLevel
+        description: 'Filter by user management permission'
     })
     @IsOptional()
-    @IsEnum(AdminAccessLevel)
-    accessLevel?: AdminAccessLevel;
-
     @ApiPropertyOptional({ description: 'Filter by user management permission' })
     @IsOptional()
     @IsBoolean()
@@ -177,12 +164,6 @@ export class AdminResponseDto {
 
     @ApiPropertyOptional({ description: 'Department the admin belongs to' })
     department?: string;
-
-    @ApiProperty({
-        description: 'Access level for the admin',
-        enum: AdminAccessLevel
-    })
-    accessLevel: AdminAccessLevel;
 
     @ApiProperty({ description: 'Whether admin can manage users' })
     canManageUsers: boolean;

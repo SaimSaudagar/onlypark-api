@@ -21,6 +21,7 @@ import { InfringementService } from './infringement.service';
 import {
   CreateInfringementRequest,
   UpdateInfringementRequest,
+  ScanInfringementRequest,
 } from './infringement.dto';
 
 @ApiTags('Infringement')
@@ -44,19 +45,34 @@ export class InfringementController {
     return this.infringementService.findOne(id);
   }
 
-  @Post()
+  @Post('scan')
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_CREATE, CarparkManagerPermission.INFRINGEMENT_CREATE, PatrolOfficerPermission.INFRINGEMENT_CREATE)
-  create(@Body() createInfringementDto: CreateInfringementRequest) {
-    return this.infringementService.create(createInfringementDto);
+  scan(@Body() request: ScanInfringementRequest) {
+    return this.infringementService.scan(request);
   }
 
-  @Patch(':id')
+  @Post('create')
+  @HttpCode(HttpStatus.CREATED)
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  @RequirePermissions(AdminPermission.INFRINGEMENT_CREATE, CarparkManagerPermission.INFRINGEMENT_CREATE, PatrolOfficerPermission.INFRINGEMENT_CREATE)
+  create(@Body() request: CreateInfringementRequest) {
+    return this.infringementService.create(request);
+  }
+
+  @Patch('update')
   @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
   @RequirePermissions(AdminPermission.INFRINGEMENT_EDIT, CarparkManagerPermission.INFRINGEMENT_EDIT, PatrolOfficerPermission.INFRINGEMENT_EDIT)
-  update(@Param('id') id: string, @Body() updateInfringementDto: UpdateInfringementRequest) {
-    return this.infringementService.update(id, updateInfringementDto);
+  update(@Body() request: UpdateInfringementRequest) {
+    return this.infringementService.create(request);
+  }
+
+  @Patch('mark-as-waived/:id')
+  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+  @RequirePermissions(AdminPermission.INFRINGEMENT_EDIT, CarparkManagerPermission.INFRINGEMENT_EDIT, PatrolOfficerPermission.INFRINGEMENT_EDIT)
+  markAsWaived(@Param('id') id: string) {
+    return this.infringementService.markAsWaived(id);
   }
 
   @Delete(':id')

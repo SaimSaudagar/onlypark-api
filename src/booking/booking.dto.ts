@@ -1,69 +1,44 @@
 import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional, IsDateString, IsEnum } from "class-validator";
-import { BookingStatus } from "../common/enums";
 
 export class CreateBookingRequest {
+    @IsOptional()
+    @IsUUID()
+    id?: string;
+
+    @IsOptional()
+    @IsString()
+    referenceNumber?: string;
+
+    @IsNotEmpty()
+    @IsUUID()
+    subCarParkId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    registrationNo: string;
+
     @IsNotEmpty()
     @IsEmail()
     email: string;
 
     @IsNotEmpty()
-    @IsString()
-    vehicleReg: string;
-
-    @IsNotEmpty()
     @IsUUID()
     tenancyId: string;
 
-    @IsNotEmpty()
-    @IsString()
-    subCarParkCode: string;
-
-    @IsNotEmpty()
-    @IsString()
-    property: string;
-
-    @IsNotEmpty()
+    @IsOptional()
     @IsDateString()
-    startTime: string;
+    timeTo?: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDateString()
-    endTime: string;
+    timeFrom?: string;
+
+    @IsOptional()
+    @IsString()
+    comments?: string;
 }
 
-export class UpdateBookingRequest {
-    @IsOptional()
-    @IsEmail()
-    email?: string;
-
-    @IsOptional()
-    @IsString()
-    vehicleReg?: string;
-
-    @IsOptional()
-    @IsUUID()
-    tenancyId?: string;
-
-    @IsOptional()
-    @IsString()
-    subCarParkCode?: string;
-
-    @IsOptional()
-    @IsString()
-    property?: string;
-
-    @IsOptional()
-    @IsDateString()
-    startTime?: string;
-
-    @IsOptional()
-    @IsDateString()
-    endTime?: string;
-
-    @IsOptional()
-    @IsEnum(BookingStatus)
-    status?: BookingStatus;
-}
+export class UpdateBookingRequest extends CreateBookingRequest { }
 
 export class BookingResponse {
     id: string;

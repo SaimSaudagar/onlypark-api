@@ -1,58 +1,56 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, IsArray, isNotEmpty } from 'class-validator';
 import { InfringementStatus } from '../common/enums';
 
-export class CreateInfringementRequest {
+export class ScanInfringementRequest {
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
+  registrationNo: string;
+}
+
+export class ScanInfringementResponse {
+  id: string;
   ticketNumber: number;
+  registrationNo: string;
+}
+
+export class CreateInfringementRequest {
+  @IsOptional()
+  @IsString()
+  id?: string;
 
   @IsNotEmpty()
   @IsString()
-  ticketDate: string;
+  carParkName: string;
+
+  @IsOptional()
+  @IsString()
+  carMakeId?: string;
 
   @IsNotEmpty()
   @IsString()
-  ticketTime: string;
+  reasonId: string;
 
   @IsNotEmpty()
   @IsString()
-  carPark: string;
-
-  @IsNotEmpty()
-  @IsString()
-  regNo: string;
-
-  @IsOptional()
-  @IsString()
-  carMakeID?: string;
-
-  @IsOptional()
-  @IsEnum(InfringementStatus)
-  status?: InfringementStatus;
-
-  @IsOptional()
-  @IsString()
-  reasonId?: string;
-
-  @IsOptional()
-  @IsString()
-  penaltyId?: string;
+  penaltyId: string;
 
   @IsOptional()
   @IsArray()
   photos?: string[];
 
   @IsOptional()
-  @IsNumber()
-  amount?: number;
-
-  @IsOptional()
   @IsString()
-  dueDate?: string;
+  comments?: string;
 }
 
-export class UpdateInfringementRequest extends PartialType(CreateInfringementRequest) {}
+export class CreateInfringementResponse {
+  id: string;
+  ticketNumber: number;
+  registrationNo: string;
+}
+
+export class UpdateInfringementRequest extends PartialType(CreateInfringementRequest) { }
 
 export interface GetInfringementResponse {
   ticketNumber: string;
@@ -69,4 +67,19 @@ export interface GetInfringementResponse {
   dueDate?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export class MarkAsWaivedResponse {
+  id: string;
+  status: InfringementStatus;
+}
+
+export class GetTicketNumberRequest {
+  @IsNotEmpty()
+  @IsNumber()
+  ticketNumber: number;
+
+  @IsNotEmpty()
+  @IsString()
+  registrationNo: string;
 }
