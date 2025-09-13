@@ -31,6 +31,7 @@ import { WhitelistModule } from './whitelist/whitelist.module';
 import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
+import { DisputeModule } from './dispute/dispute.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
 import { BookingModule } from './booking/booking.module';
 import { OutstandingRegistrationModule } from './outstanding-registration/outstanding-registration.module';
@@ -70,7 +71,9 @@ import { TemplateEngineModule } from './common/services/template-engine/template
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
         logging: process.env.NODE_ENV === 'development',
-        ssl: { rejectUnauthorized: false },
+        ...(process.env.NODE_ENV === 'production' && {
+          ssl: { rejectUnauthorized: false },
+        }),
         timezone: 'Z',
       }),
       inject: [ConfigService],
@@ -107,6 +110,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     WhitelistCompanyModule,
     BlacklistModule,
     InfringementModule,
+    DisputeModule,
     PatrolOfficerModule,
     BookingModule,
     OutstandingRegistrationModule,
