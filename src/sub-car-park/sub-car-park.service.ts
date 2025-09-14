@@ -10,6 +10,7 @@ import {
   SubCarParkDeleteResponse,
   FindSubCarParkResponse,
   FindSubCarParkRequest,
+  FindAllSubCarParkResponse,
 } from './sub-car-park.dto';
 import * as crypto from 'crypto';
 import { CustomException } from '../common/exceptions/custom.exception';
@@ -251,16 +252,16 @@ export class SubCarParkService {
     }
   }
 
-  async findAll(request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
-    const { pageNo, pageSize, sortField, sortOrder, name, status } = request;
+  async findAll(request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindAllSubCarParkResponse>> {
+    const { pageNo, pageSize, sortField, sortOrder, search, status } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
     const whereOptions: FindOptionsWhere<SubCarPark> = {};
     const orderOptions: FindOptionsOrder<SubCarPark> = {};
 
-    if (name) {
-      whereOptions.carParkName = Like(`%${name}%`);
+    if (search) {
+      whereOptions.carParkName = Like(`%${search}%`);
     }
 
     if (status) {
@@ -283,38 +284,19 @@ export class SubCarParkService {
       order: orderOptions,
     });
 
+
+    let response: FindAllSubCarParkResponse[] = subCarParks.map(subCarPark => ({
+      id: subCarPark.id,
+      carParkName: subCarPark.carParkName,
+      carSpace: subCarPark.carSpace,
+      location: subCarPark.location,
+      lat: subCarPark.lat,
+      lang: subCarPark.lang,
+      status: subCarPark.status,
+    }));
+
     return {
-      rows: subCarParks.map(subCarPark => ({
-        id: subCarPark.id,
-        carParkName: subCarPark.carParkName,
-        carSpace: subCarPark.carSpace,
-        location: subCarPark.location,
-        lat: subCarPark.lat,
-        lang: subCarPark.lang,
-        tenantEmailCheck: subCarPark.tenantEmailCheck,
-        geolocation: subCarPark.geolocation,
-        event: subCarPark.event,
-        subCarParkCode: subCarPark.subCarParkCode,
-        status: subCarPark.status,
-        masterCarParkId: subCarPark.masterCarParkId,
-        masterCarPark: subCarPark.masterCarPark ? {
-          id: subCarPark.masterCarPark.id,
-          carParkName: subCarPark.masterCarPark.carParkName,
-          masterCarParkCode: subCarPark.masterCarPark.masterCarParkCode,
-          carParkType: subCarPark.masterCarPark.carParkType,
-          status: subCarPark.masterCarPark.status,
-        } : undefined,
-        tenancies: subCarPark.tenancies?.map(tenancy => ({
-          id: tenancy.id,
-          tenantName: tenancy.tenantName,
-          tenantEmail: tenancy.tenantEmail,
-        })) || [],
-        whitelistCompanies: subCarPark.whitelistCompanies?.map(company => ({
-          id: company.id,
-          companyName: company.companyName,
-          domainName: company.domainName,
-        })) || [],
-      })),
+      rows: response,
       pagination: {
         size: pageSize,
         page: pageNo,

@@ -100,7 +100,7 @@ export class UpdateSubCarParkRequest extends CreateSubCarParkRequest { }
 export class FindSubCarParkRequest extends ApiGetBaseRequest {
   @IsString()
   @IsOptional()
-  name?: string;
+  search?: string;
 
   @IsOptional()
   @IsEnum(ParkingSpotStatus)
@@ -126,6 +126,17 @@ export class FindSubCarParkResponse {
   tenancies?: TenancyResponse[];
   whitelistCompanies?: WhitelistCompanyResponse[];
 }
+
+export class FindAllSubCarParkResponse {
+  id: string;
+  carParkName: string;
+  carSpace: number;
+  status: ParkingSpotStatus;
+  location: string;
+  lat: number;
+  lang: number;
+}
+
 
 export class MasterCarPark {
   id: string;

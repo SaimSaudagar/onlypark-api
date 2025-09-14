@@ -21,6 +21,7 @@ import {
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
   FindSubCarParkRequest,
+  FindAllSubCarParkResponse,
 } from './sub-car-park.dto';
 
 @ApiTags('SubCarPark')
@@ -29,7 +30,7 @@ export class SubCarParkController {
   constructor(private readonly subCarParkService: SubCarParkService) { }
 
   @Get()
-  findAll(@Query() request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+  findAll(@Query() request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindAllSubCarParkResponse>> {
     return this.subCarParkService.findAll(request);
   }
 
