@@ -55,10 +55,10 @@ export class ErrorCode {
   };
 
 
-  public static readonly COMPANY_NAME_AND_EMAIL_REQUIRED = {
-    key: 'COMPANY_NAME_AND_EMAIL_REQUIRED',
-    code: 'COMPANY_NAME_AND_EMAIL_REQUIRED',
-    message: 'Company name and email are required',
+  public static readonly COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED = {
+    key: 'COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED',
+    code: 'COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED',
+    message: 'Company name and domain name are required',
   };
 
   public static readonly INVALID_TENANCY_DATA = {
@@ -263,10 +263,10 @@ export class ErrorCode {
     message: 'Whitelist company not found',
   };
 
-  public static readonly WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS = {
-    key: 'WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS',
-    code: 'WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS',
-    message: 'Company with this email already exists in this car park',
+  public static readonly WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS = {
+    key: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
+    code: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
+    message: 'Company with this domain name already exists in this car park',
   };
 
   public static readonly TOKEN_REQUIRED = {

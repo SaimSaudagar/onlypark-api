@@ -15,12 +15,12 @@ export class WhitelistCompanyService {
     async create(createDto: CreateWhitelistCompanyDto): Promise<WhitelistCompany> {
         try {
             const existingCompany = await this.whitelistCompanyRepository.findOne({
-                where: { email: createDto.email, subCarParkId: createDto.subCarParkId }
+                where: { domainName: createDto.domainName, subCarParkId: createDto.subCarParkId }
             });
 
             if (existingCompany) {
                 throw new CustomException(
-                    ErrorCode.WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS.key,
+                    ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
                     HttpStatus.BAD_REQUEST,
                 );
             }
@@ -40,7 +40,7 @@ export class WhitelistCompanyService {
     }
 
     async findAll(request: FindWhitelistCompanyRequest): Promise<ApiGetBaseResponse<FindWhitelistCompanyResponse>> {
-        const { companyName, email, pageNo, pageSize, sortField, sortOrder, search } = request;
+        const { companyName, domainName, pageNo, pageSize, sortField, sortOrder, search } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
@@ -53,14 +53,14 @@ export class WhitelistCompanyService {
             whereOptions.push({ companyName: ILike(`%${companyName}%`) });
         }
 
-        if (email) {
-            whereOptions.push({ email: ILike(`%${email}%`) });
+        if (domainName) {
+            whereOptions.push({ domainName: ILike(`%${domainName}%`) });
         }
 
         if (search) {
             whereOptions = [
                 { companyName: ILike(`%${search}%`) },
-                { email: ILike(`%${search}%`) }
+                { domainName: ILike(`%${search}%`) }
             ];
         }
 
@@ -81,7 +81,7 @@ export class WhitelistCompanyService {
         const response = whitelistCompanies.map(whitelistCompany => ({
             id: whitelistCompany.id,
             companyName: whitelistCompany.companyName,
-            email: whitelistCompany.email,
+            domainName: whitelistCompany.domainName,
             subCarParkId: whitelistCompany.subCarParkId,
         }));
 
@@ -139,17 +139,17 @@ export class WhitelistCompanyService {
             }
 
             // Check if email is being updated and if it already exists
-            if (updateDto.email && updateDto.email !== entity.email) {
+            if (updateDto.domainName && updateDto.domainName !== entity.domainName) {
                 const existingCompany = await this.whitelistCompanyRepository.findOne({
                     where: {
-                        email: updateDto.email,
+                        domainName: updateDto.domainName,
                         subCarParkId: updateDto.subCarParkId || entity.subCarParkId
                     }
                 });
 
                 if (existingCompany && existingCompany.id !== id) {
                     throw new CustomException(
-                        ErrorCode.WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS.key,
+                        ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
                         HttpStatus.BAD_REQUEST,
                     );
                 }
@@ -233,10 +233,10 @@ export class WhitelistCompanyService {
         }
     }
 
-    async checkEmailExists(email: string, subCarParkId: string): Promise<boolean> {
+    async checkDomainNameExists(domainName: string, subCarParkId: string): Promise<boolean> {
         const existingCompany = await this.whitelistCompanyRepository.findOne({
             where: {
-                email: email,
+                domainName: domainName,
                 subCarParkId: subCarParkId
             }
         });
@@ -248,11 +248,11 @@ export class WhitelistCompanyService {
         const createdWhitelistCompanies: CreateWhitelistCompanyResponse[] = [];
 
         for (const company of request) {
-            const emailExists = await this.checkEmailExists(company.email, company.subCarParkId);
+            const emailExists = await this.checkDomainNameExists(company.domainName, company.subCarParkId);
 
             if (emailExists) {
                 throw new CustomException(
-                    ErrorCode.WHITELIST_COMPANY_EMAIL_ALREADY_EXISTS.key,
+                    ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
                     HttpStatus.BAD_REQUEST,
                 );
             }
@@ -264,7 +264,7 @@ export class WhitelistCompanyService {
                 .into(WhitelistCompany)
                 .values({
                     companyName: company.companyName,
-                    email: company.email,
+                    domainName: company.domainName,
                     subCarParkId: company.subCarParkId,
                 })
                 .returning('*')
@@ -277,7 +277,7 @@ export class WhitelistCompanyService {
         return createdWhitelistCompanies.map(company => ({
             id: company.id,
             companyName: company.companyName,
-            email: company.email,
+            domainName: company.domainName,
             subCarParkId: company.subCarParkId,
         }));
     }

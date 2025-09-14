@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, IsOptional } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiGetBaseRequest } from '../common/types';
 
@@ -8,8 +8,8 @@ export class CreateWhitelistCompanyDto {
     companyName: string;
 
     @IsNotEmpty()
-    @IsEmail()
-    email: string;
+    @IsString()
+    domainName: string;
 
     @IsNotEmpty()
     @IsUUID()
@@ -19,7 +19,7 @@ export class CreateWhitelistCompanyDto {
 export class CreateWhitelistCompanyResponse {
     id: string;
     companyName: string;
-    email: string;
+    domainName: string;
     subCarParkId: string;
 }
 
@@ -31,8 +31,8 @@ export class FindWhitelistCompanyRequest extends ApiGetBaseRequest {
     companyName?: string;
 
     @IsOptional()
-    @IsEmail()
-    email?: string;
+    @IsString()
+    domainName?: string;
 
     @IsOptional()
     @IsString()
@@ -42,6 +42,6 @@ export class FindWhitelistCompanyRequest extends ApiGetBaseRequest {
 export class FindWhitelistCompanyResponse {
     id: string;
     companyName: string;
-    email: string;
+    domainName: string;
     subCarParkId: string;
 }

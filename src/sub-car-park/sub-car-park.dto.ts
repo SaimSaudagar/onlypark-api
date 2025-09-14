@@ -68,6 +68,10 @@ export class CreateSubCarParkRequest {
 }
 
 export class TenancyRequest {
+  @IsOptional()
+  @IsUUID()
+  id?: string;
+
   @IsNotEmpty()
   @IsString()
   tenantName: string;
@@ -78,13 +82,17 @@ export class TenancyRequest {
 }
 
 export class WhitelistCompanyRequest {
+  @IsOptional()
+  @IsUUID()
+  id?: string;
+
   @IsNotEmpty()
   @IsString()
   companyName: string;
 
   @IsNotEmpty()
-  @IsEmail()
-  email: string;
+  @IsString()
+  domainName: string;
 }
 
 export class UpdateSubCarParkRequest extends CreateSubCarParkRequest { }
@@ -167,7 +175,7 @@ export class SubCarParkCreateResponse {
 export class WhitelistCompanyResponse {
   id: string;
   companyName: string;
-  email: string;
+  domainName: string;
 }
 
 export class SubCarParkUpdateResponse {

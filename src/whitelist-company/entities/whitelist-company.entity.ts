@@ -16,7 +16,7 @@ export class WhitelistCompany extends BaseEntity {
     companyName: string;
 
     @Column({ type: 'varchar', nullable: false })
-    email: string;
+    domainName: string;
 
     @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.whitelistCompanies)
     @JoinColumn({ name: 'subCarParkId' })
