@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1757721219318 implements MigrationInterface {
-    name = 'Migrations1757721219318'
+export class Migrations1757813891634 implements MigrationInterface {
+    name = 'Migrations1757813891634'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -12,14 +12,13 @@ export class Migrations1757721219318 implements MigrationInterface {
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "regNo" character varying NOT NULL,
                 "email" character varying NOT NULL,
-                "status" character varying NOT NULL DEFAULT 'active',
                 "comments" character varying,
                 "masterCarParkId" uuid NOT NULL,
                 CONSTRAINT "PK_a2b2ead5e27ec105ee5f06e8313" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."master_car_park_carparktype_enum" AS ENUM('Retail', 'Residential')
+            CREATE TYPE "public"."master_car_park_carparktype_enum" AS ENUM('Commercial', 'Residential')
         `);
         await queryRunner.query(`
             CREATE TYPE "public"."master_car_park_status_enum" AS ENUM('Active', 'Disabled')
@@ -240,7 +239,7 @@ export class Migrations1757721219318 implements MigrationInterface {
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "companyName" character varying NOT NULL,
-                "email" character varying NOT NULL,
+                "domainName" character varying NOT NULL,
                 "subCarParkId" uuid NOT NULL,
                 CONSTRAINT "PK_0a7068f50d6b2295d8a0a2e918a" PRIMARY KEY ("id")
             )
