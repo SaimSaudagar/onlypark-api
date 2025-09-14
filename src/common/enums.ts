@@ -62,7 +62,7 @@ export enum BlacklistStatus {
 }
 
 export enum CarParkType {
-  RETAIL = 'Retail',
+  COMMERCIAL = 'Commercial',
   RESIDENTIAL = 'Residential',
 }
 
