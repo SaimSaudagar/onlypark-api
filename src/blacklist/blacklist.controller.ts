@@ -16,7 +16,6 @@ import { BlacklistService } from './blacklist.service';
 import { CreateBlacklistRequest, FindBlacklistRequest, UpdateBlacklistRequest } from './blacklist.dto';
 
 @ApiTags('Blacklist')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'blacklist', version: '1' })
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) { }
