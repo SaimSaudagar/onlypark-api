@@ -63,20 +63,19 @@ export class MasterCarParkService extends BaseService {
       );
     }
 
-    const masterCarPark = this.masterCarParkRepository.create({
+    const masterCarPark = await this.masterCarParkRepository.save({
       carParkName,
       carParkType,
       masterCarParkCode,
       status: ParkingSpotStatus.ACTIVE,
     });
-    const savedMasterCarPark = await this.masterCarParkRepository.create(masterCarPark);
 
     const response = new CreateMasterCarParkResponse();
-    response.id = savedMasterCarPark.id;
-    response.carParkName = savedMasterCarPark.carParkName;
-    response.carParkType = savedMasterCarPark.carParkType;
-    response.masterCarParkCode = savedMasterCarPark.masterCarParkCode;
-    response.status = savedMasterCarPark.status;
+    response.id = masterCarPark.id;
+    response.carParkName = masterCarPark.carParkName;
+    response.carParkType = masterCarPark.carParkType;
+    response.masterCarParkCode = masterCarPark.masterCarParkCode;
+    response.status = masterCarPark.status;
 
     return response;
   }
