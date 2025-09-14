@@ -8,6 +8,7 @@ import {
   FindInfringementByIdResponse,
   FindInfringementRequest,
   FindInfringementResponse,
+  GetPenaltyResponse,
   GetTicketNumberRequest,
   MarkAsWaivedResponse,
   ScanInfringementRequest,
@@ -19,12 +20,15 @@ import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
 import { InfringementStatus } from 'src/common/enums';
 import { ApiGetBaseResponse } from 'src/common';
+import { InfringementPenalty } from './entities/infringement-penalty.entity';
 
 @Injectable()
 export class InfringementService {
   constructor(
     @InjectRepository(Infringement)
     private infringementRepository: Repository<Infringement>,
+    @InjectRepository(InfringementPenalty)
+    private infringementPenaltyRepository: Repository<InfringementPenalty>,
   ) { }
 
   async scan(request: ScanInfringementRequest): Promise<ScanInfringementResponse> {
@@ -135,7 +139,7 @@ export class InfringementService {
 
   async findById(id: string): Promise<FindInfringementByIdResponse> {
     const infringement = await this.infringementRepository.findOne({
-      where: { ticketNumber: Number(id) },
+      where: { id },
     });
 
     if (!infringement) {
@@ -145,7 +149,15 @@ export class InfringementService {
       );
     }
 
-    return infringement;
+    let response: FindInfringementByIdResponse = {
+      id: infringement.id,
+      ticketNumber: infringement.ticketNumber,
+      registrationNo: infringement.registrationNo,
+      status: infringement.status,
+      ticketDate: infringement.ticketDate,
+    };
+
+    return response;
   }
 
   async remove(id: string) {
@@ -188,5 +200,13 @@ export class InfringementService {
     }
 
     return infringement.id;
+  }
+
+  async getPenalty(carParkName: string): Promise<GetPenaltyResponse[]> {
+    return await this.infringementPenaltyRepository.find({
+      where: {
+        carParkName: carParkName,
+      },
+    });
   }
 }

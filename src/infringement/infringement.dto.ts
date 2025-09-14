@@ -106,3 +106,10 @@ export class FindInfringementByIdResponse {
   status: InfringementStatus;
   ticketDate: Date;
 }
+
+export class GetPenaltyResponse {
+  id: string;
+  penaltyName: string;
+  amountBeforeDue: number;
+  amountAfterDue: number;
+}
