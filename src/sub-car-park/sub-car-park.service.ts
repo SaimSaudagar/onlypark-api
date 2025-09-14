@@ -8,8 +8,8 @@ import {
   SubCarParkCreateResponse,
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
-  SubCarParkRequest,
   FindSubCarParkResponse,
+  FindSubCarParkRequest,
 } from './sub-car-park.dto';
 import * as crypto from 'crypto';
 import { CustomException } from '../common/exceptions/custom.exception';
@@ -147,6 +147,13 @@ export class SubCarParkService {
         );
       }
 
+      if (masterCarPark.status !== ParkingSpotStatus.ACTIVE) {
+        throw new CustomException(
+          ErrorCode.MASTER_CAR_PARK_NOT_ACTIVE.key,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       // This is a create operation
       const existingSubCarPark = await queryRunner.manager
         .createQueryBuilder(SubCarPark, 'subCarPark')
@@ -244,8 +251,8 @@ export class SubCarParkService {
     }
   }
 
-  async findAll(request: SubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
-    const { pageNo, pageSize, sortField, sortOrder, name } = request;
+  async findAll(request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+    const { pageNo, pageSize, sortField, sortOrder, name, status } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -254,6 +261,10 @@ export class SubCarParkService {
 
     if (name) {
       whereOptions.carParkName = Like(`%${name}%`);
+    }
+
+    if (status) {
+      whereOptions.status = status;
     }
 
     if (sortField) {

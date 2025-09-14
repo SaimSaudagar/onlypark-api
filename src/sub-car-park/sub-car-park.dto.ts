@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail, ValidateIf } from 'class-validator';
-import { ParkingSpotStatus } from '../common/enums';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDecimal, IsBoolean, IsDateString, IsUUID, IsArray, IsEmail, ValidateIf, IsEnum } from 'class-validator';
+import { CarParkType, ParkingSpotStatus } from '../common/enums';
 import { ApiGetBaseRequest } from '../common/types';
 
 export class CreateSubCarParkRequest {
@@ -97,10 +97,14 @@ export class WhitelistCompanyRequest {
 
 export class UpdateSubCarParkRequest extends CreateSubCarParkRequest { }
 
-export class SubCarParkRequest extends ApiGetBaseRequest {
+export class FindSubCarParkRequest extends ApiGetBaseRequest {
   @IsString()
   @IsOptional()
   name?: string;
+
+  @IsOptional()
+  @IsEnum(ParkingSpotStatus)
+  status?: ParkingSpotStatus;
 }
 export class FindSubCarParkResponse {
   id: string;

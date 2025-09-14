@@ -8,29 +8,19 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
-  UseGuards,
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from '../common/decorators';
-import { ApiGetBaseResponse, AuthenticatedUser } from '../common';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RequirePermissions } from '../common/decorators/permission.decorator';
-import { PermissionsGuard } from '../common/guards/permission.guard';
-import { UserType, AdminPermission, CarparkManagerPermission } from '../common/enums';
+import { ApiGetBaseResponse } from '../common';
 import { SubCarParkService } from './sub-car-park.service';
 import {
   CreateSubCarParkRequest,
   UpdateSubCarParkRequest,
   FindSubCarParkResponse,
-  SubCarParkAvailabilityResponse,
-  QrCodeResponse,
   SubCarParkCreateResponse,
   SubCarParkUpdateResponse,
   SubCarParkDeleteResponse,
-  SubCarParkRequest,
+  FindSubCarParkRequest,
 } from './sub-car-park.dto';
 
 @ApiTags('SubCarPark')
@@ -39,7 +29,7 @@ export class SubCarParkController {
   constructor(private readonly subCarParkService: SubCarParkService) { }
 
   @Get()
-  findAll(@Query() request: SubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+  findAll(@Query() request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
     return this.subCarParkService.findAll(request);
   }
 

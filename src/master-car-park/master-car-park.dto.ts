@@ -33,9 +33,7 @@ export class UpdateMasterCarParkStatusResponse {
   status: ParkingSpotStatus;
 }
 
-
 export class UpdateMasterCarParkResponse extends CreateMasterCarParkResponse { }
-
 
 export class FindMasterCarParkRequest extends ApiGetBaseRequest {
   @IsOptional()
@@ -46,6 +44,14 @@ export class FindMasterCarParkRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsIn(['carParkName'])
   sortField?: string;
+
+  @IsOptional()
+  @IsEnum(CarParkType)
+  carParkType?: CarParkType;
+
+  @IsOptional()
+  @IsEnum(ParkingSpotStatus)
+  status?: ParkingSpotStatus;
 }
 
 export class FindMasterCarParkResponse {

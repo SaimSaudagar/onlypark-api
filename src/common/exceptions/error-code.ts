@@ -167,6 +167,12 @@ export class ErrorCode {
   };
 
   // Car Park Errors
+  public static readonly MASTER_CAR_PARK_NOT_ACTIVE = {
+    key: 'MASTER_CAR_PARK_NOT_ACTIVE',
+    code: 'MASTER_CAR_PARK_NOT_ACTIVE',
+    message: 'Master car park is not active',
+  };
+
   public static readonly MASTER_CAR_PARK_CODE_ALREADY_EXISTS = {
     key: 'MASTER_CAR_PARK_CODE_ALREADY_EXISTS',
     code: 'MASTER_CAR_PARK_CODE_ALREADY_EXISTS',
