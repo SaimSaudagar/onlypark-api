@@ -9,6 +9,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
@@ -22,6 +23,7 @@ import {
   CreateInfringementRequest,
   UpdateInfringementRequest,
   ScanInfringementRequest,
+  FindInfringementRequest,
 } from './infringement.dto';
 
 @ApiTags('Infringement')
@@ -32,17 +34,13 @@ export class InfringementController {
   constructor(private readonly infringementService: InfringementService) { }
 
   @Get()
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-  @RequirePermissions(AdminPermission.INFRINGEMENT_LIST, CarparkManagerPermission.INFRINGEMENT_LIST, UserPermission.INFRINGEMENT_LIST, PatrolOfficerPermission.INFRINGEMENT_LIST)
-  findAll() {
-    return this.infringementService.findAll();
+  findAll(@Query() request: FindInfringementRequest) {
+    return this.infringementService.findAll(request);
   }
 
   @Get(':id')
-  @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-  @RequirePermissions(AdminPermission.INFRINGEMENT_VIEW, CarparkManagerPermission.INFRINGEMENT_VIEW, UserPermission.INFRINGEMENT_VIEW, PatrolOfficerPermission.INFRINGEMENT_VIEW)
   findOne(@Param('id') id: string) {
-    return this.infringementService.findOne(id);
+    return this.infringementService.findById(id);
   }
 
   @Post('scan')

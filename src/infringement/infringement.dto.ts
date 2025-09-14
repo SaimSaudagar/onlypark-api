@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, IsArray, isNotEmpty } from 'class-validator';
 import { InfringementStatus } from '../common/enums';
+import { ApiGetBaseRequest } from 'src/common';
 
 export class ScanInfringementRequest {
   @IsNotEmpty()
@@ -82,4 +83,26 @@ export class GetTicketNumberRequest {
   @IsNotEmpty()
   @IsString()
   registrationNo: string;
+}
+
+export class FindInfringementRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  search?: string;
+}
+
+export class FindInfringementResponse {
+  id: string;
+  ticketNumber: number;
+  registrationNo: string;
+  status: InfringementStatus;
+  ticketDate: Date;
+}
+
+export class FindInfringementByIdResponse {
+  id: string;
+  ticketNumber: number;
+  registrationNo: string;
+  status: InfringementStatus;
+  ticketDate: Date;
 }

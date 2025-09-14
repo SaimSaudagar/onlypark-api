@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { Infringement } from './entities/infringement.entity';
 import {
   CreateInfringementRequest,
   CreateInfringementResponse,
+  FindInfringementByIdResponse,
+  FindInfringementRequest,
+  FindInfringementResponse,
   GetTicketNumberRequest,
   MarkAsWaivedResponse,
   ScanInfringementRequest,
@@ -15,6 +18,7 @@ import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
 import { InfringementStatus } from 'src/common/enums';
+import { ApiGetBaseResponse } from 'src/common';
 
 @Injectable()
 export class InfringementService {
@@ -87,11 +91,49 @@ export class InfringementService {
     return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo: infringement.registrationNo };
   }
 
-  async findAll(options?: FindManyOptions<Infringement>): Promise<Infringement[]> {
-    return await this.infringementRepository.find(options);
+  async findAll(request: FindInfringementRequest): Promise<ApiGetBaseResponse<FindInfringementResponse>> {
+    const { search, sortField, sortOrder, pageNo, pageSize } = request;
+    const skip = (pageNo - 1) * pageSize;
+    const take = pageSize;
+
+    const whereOptions: FindOptionsWhere<Infringement> = {};
+    const orderOptions: FindOptionsOrder<Infringement> = {};
+
+    if (search) {
+      whereOptions.registrationNo = ILike(`%${search}%`);
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    const [infringements, totalItems] = await this.infringementRepository.findAndCount({
+      skip,
+      take,
+      where: whereOptions,
+      order: orderOptions,
+    });
+
+    const response = infringements.map(infringement => ({
+      id: infringement.id,
+      ticketNumber: infringement.ticketNumber,
+      registrationNo: infringement.registrationNo,
+      status: infringement.status,
+      ticketDate: infringement.ticketDate,
+    }));
+
+    return {
+      rows: response,
+      pagination: {
+        size: pageSize,
+        page: pageNo,
+        totalPages: Math.ceil(totalItems / pageSize),
+        totalItems,
+      },
+    }
   }
 
-  async findOne(id: string): Promise<Infringement> {
+  async findById(id: string): Promise<FindInfringementByIdResponse> {
     const infringement = await this.infringementRepository.findOne({
       where: { ticketNumber: Number(id) },
     });
