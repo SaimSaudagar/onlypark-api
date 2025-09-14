@@ -31,15 +31,12 @@ export class BlacklistService {
       }
     }
 
-    const blacklist: Partial<BlacklistReg> = {
+    const savedBlacklist = await this.blacklistRepository.save({
       regNo,
       email,
       comments,
       masterCarParkId,
-      status: BlacklistStatus.ACTIVE,
-    }
-
-    const savedBlacklist = await this.blacklistRepository.save(blacklist);
+    });
 
     return {
       id: savedBlacklist.id,
@@ -116,8 +113,8 @@ export class BlacklistService {
     return entity;
   }
 
-  async update(request: UpdateBlacklistRequest): Promise<UpdateBlacklistResponse> {
-    const entity = await this.blacklistRepository.findOne({ where: { id: request.id } });
+  async update(id: string, request: UpdateBlacklistRequest): Promise<UpdateBlacklistResponse> {
+    const entity = await this.blacklistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,

@@ -1,11 +1,7 @@
-import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate } from 'class-validator';
-import { ApiGetBaseRequest } from '../common';
+import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate, IsEnum } from 'class-validator';
+import { ApiGetBaseRequest, BlacklistStatus } from '../common';
 
 export class CreateBlacklistRequest {
-  @IsUUID()
-  @IsOptional()
-  id?: string;
-
   @IsUUID()
   @IsNotEmpty()
   masterCarParkId: string;

@@ -11,7 +11,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { BlacklistService } from './blacklist.service';
 import { CreateBlacklistRequest, FindBlacklistRequest, UpdateBlacklistRequest } from './blacklist.dto';
 
@@ -36,9 +35,9 @@ export class BlacklistController {
     return this.blacklistService.create(request);
   }
 
-  @Patch()
-  update(@Body() request: UpdateBlacklistRequest) {
-    return this.blacklistService.update(request);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() request: UpdateBlacklistRequest) {
+    return this.blacklistService.update(id, request);
   }
 
   @Delete(':id')

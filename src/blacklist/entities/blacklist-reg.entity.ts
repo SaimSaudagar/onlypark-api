@@ -18,9 +18,6 @@ export class BlacklistReg extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', default: 'active' })
-  status: string;
-
   @Column({ type: 'varchar', nullable: true })
   comments: string;
 
