@@ -7,7 +7,6 @@ import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
 import { MasterCarParkService } from '../master-car-park/master-car-park.service';
-import { BlacklistStatus } from '../common/enums';
 import { ApiGetBaseResponse } from '../common/types';
 
 @Injectable()
