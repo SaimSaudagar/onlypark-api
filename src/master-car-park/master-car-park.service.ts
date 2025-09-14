@@ -81,7 +81,7 @@ export class MasterCarParkService extends BaseService {
   }
 
   async findAll(request: FindMasterCarParkRequest): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
-    const { pageNo, pageSize, sortField, sortOrder, carParkName } = request;
+    const { pageNo, pageSize, sortField, sortOrder, search } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -94,8 +94,8 @@ export class MasterCarParkService extends BaseService {
       whereOptions.id = In(subCarParks);
     }
 
-    if (carParkName) {
-      whereOptions.carParkName = ILike(`%${carParkName}%`);
+    if (search) {
+      whereOptions.carParkName = ILike(`%${search}%`);
     }
 
     if (sortField) {

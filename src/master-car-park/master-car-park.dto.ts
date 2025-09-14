@@ -40,7 +40,7 @@ export class UpdateMasterCarParkResponse extends CreateMasterCarParkResponse { }
 export class FindMasterCarParkRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsString()
-  carParkName?: string;
+  search?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

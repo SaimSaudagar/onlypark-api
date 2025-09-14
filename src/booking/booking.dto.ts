@@ -81,7 +81,6 @@ export class BookingCreateResponse {
     endTime: string;
     status: string;
     createdAt: Date;
-    message: string;
 }
 
 export class BookingUpdateResponse {

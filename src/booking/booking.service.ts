@@ -111,7 +111,7 @@ export class BookingService {
         }
 
         // Create booking
-        const booking = this.bookingRepository.create({
+        const booking = await this.bookingRepository.save({
             email,
             vehicleReg: registrationNo,
             tenancyId,
@@ -122,19 +122,16 @@ export class BookingService {
             status: BookingStatus.ACTIVE,
         });
 
-        const savedBooking = await this.bookingRepository.create(booking);
-
         return {
-            id: savedBooking.id,
-            email: savedBooking.email,
-            vehicleReg: savedBooking.vehicleReg,
-            subCarParkCode: savedBooking.subCarParkCode,
-            property: savedBooking.property,
-            startTime: savedBooking.startTime,
-            endTime: savedBooking.endTime,
-            status: savedBooking.status,
-            createdAt: savedBooking.createdAt,
-            message: 'Booking created successfully',
+            id: booking.id,
+            email: booking.email,
+            vehicleReg: booking.vehicleReg,
+            subCarParkCode: booking.subCarParkCode,
+            property: booking.property,
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            status: booking.status,
+            createdAt: booking.createdAt,
         };
     }
 

@@ -24,11 +24,11 @@ export class AdminService {
       );
     }
 
-    const savedAdmin = this.adminRepository.create({
+    const savedAdmin = await this.adminRepository.save({
       userId: request.userId,
       status: AdminStatus.ACTIVE,
     });
-    return await this.adminRepository.create(savedAdmin);
+    return savedAdmin;
   }
 
   findAll() {
@@ -46,7 +46,7 @@ export class AdminService {
     }
 
     Object.assign(admin, updateAdminDto);
-    return await this.adminRepository.create(admin);
+    return await this.adminRepository.save(admin);
   }
 
   async remove(id: string) {
