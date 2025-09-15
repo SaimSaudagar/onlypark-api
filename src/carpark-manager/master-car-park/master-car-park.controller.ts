@@ -4,14 +4,18 @@ import { FindMasterCarParkRequest, FindMasterCarParkResponse } from './master-ca
 import { ApiGetBaseResponse } from '../../common/types';
 import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { AllowedRoles } from '../../auth/guards/roles.guard';
+import { UserType } from '../../common/enums';
+import { RoleGuard } from '../../auth/guards/roles.guard';
 
 @ApiTags('Carpark Manager => Master Car Park')
 @Controller({ path: 'carpark-manager/master-car-park', version: '1' })
-@UseGuards(JwtAuthenticationGuard)
 export class MasterCarParkController {
     constructor(private readonly masterCarParkService: MasterCarParkService) { }
 
-    @Get()
+    @Get('list')
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.CARPARK_MANAGER)
     async findAll(
         @Query() request: FindMasterCarParkRequest,
     ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
@@ -19,6 +23,8 @@ export class MasterCarParkController {
     }
 
     @Get('visitor')
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.CARPARK_MANAGER)
     async findVisitorMasterCarParks(
         @Query() request: FindMasterCarParkRequest,
     ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
@@ -26,6 +32,8 @@ export class MasterCarParkController {
     }
 
     @Get('whitelist')
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.CARPARK_MANAGER)
     async findWhitelistMasterCarParks(
         @Query() request: FindMasterCarParkRequest,
     ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
@@ -33,6 +41,8 @@ export class MasterCarParkController {
     }
 
     @Get('blacklist')
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.CARPARK_MANAGER)
     async findBlacklistMasterCarParks(
         @Query() request: FindMasterCarParkRequest,
     ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {

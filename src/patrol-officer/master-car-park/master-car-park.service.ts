@@ -106,9 +106,9 @@ export class MasterCarParkService extends BaseService {
     }
 
     private async getAssignedSubCarParks(): Promise<string[]> {
-        const user = this.authenticatedUser;
+        const userId = this.authenticatedUser.id;
 
-        if (!user?.id) {
+        if (!userId) {
             throw new CustomException(
                 ErrorCode.USER_NOT_FOUND.key,
                 HttpStatus.NOT_FOUND,
@@ -116,7 +116,7 @@ export class MasterCarParkService extends BaseService {
         }
 
         const patrolOfficer = await this.patrolOfficerService.findOne({
-            where: { userId: user.id },
+            where: { userId: userId },
             relations: [
                 'patrolOfficerVisitorSubCarParks',
                 'patrolOfficerVisitorSubCarParks.subCarPark',

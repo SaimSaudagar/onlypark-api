@@ -45,7 +45,6 @@ export class MasterCarParkController {
         return await this.masterCarParkService.create(request);
     }
 
-
     @Patch(':id')
     @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
