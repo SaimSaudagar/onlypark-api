@@ -3,10 +3,13 @@ import {
   Column,
   OneToOne,
   JoinColumn,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
+import { PatrolOfficerVisitorSubCarPark } from './patrol-officer-visitor-sub-car-park.entity';
+import { PatrolOfficerWhitelistSubCarPark } from './patrol-officer-whitelist-sub-car-park.entity';
+import { PatrolOfficerBlacklistSubCarPark } from './patrol-officer-blacklist-sub-car-park.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 
@@ -30,6 +33,12 @@ export class PatrolOfficer extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   userId: string;
 
-  @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.patrolOfficers)
-  subCarParks: SubCarPark[];
+  @OneToMany(() => PatrolOfficerVisitorSubCarPark, (patrolOfficerVisitorSubCarPark) => patrolOfficerVisitorSubCarPark.patrolOfficer)
+  patrolOfficerVisitorSubCarParks: PatrolOfficerVisitorSubCarPark[];
+
+  @OneToMany(() => PatrolOfficerWhitelistSubCarPark, (patrolOfficerWhitelistSubCarPark) => patrolOfficerWhitelistSubCarPark.patrolOfficer)
+  patrolOfficerWhitelistSubCarParks: PatrolOfficerWhitelistSubCarPark[];
+
+  @OneToMany(() => PatrolOfficerBlacklistSubCarPark, (patrolOfficerBlacklistSubCarPark) => patrolOfficerBlacklistSubCarPark.patrolOfficer)
+  patrolOfficerBlacklistSubCarParks: PatrolOfficerBlacklistSubCarPark[];
 }

@@ -10,7 +10,6 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { CarparkManagerService } from './carpark-manager.service';
 import {
   CreateCarparkManagerRequest,
@@ -18,7 +17,6 @@ import {
 } from './carpark-manager.dto';
 
 @ApiTags('CarparkManager')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'carpark-manager', version: '1' })
 export class CarparkManagerController {
   constructor(private readonly carparkManagerService: CarparkManagerService) { }

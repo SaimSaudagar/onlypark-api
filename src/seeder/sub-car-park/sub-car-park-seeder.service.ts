@@ -42,8 +42,6 @@ export class SubCarParkSeederService {
           continue;
         }
 
-        // Generate car park code
-        const subCarParkCode = this.generateCarParkCode();
 
         const subCarPark = this.subCarParkRepository.create({
           carParkName: subCarParkData.carParkName,
@@ -52,7 +50,7 @@ export class SubCarParkSeederService {
           lat: subCarParkData.lat,
           lang: subCarParkData.lang,
           description: subCarParkData.description,
-          subCarParkCode: subCarParkCode,
+          subCarParkCode: subCarParkData.subCarParkCode,
           freeHours: subCarParkData.freeHours,
           tenantEmailCheck: subCarParkData.tenantEmailCheck,
           geolocation: subCarParkData.geolocation,
@@ -63,7 +61,7 @@ export class SubCarParkSeederService {
           masterCarParkId: masterCarPark.id,
         });
 
-        await this.subCarParkRepository.create(subCarPark);
+        await this.subCarParkRepository.save(subCarPark);
         this.logger.log(`Sub Car Park ${subCarParkData.carParkName} seeded under ${subCarParkData.masterCarParkName}`);
       } else {
         this.logger.log(`Sub Car Park ${subCarParkData.carParkName} already exists`);

@@ -14,21 +14,21 @@ const runSeed = async () => {
   try {
     console.log('Starting seeding process...');
 
-    // Seed roles first
-    console.log('Seeding roles...');
-    await app.get(RoleSeederService).run();
+    // // Seed roles first
+    // console.log('Seeding roles...');
+    // await app.get(RoleSeederService).run();
 
-    // Seed permissions
-    console.log('Seeding permissions...');
-    await app.get(PermissionSeederService).run();
+    // // Seed permissions
+    // console.log('Seeding permissions...');
+    // await app.get(PermissionSeederService).run();
 
-    // Assign permissions to roles
-    console.log('Assigning permissions to roles...');
-    await app.get(RolePermissionSeederService).run();
+    // // Assign permissions to roles
+    // console.log('Assigning permissions to roles...');
+    // await app.get(RolePermissionSeederService).run();
 
-    // Seed car makes
-    console.log('Seeding car makes...');
-    await app.get(CarMakeSeederService).run();
+    // // Seed car makes
+    // console.log('Seeding car makes...');
+    // await app.get(CarMakeSeederService).run();
 
     // Seed master car parks
     console.log('Seeding master car parks...');

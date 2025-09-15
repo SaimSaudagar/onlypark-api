@@ -9,13 +9,11 @@ import {
     HttpStatus,
     HttpCode,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 import { WhitelistService } from './whitelist.service';
-import { CreateWhitelistDto, UpdateWhitelistDto, WhitelistResponseDto } from './whitelist.dto';
+import { CreateWhitelistDto, UpdateWhitelistDto } from './whitelist.dto';
 
 @ApiTags('Whitelist')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'whitelist', version: '1' })
 export class WhitelistController {
     constructor(private readonly whitelistService: WhitelistService) { }

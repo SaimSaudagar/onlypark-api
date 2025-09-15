@@ -10,8 +10,7 @@ import {
     HttpCode,
     Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 import { WhitelistCompanyService } from './whitelist-company.service';
 import {
     CreateWhitelistCompanyDto,

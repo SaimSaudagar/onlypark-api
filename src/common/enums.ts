@@ -82,6 +82,12 @@ export enum InfringementStatus {
   WAIVED = 'Waived',
 }
 
+export enum WhitelistType {
+  HOUR = 'Hour',
+  DATE = 'Date',
+  PERMANENT = 'Permanent',
+}
+
 export enum DisputeStatus {
   PENDING = 'Pending',
   APPROVED = 'Approved',

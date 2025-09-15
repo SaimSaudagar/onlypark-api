@@ -4,7 +4,7 @@ import { ApiGetBaseRequest, BlacklistStatus } from '../common';
 export class CreateBlacklistRequest {
   @IsUUID()
   @IsNotEmpty()
-  masterCarParkId: string;
+  subCarParkId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -48,8 +48,8 @@ export class FindBlacklistResponse {
   regNo: string;
   email: string;
   createdAt: Date;
-  masterCarPark: {
+  subCarPark: {
     id: string;
-    masterCarParkName: string;
+    subCarParkName: string;
   };
 }

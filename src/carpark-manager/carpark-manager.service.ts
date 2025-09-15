@@ -9,7 +9,7 @@ import {
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
+import { SubCarParkService } from '../admin/sub-car-park/sub-car-park.service';
 
 @Injectable()
 export class CarparkManagerService {

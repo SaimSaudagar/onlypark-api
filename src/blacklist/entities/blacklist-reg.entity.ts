@@ -6,11 +6,11 @@ import {
 } from 'typeorm';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
-import { MasterCarPark } from '../../master-car-park/entities/master-car-park.entity';
+import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 
-@Entity('black_list_reg')
+@Entity('black_list')
 @Auditable()
-export class BlacklistReg extends BaseEntity {
+export class Blacklist extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   regNo: string;
@@ -21,10 +21,10 @@ export class BlacklistReg extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   comments: string;
 
-  @ManyToOne(() => MasterCarPark, (masterCarPark) => masterCarPark.blacklists)
-  @JoinColumn({ name: 'masterCarParkId' })
-  masterCarPark: MasterCarPark;
+  @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.blacklists)
+  @JoinColumn({ name: 'subCarParkId' })
+  subCarPark: SubCarPark;
 
   @Column({ type: 'varchar', nullable: false })
-  masterCarParkId: string;
+  subCarParkId: string;
 }

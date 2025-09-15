@@ -29,17 +29,15 @@ export class MasterCarParkSeederService {
       });
 
       if (!existingMasterCarPark) {
-        // Generate car park code
-        const masterCarParkCode = this.generateCarParkCode();
 
         const masterCarPark = this.masterCarParkRepository.create({
           carParkName: masterCarParkData.carParkName,
           carParkType: masterCarParkData.carParkType,
-          masterCarParkCode: masterCarParkCode,
+          masterCarParkCode: masterCarParkData.masterCarParkCode,
           status: masterCarParkData.status,
         });
 
-        await this.masterCarParkRepository.create(masterCarPark);
+        await this.masterCarParkRepository.save(masterCarPark);
         this.logger.log(`Master Car Park ${masterCarParkData.carParkName} seeded`);
       } else {
         this.logger.log(`Master Car Park ${masterCarParkData.carParkName} already exists`);
@@ -47,17 +45,9 @@ export class MasterCarParkSeederService {
     }
   }
 
-  private generateCarParkCode(): string {
+  private generateMasterCarParkCode(): string {
     const prefix = 'MC';
     const randomSuffix = Math.random().toString(36).substring(2, 5).toUpperCase();
     return `${prefix}${randomSuffix}`;
   }
-
-  // private generateSlug(name: string): string {
-  //   return name
-  //     .toLowerCase()
-  //     .replace(/[^\w\s-]/g, '')
-  //     .replace(/\s+/g, '-')
-  //     .trim();
-  // }
 }

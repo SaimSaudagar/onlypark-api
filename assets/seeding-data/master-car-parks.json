@@ -1,46 +1,62 @@
 [
   {
     "carParkName": "Downtown Shopping Center",
-    "totalCarSpace": 500,
-    "carParkType": "Retail",
-    "location": "123 Main Street, Downtown",
-    "lat": 40.7128,
-    "lang": -74.0060,
-    "description": "Large parking facility serving the downtown shopping district",
-    "operatingHours": 24,
-    "tenantEmailCheck": true,
-    "geolocation": true,
-    "event": false,
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCDT01",
     "status": "Active"
   },
   {
     "carParkName": "Residential Complex A",
-    "totalCarSpace": 200,
     "carParkType": "Residential",
-    "location": "456 Oak Avenue, Residential Area",
-    "lat": 40.7589,
-    "lang": -73.9851,
-    "description": "Parking facility for residential complex residents",
-    "operatingHours": 24,
-    "tenantEmailCheck": true,
-    "geolocation": true,
-    "event": false,
+    "masterCarParkCode": "MCRC01",
     "status": "Active"
   },
   {
     "carParkName": "Business District Plaza",
-    "totalCarSpace": 300,
-    "carParkType": "Retail",
-    "location": "789 Business Blvd, Financial District",
-    "lat": 40.7505,
-    "lang": -73.9934,
-    "description": "Parking for business district employees and visitors",
-    "operatingHours": 18,
-    "tenantEmailCheck": false,
-    "geolocation": true,
-    "event": true,
-    "eventDate": "2024-12-25T00:00:00.000Z",
-    "eventExpiryDate": "2024-12-26T00:00:00.000Z",
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCBD01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "University Campus Parking",
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCUC01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Luxury Apartments Tower",
+    "carParkType": "Residential",
+    "masterCarParkCode": "MCLA01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Medical Center Parking",
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCMC01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Suburban Housing Estate",
+    "carParkType": "Residential",
+    "masterCarParkCode": "MCSH01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Airport Terminal Parking",
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCAT01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Executive Condominiums",
+    "carParkType": "Residential",
+    "masterCarParkCode": "MCEC01",
+    "status": "Active"
+  },
+  {
+    "carParkName": "Industrial Zone Parking",
+    "carParkType": "Commercial",
+    "masterCarParkCode": "MCIZ01",
     "status": "Active"
   }
 ]

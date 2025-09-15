@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlacklistController } from './blacklist.controller';
 import { BlacklistService } from './blacklist.service';
-import { BlacklistReg } from './entities/blacklist-reg.entity';
-import { MasterCarParkModule } from '../master-car-park/master-car-park.module';
+import { Blacklist } from './entities/blacklist-reg.entity';
+import { SubCarParkModule } from '../admin/sub-car-park/sub-car-park.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BlacklistReg]), MasterCarParkModule],
+  imports: [TypeOrmModule.forFeature([Blacklist]), SubCarParkModule],
   controllers: [BlacklistController],
   providers: [BlacklistService],
   exports: [BlacklistService],

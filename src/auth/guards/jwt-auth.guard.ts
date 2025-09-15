@@ -1,35 +1,21 @@
-import { Injectable, applyDecorators, UseGuards, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../../common/decorators/public.decorator';
 
 @Injectable()
-export default class JwtAuthenticationGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
-    super();
-  }
+export default class JwtAuthenticationGuard extends AuthGuard('jwt') {}
 
+@Injectable()
+export class OptionalJwtAuthGuard extends JwtAuthenticationGuard {
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const request = context.switchToHttp().getRequest();
+    const authorizationHeader = request.headers['authorization'];
 
-    if (isPublic) {
+    // If there's no authorization header, allow access without validation
+    if (!authorizationHeader) {
       return true;
     }
 
+    // If an authorization header exists, call the parent's canActivate for validation
     return super.canActivate(context);
   }
-
-  handleRequest(err: any, user: any, info: any) {
-    if (err || !user) {
-      throw err || new UnauthorizedException('Invalid or expired token');
-    }
-    return user;
-  }
 }
-
-export const JwtAuthGuardWithApiBearer = () =>
-  applyDecorators(UseGuards(JwtAuthenticationGuard), ApiBearerAuth());

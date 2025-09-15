@@ -14,9 +14,12 @@ import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.e
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { Whitelist } from '../../whitelist/entities/whitelist.entity';
 import { WhitelistCompany } from '../../whitelist-company/entities/whitelist-company.entity';
-import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
+import { PatrolOfficerVisitorSubCarPark } from '../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
+import { PatrolOfficerWhitelistSubCarPark } from '../../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
+import { PatrolOfficerBlacklistSubCarPark } from '../../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
+import { Blacklist } from '../../blacklist/entities/blacklist-reg.entity';
 
 @Entity('sub_car_park')
 @Auditable()
@@ -90,8 +93,17 @@ export class SubCarPark extends BaseEntity {
   @OneToMany(() => WhitelistCompany, (whitelistCompany) => whitelistCompany.subCarPark)
   whitelistCompanies: WhitelistCompany[];
 
-  @OneToMany(() => PatrolOfficer, (officer) => officer.subCarParks)
-  patrolOfficers: PatrolOfficer[];
+  @OneToMany(() => Blacklist, (blacklist) => blacklist.subCarPark)
+  blacklists: Blacklist[];
+
+  @OneToMany(() => PatrolOfficerVisitorSubCarPark, (patrolOfficerVisitorSubCarPark) => patrolOfficerVisitorSubCarPark.subCarPark)
+  patrolOfficerVisitorSubCarParks: PatrolOfficerVisitorSubCarPark[];
+
+  @OneToMany(() => PatrolOfficerWhitelistSubCarPark, (patrolOfficerWhitelistSubCarPark) => patrolOfficerWhitelistSubCarPark.subCarPark)
+  patrolOfficerWhitelistSubCarParks: PatrolOfficerWhitelistSubCarPark[];
+
+  @OneToMany(() => PatrolOfficerBlacklistSubCarPark, (patrolOfficerBlacklistSubCarPark) => patrolOfficerBlacklistSubCarPark.subCarPark)
+  patrolOfficerBlacklistSubCarParks: PatrolOfficerBlacklistSubCarPark[];
 
   @ManyToOne(() => CarparkManager, (carparkManager) => carparkManager.subCarParks)
   @JoinColumn({ name: 'carparkManagerId' })

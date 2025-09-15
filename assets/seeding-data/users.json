@@ -6,5 +6,13 @@
     "type": "super_admin",
     "phone": "+1234567890",
     "status": "Active"
+  },
+  {
+    "name": "Carpark Manager User",
+    "email": "carparkmanager@gmail.com",
+    "password": "carparkmanager1234",
+    "type": "carpark_manager",
+    "phone": "+1234567890",
+    "status": "Active"
   }
 ]

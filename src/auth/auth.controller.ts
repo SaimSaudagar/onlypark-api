@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { JwtAuthGuardWithApiBearer } from './guards/jwt-auth.guard';
 import {
   ChangePasswordRequest,
   LoginRequest,
@@ -66,7 +65,6 @@ export class AuthController {
 
   @Post('change-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @JwtAuthGuardWithApiBearer()
   public async changePassword(
     @Req() request: any,
     @Body() requestBody: ChangePasswordRequest,

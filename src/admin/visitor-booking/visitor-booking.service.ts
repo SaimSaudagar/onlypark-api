@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { VisitorBooking } from './entities/visitor-booking.entity';
+import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
 import {
     CreateVisitorBookingRequest,
     VisitorBookingResponse,
@@ -9,11 +9,11 @@ import {
     VisitorBookingCreateResponse,
     VisitorBookingDeleteResponse,
 } from './visitor-booking.dto';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
+import { CustomException } from '../../common/exceptions/custom.exception';
+import { ErrorCode } from '../../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { BookingStatus } from '../common/enums';
-import { TenancyService } from '../tenancy/tenancy.service';
+import { BookingStatus } from '../../common/enums';
+import { TenancyService } from '../../tenancy/tenancy.service';
 import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
 
 @Injectable()
@@ -200,77 +200,6 @@ export class VisitorBookingService {
             updatedAt: visitorBooking.updatedAt,
         };
     }
-
-    // async update(id: string, updateDto: UpdateVisitorBookingRequest): Promise<VisitorBookingUpdateResponse> {
-    //   const visitorBooking = await this.visitorBookingRepository.findOne({
-    //     where: { id },
-    //     relations: {
-    //       tenancy: true,
-    //       subCarPark: true,
-    //     },
-    //   });
-
-    //   if (!visitorBooking) {
-    //     throw new CustomException(
-    //       ErrorCode.BOOKING_NOT_FOUND.key,
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //   }
-
-    //   // Validate status transitions
-    //   if (updateDto.status) {
-    //     if (visitorBooking.status === BookingStatus.EXPIRED && updateDto.status !== BookingStatus.EXPIRED) {
-    //       throw new CustomException(
-    //         ErrorCode.BOOKING_EXPIRED.key,
-    //         HttpStatus.BAD_REQUEST,
-    //       );
-    //     }
-
-    //     if (visitorBooking.status === BookingStatus.CHECKOUT && updateDto.status !== BookingStatus.CHECKOUT) {
-    //       throw new CustomException(
-    //         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-    //         HttpStatus.BAD_REQUEST,
-    //       );
-    //     }
-    //   }
-
-    //   // Validate dates if being updated
-    //   if (updateDto.startTime || updateDto.endTime) {
-    //     const startTime = updateDto.startTime ? new Date(updateDto.startTime) : new Date(visitorBooking.startTime);
-    //     const endTime = updateDto.endTime ? new Date(updateDto.endTime) : new Date(visitorBooking.endTime);
-
-    //     if (startTime >= endTime) {
-    //       throw new CustomException(
-    //         ErrorCode.INVALID_BOOKING_DATES.key,
-    //         HttpStatus.BAD_REQUEST,
-    //       );
-    //     }
-    //   }
-
-    //   // Validate vehicle registration if being updated
-    //   if (updateDto.vehicleReg && !this.isValidVehicleRegistration(updateDto.vehicleReg)) {
-    //     throw new CustomException(
-    //       ErrorCode.INVALID_VEHICLE_REGISTRATION.key,
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //   }
-
-    //   Object.assign(visitorBooking, updateDto);
-    //   const updatedVisitorBooking = await this.visitorBookingRepository.create(visitorBooking);
-
-    //   return {
-    //     id: updatedVisitorBooking.id,
-    //     email: updatedVisitorBooking.email,
-    //     vehicleReg: updatedVisitorBooking.vehicleReg,
-    //     subCarParkCode: updatedVisitorBooking.subCarParkCode,
-    //     property: updatedVisitorBooking.property,
-    //     startTime: updatedVisitorBooking.startTime,
-    //     endTime: updatedVisitorBooking.endTime,
-    //     status: updatedVisitorBooking.status,
-    //     updatedAt: updatedVisitorBooking.updatedAt,
-    //     message: 'Visitor booking updated successfully',
-    //   };
-    // }
 
     async remove(id: string): Promise<VisitorBookingDeleteResponse> {
         const visitorBooking = await this.visitorBookingRepository.findOne({

@@ -23,8 +23,6 @@ import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { AdminModule } from './admin/admin.module';
 import { CarparkManagerModule } from './carpark-manager/carpark-manager.module';
-import { MasterCarParkModule } from './master-car-park/master-car-park.module';
-import { SubCarParkModule } from './sub-car-park/sub-car-park.module';
 
 import { TenancyModule } from './tenancy/tenancy.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
@@ -33,7 +31,6 @@ import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
-import { VisitorBookingModule } from './visitor-booking/visitor-booking.module';
 import { OutstandingRegistrationModule } from './outstanding-registration/outstanding-registration.module';
 import { AuditLogModule } from './common/services/audit-log/audit-log.module';
 import { RequestContextModule } from './common/services/request-context/request-context.module';
@@ -102,8 +99,6 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     PermissionModule,
     AdminModule,
     CarparkManagerModule,
-    MasterCarParkModule,
-    SubCarParkModule,
 
     TenancyModule,
     WhitelistModule,
@@ -112,7 +107,6 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     InfringementModule,
     DisputeModule,
     PatrolOfficerModule,
-    VisitorBookingModule,
     OutstandingRegistrationModule,
     AuditLogModule,
     RequestContextModule,

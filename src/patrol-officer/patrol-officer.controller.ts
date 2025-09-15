@@ -10,11 +10,9 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { PatrolOfficerService } from './patrol-officer.service';
 
 @ApiTags('PatrolOfficer')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'patrol-officer', version: '1' })
 export class PatrolOfficerController {
   constructor(private readonly patrolOfficerService: PatrolOfficerService) { }

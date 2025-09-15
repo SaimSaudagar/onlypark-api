@@ -15,7 +15,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators';
 import { AuthenticatedUser } from '../common';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard, AllowedRoles } from '../auth/guards/roles.guard';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
@@ -73,7 +72,7 @@ export class UserController {
     return this.userService.create(request);
   }
 
-  @Put('profile')
+  @Patch('profile')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(UserPermission.PROFILE_EDIT)
   async updateUserProfile(

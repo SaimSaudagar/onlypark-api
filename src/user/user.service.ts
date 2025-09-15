@@ -24,7 +24,7 @@ import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity'
 import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
 import { Admin } from '../admin/entities/admin.entity';
 import { Whitelist } from '../whitelist/entities/whitelist.entity';
-import { BlacklistReg } from '../blacklist/entities/blacklist-reg.entity';
+import { Blacklist } from '../blacklist/entities/blacklist-reg.entity';
 
 @Injectable()
 export class UserService {
@@ -117,7 +117,7 @@ export class UserService {
       // Create blacklist entries if provided
       if (blacklist && blacklist.length > 0) {
         for (const vehicleReg of blacklist) {
-          await queryRunner.manager.save(BlacklistReg, {
+          await queryRunner.manager.save(Blacklist, {
             regNo: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,

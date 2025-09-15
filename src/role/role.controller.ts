@@ -13,7 +13,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators';
 import { AuthenticatedUser } from '../common';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard, AllowedRoles } from '../auth/guards/roles.guard';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
@@ -25,7 +24,6 @@ import {
 } from './role.dto';
 
 @ApiTags('Role')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'role', version: '1' })
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }

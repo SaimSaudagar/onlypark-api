@@ -12,7 +12,6 @@ import {
     Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
@@ -27,7 +26,6 @@ import {
 } from './dispute.dto';
 
 @ApiTags('Dispute')
-@JwtAuthGuardWithApiBearer()
 @UseGuards(RoleGuard, PermissionsGuard)
 @Controller({ path: 'dispute', version: '1' })
 export class DisputeController {

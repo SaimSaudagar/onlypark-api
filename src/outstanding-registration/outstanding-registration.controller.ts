@@ -10,11 +10,9 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuardWithApiBearer } from '../auth/guards/jwt-auth.guard';
 import { OutstandingRegistrationService } from './outstanding-registration.service';
 
 @ApiTags('OutstandingRegistration')
-@JwtAuthGuardWithApiBearer()
 @Controller({ path: 'outstanding-registration', version: '1' })
 export class OutstandingRegistrationController {
   constructor(private readonly outstandingRegistrationService: OutstandingRegistrationService) { }

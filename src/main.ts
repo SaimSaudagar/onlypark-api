@@ -60,8 +60,8 @@ async function bootstrap() {
     .setTitle('OnlyPark API')
     .setDescription('The OnlyPark parking management system API')
     .setVersion('1.0')
-    .addTag('onlypark')
     .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
