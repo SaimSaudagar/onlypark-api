@@ -1,17 +1,17 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsOptional, IsEnum, IsBoolean, IsUUID, IsEmail, MinLength, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AdminStatus, UserType } from '../common/enums';
+import { AdminStatus, UserType } from '../../common/enums';
 import { Type } from 'class-transformer';
 
-export class CreateAdminDto {
+export class CreateProfileDto {
     @ApiProperty({ description: 'User ID to associate with this admin' })
     @IsNotEmpty()
     @IsUUID()
     userId: string;
 }
 
-export class CreateUserForAdminDto {
+export class CreateUserForProfileDto {
     @ApiProperty({ description: 'User full name' })
     @IsNotEmpty()
     @IsString()
@@ -47,8 +47,8 @@ export class CreateUserForAdminDto {
     type: UserType = UserType.ADMIN;
 }
 
-// Create Admin with User DTO - for creating admin with new user account
-export class CreateAdminWithUserDto {
+// Create Profile with User DTO - for creating admin with new user account
+export class CreateProfileWithUserDto {
     @ApiProperty({ description: 'Admin code - must be unique' })
     @IsNotEmpty()
     @IsString()
@@ -94,18 +94,18 @@ export class CreateAdminWithUserDto {
 
     @ApiProperty({
         description: 'User account information for the admin',
-        type: CreateUserForAdminDto
+        type: CreateUserForProfileDto
     })
     @ValidateNested()
-    @Type(() => CreateUserForAdminDto)
-    user: CreateUserForAdminDto;
+    @Type(() => CreateUserForProfileDto)
+    user: CreateUserForProfileDto;
 }
 
-// Update Admin DTO
-export class UpdateAdminDto extends PartialType(CreateAdminDto) { }
+// Update Profile DTO
+export class UpdateProfileDto extends PartialType(CreateProfileDto) { }
 
-// Query Admin DTO - for filtering and searching
-export class QueryAdminDto {
+// Query Profile DTO - for filtering and searching
+export class QueryProfileDto {
     @ApiPropertyOptional({ description: 'Filter by admin code' })
     @IsOptional()
     @IsString()
@@ -116,10 +116,6 @@ export class QueryAdminDto {
     @IsString()
     department?: string;
 
-    @ApiPropertyOptional({
-        description: 'Filter by user management permission'
-    })
-    @IsOptional()
     @ApiPropertyOptional({ description: 'Filter by user management permission' })
     @IsOptional()
     @IsBoolean()
@@ -154,8 +150,8 @@ export class QueryAdminDto {
     userEmail?: string;
 }
 
-// Admin Response DTO
-export class AdminResponseDto {
+// Profile Response DTO
+export class ProfileResponseDto {
     @ApiProperty({ description: 'Admin unique identifier' })
     id: string;
 

@@ -22,15 +22,17 @@ import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { AdminModule } from './admin/admin.module';
+import { ProfileModule as AdminProfileModule } from './admin/profile/profile.module';
 import { CarparkManagerModule } from './carpark-manager/carpark-manager.module';
+import { ProfileModule as CarparkManagerProfileModule } from './carpark-manager/profile/profile.module';
 
 import { TenancyModule } from './tenancy/tenancy.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
-import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
+import { ProfileModule as PatrolOfficerProfileModule } from './patrol-officer/profile/profile.module';
 import { OutstandingRegistrationModule } from './outstanding-registration/outstanding-registration.module';
 import { AuditLogModule } from './common/services/audit-log/audit-log.module';
 import { RequestContextModule } from './common/services/request-context/request-context.module';
@@ -98,15 +100,16 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     RoleModule,
     PermissionModule,
     AdminModule,
+    AdminProfileModule,
     CarparkManagerModule,
-
+    CarparkManagerProfileModule,
     TenancyModule,
     WhitelistModule,
     WhitelistCompanyModule,
-    BlacklistModule,
     InfringementModule,
     DisputeModule,
     PatrolOfficerModule,
+    PatrolOfficerProfileModule,
     OutstandingRegistrationModule,
     AuditLogModule,
     RequestContextModule,

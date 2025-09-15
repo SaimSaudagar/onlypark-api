@@ -11,12 +11,7 @@ import {
   UpdateUserDto,
   UpdateUserProfileRequest,
 } from './user.dto';
-import { AdminService } from '../admin/admin.service';
-import { CarparkManagerService } from '../carpark-manager/carpark-manager.service';
-import { PatrolOfficerService } from '../patrol-officer/patrol-officer.service';
 import { EmailService } from '../common/services/email/email.service';
-import { WhitelistService } from '../whitelist/whitelist.service';
-import { BlacklistService } from '../blacklist/blacklist.service';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { DataSource } from 'typeorm';
@@ -31,12 +26,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private adminService: AdminService,
-    private carparkManagerService: CarparkManagerService,
-    private patrolOfficerService: PatrolOfficerService,
     private emailService: EmailService,
-    private whitelistService: WhitelistService,
-    private blacklistService: BlacklistService,
     private configService: ConfigService,
     private dataSource: DataSource,
   ) { }

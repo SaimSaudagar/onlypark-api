@@ -1,24 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, In, ILike } from 'typeorm';
-import { MasterCarPark } from '../../master-car-park/entities/master-car-park.entity';
+import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Repository } from 'typeorm';
-import { FindMasterCarParkRequest, FindMasterCarParkResponse } from './master-car-park.dto';
+import { FindSubCarParkRequest, FindSubCarParkResponse } from './sub-car-park.dto';
 import { ApiGetBaseResponse } from '../../common/types';
 import { BaseService } from '../../common/base.service';
 import { ConfigService } from '@nestjs/config';
 import { RequestContextService } from '../../common/services/request-context/request-context.service';
 import { DataSource } from 'typeorm';
-import { CarParkType } from '../../common/enums';
-import { CustomException } from 'src/common/exceptions/custom.exception';
-import { ErrorCode } from 'src/common/exceptions/error-code';
+import { CustomException } from '../../common/exceptions/custom.exception';
+import { ErrorCode } from '../../common/exceptions/error-code';
 import { CarparkManager } from '../entities/carpark-manager.entity';
 
 @Injectable()
-export class MasterCarParkService extends BaseService {
+export class SubCarParkService extends BaseService {
     constructor(
-        @InjectRepository(MasterCarPark)
-        private masterCarParkRepository: Repository<MasterCarPark>,
+        @InjectRepository(SubCarPark)
+        private subCarParkRepository: Repository<SubCarPark>,
         requestContextService: RequestContextService,
         configService: ConfigService,
         datasource: DataSource,
@@ -29,17 +28,17 @@ export class MasterCarParkService extends BaseService {
             requestContextService,
             configService,
             datasource,
-            MasterCarParkService.name,
+            SubCarParkService.name,
         );
     }
 
-    async findAll(request: FindMasterCarParkRequest): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
-        const { pageNo, pageSize, sortField, sortOrder, search, carParkType, status } = request;
+    async findAll(request: FindSubCarParkRequest): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+        const { pageNo, pageSize, sortField, sortOrder, search, status } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<MasterCarPark> = {};
-        const orderOptions: FindOptionsOrder<MasterCarPark> = {};
+        const whereOptions: FindOptionsWhere<SubCarPark> = {};
+        const orderOptions: FindOptionsOrder<SubCarPark> = {};
 
         const assignedSubCarParkIds = await this.getAssignedSubCarParks();
 
@@ -47,52 +46,56 @@ export class MasterCarParkService extends BaseService {
             whereOptions.carParkName = ILike(`%${search}%`);
         }
 
-        if (sortField) {
-            orderOptions[sortField] = sortOrder;
-        }
-
-        if (carParkType) {
-            whereOptions.carParkType = carParkType as CarParkType;
-        }
-
         if (status) {
             whereOptions.status = status;
         }
 
-        // Filter by assigned sub car parks at the database level
-        if (assignedSubCarParkIds && assignedSubCarParkIds.length > 0) {
-            whereOptions.subCarParks = {
-                id: In(assignedSubCarParkIds)
-            };
+        if (sortField) {
+            orderOptions[sortField] = sortOrder;
         }
 
-        const query: FindManyOptions<MasterCarPark> = {
+        // Filter by assigned sub car parks at the database level
+        if (assignedSubCarParkIds && assignedSubCarParkIds.length > 0) {
+            whereOptions.id = In(assignedSubCarParkIds);
+        }
+
+        const query: FindManyOptions<SubCarPark> = {
             where: whereOptions,
             order: orderOptions,
             relations: {
-                subCarParks: true,
+                masterCarPark: true,
             },
             skip,
             take,
         };
 
-        const [masterCarParks, totalItems] = await this.masterCarParkRepository.findAndCount(query);
+        const [subCarParks, totalItems] = await this.subCarParkRepository.findAndCount(query);
 
         // Map the results to response format
-        const response: FindMasterCarParkResponse[] = masterCarParks.map(masterCarPark => ({
-            id: masterCarPark.id,
-            carParkName: masterCarPark.carParkName,
-            carParkType: masterCarPark.carParkType,
-            carParkCode: masterCarPark.masterCarParkCode,
-            status: masterCarPark.status,
-            subCarParks: masterCarPark.subCarParks
-                ?.filter(subCarPark => assignedSubCarParkIds.includes(subCarPark.id))
-                ?.map(subCarPark => ({
-                    id: subCarPark.id,
-                    carParkName: subCarPark.carParkName,
-                    carSpace: subCarPark.carSpace,
-                    status: subCarPark.status,
-                })),
+        const response: FindSubCarParkResponse[] = subCarParks.map(subCarPark => ({
+            id: subCarPark.id,
+            carParkName: subCarPark.carParkName,
+            carSpace: subCarPark.carSpace,
+            location: subCarPark.location,
+            lat: subCarPark.lat,
+            lang: subCarPark.lang,
+            description: subCarPark.description,
+            subCarParkCode: subCarPark.subCarParkCode,
+            freeHours: subCarPark.freeHours,
+            tenantEmailCheck: subCarPark.tenantEmailCheck,
+            geolocation: subCarPark.geolocation,
+            event: subCarPark.event,
+            eventDate: subCarPark.eventDate,
+            eventExpiryDate: subCarPark.eventExpiryDate,
+            status: subCarPark.status,
+            masterCarParkId: subCarPark.masterCarParkId,
+            masterCarPark: subCarPark.masterCarPark ? {
+                id: subCarPark.masterCarPark.id,
+                carParkName: subCarPark.masterCarPark.carParkName,
+                masterCarParkCode: subCarPark.masterCarPark.masterCarParkCode,
+                carParkType: subCarPark.masterCarPark.carParkType,
+                status: subCarPark.masterCarPark.status,
+            } : undefined,
         }));
 
         return {
@@ -103,7 +106,7 @@ export class MasterCarParkService extends BaseService {
                 totalPages: Math.ceil(totalItems / pageSize),
                 totalItems,
             },
-        }
+        };
     }
 
     private async getAssignedSubCarParks(): Promise<string[]> {
@@ -162,13 +165,13 @@ export class MasterCarParkService extends BaseService {
         return Array.from(assignedSubCarParkIds);
     }
 
-    async findByAssignmentType(request: FindMasterCarParkRequest, assignmentType: 'visitor' | 'whitelist' | 'blacklist'): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
-        const { pageNo, pageSize, sortField, sortOrder, search, carParkType, status } = request;
+    async findByAssignmentType(request: FindSubCarParkRequest, assignmentType: 'visitor' | 'whitelist' | 'blacklist'): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+        const { pageNo, pageSize, sortField, sortOrder, search, status } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<MasterCarPark> = {};
-        const orderOptions: FindOptionsOrder<MasterCarPark> = {};
+        const whereOptions: FindOptionsWhere<SubCarPark> = {};
+        const orderOptions: FindOptionsOrder<SubCarPark> = {};
 
         const assignedSubCarParkIds = await this.getAssignedSubCarParksByType(assignmentType);
 
@@ -176,52 +179,56 @@ export class MasterCarParkService extends BaseService {
             whereOptions.carParkName = ILike(`%${search}%`);
         }
 
-        if (sortField) {
-            orderOptions[sortField] = sortOrder;
-        }
-
-        if (carParkType) {
-            whereOptions.carParkType = carParkType as CarParkType;
-        }
-
         if (status) {
             whereOptions.status = status;
         }
 
-        // Filter by assigned sub car parks at the database level
-        if (assignedSubCarParkIds && assignedSubCarParkIds.length > 0) {
-            whereOptions.subCarParks = {
-                id: In(assignedSubCarParkIds)
-            };
+        if (sortField) {
+            orderOptions[sortField] = sortOrder;
         }
 
-        const query: FindManyOptions<MasterCarPark> = {
+        // Filter by assigned sub car parks at the database level
+        if (assignedSubCarParkIds && assignedSubCarParkIds.length > 0) {
+            whereOptions.id = In(assignedSubCarParkIds);
+        }
+
+        const query: FindManyOptions<SubCarPark> = {
             where: whereOptions,
             order: orderOptions,
             relations: {
-                subCarParks: true,
+                masterCarPark: true,
             },
             skip,
             take,
         };
 
-        const [masterCarParks, totalItems] = await this.masterCarParkRepository.findAndCount(query);
+        const [subCarParks, totalItems] = await this.subCarParkRepository.findAndCount(query);
 
         // Map the results to response format
-        const response: FindMasterCarParkResponse[] = masterCarParks.map(masterCarPark => ({
-            id: masterCarPark.id,
-            carParkName: masterCarPark.carParkName,
-            carParkType: masterCarPark.carParkType,
-            carParkCode: masterCarPark.masterCarParkCode,
-            status: masterCarPark.status,
-            subCarParks: masterCarPark.subCarParks
-                ?.filter(subCarPark => assignedSubCarParkIds.includes(subCarPark.id))
-                ?.map(subCarPark => ({
-                    id: subCarPark.id,
-                    carParkName: subCarPark.carParkName,
-                    carSpace: subCarPark.carSpace,
-                    status: subCarPark.status,
-                })),
+        const response: FindSubCarParkResponse[] = subCarParks.map(subCarPark => ({
+            id: subCarPark.id,
+            carParkName: subCarPark.carParkName,
+            carSpace: subCarPark.carSpace,
+            location: subCarPark.location,
+            lat: subCarPark.lat,
+            lang: subCarPark.lang,
+            description: subCarPark.description,
+            subCarParkCode: subCarPark.subCarParkCode,
+            freeHours: subCarPark.freeHours,
+            tenantEmailCheck: subCarPark.tenantEmailCheck,
+            geolocation: subCarPark.geolocation,
+            event: subCarPark.event,
+            eventDate: subCarPark.eventDate,
+            eventExpiryDate: subCarPark.eventExpiryDate,
+            status: subCarPark.status,
+            masterCarParkId: subCarPark.masterCarParkId,
+            masterCarPark: subCarPark.masterCarPark ? {
+                id: subCarPark.masterCarPark.id,
+                carParkName: subCarPark.masterCarPark.carParkName,
+                masterCarParkCode: subCarPark.masterCarPark.masterCarParkCode,
+                carParkType: subCarPark.masterCarPark.carParkType,
+                status: subCarPark.masterCarPark.status,
+            } : undefined,
         }));
 
         return {
@@ -232,7 +239,7 @@ export class MasterCarParkService extends BaseService {
                 totalPages: Math.ceil(totalItems / pageSize),
                 totalItems,
             },
-        }
+        };
     }
 
     private async getAssignedSubCarParksByType(assignmentType: 'visitor' | 'whitelist' | 'blacklist'): Promise<string[]> {

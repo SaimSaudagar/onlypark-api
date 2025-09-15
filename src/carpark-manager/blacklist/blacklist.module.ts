@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MasterCarParkController } from './master-car-park.controller';
-import { MasterCarParkService } from './master-car-park.service';
-import { MasterCarPark } from '../../master-car-park/entities/master-car-park.entity';
+import { BlacklistController } from './blacklist.controller';
+import { BlacklistService } from './blacklist.service';
+import { Blacklist } from '../../blacklist/entities/blacklist-reg.entity';
 import { CarparkManager } from '../entities/carpark-manager.entity';
 import { CarparkManagerVisitorSubCarPark } from '../entities/carpark-manager-visitor-sub-car-park.entity';
 import { CarparkManagerWhitelistSubCarPark } from '../entities/carpark-manager-whitelist-sub-car-park.entity';
@@ -11,15 +11,15 @@ import { CarparkManagerBlacklistSubCarPark } from '../entities/carpark-manager-b
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            MasterCarPark,
+            Blacklist,
             CarparkManager,
             CarparkManagerVisitorSubCarPark,
             CarparkManagerWhitelistSubCarPark,
-            CarparkManagerBlacklistSubCarPark
+            CarparkManagerBlacklistSubCarPark,
         ]),
     ],
-    controllers: [MasterCarParkController],
-    providers: [MasterCarParkService],
-    exports: [MasterCarParkService],
+    controllers: [BlacklistController],
+    providers: [BlacklistService],
+    exports: [BlacklistService],
 })
-export class MasterCarParkModule { }
+export class BlacklistModule { }

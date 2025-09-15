@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PatrolOfficerController } from './patrol-officer.controller';
-import { PatrolOfficerService } from './patrol-officer.service';
 import { PatrolOfficer } from './entities/patrol-officer.entity';
 import { MasterCarParkModule } from './master-car-park/master-car-park.module';
+import { SubCarParkModule } from './sub-car-park/sub-car-park.module';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PatrolOfficer]),
     MasterCarParkModule,
+    SubCarParkModule,
+    BlacklistModule,
   ],
-  controllers: [PatrolOfficerController],
-  providers: [PatrolOfficerService],
-  exports: [PatrolOfficerService],
 })
 export class PatrolOfficerModule { }

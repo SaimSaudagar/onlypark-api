@@ -233,6 +233,12 @@ export class ErrorCode {
     message: 'Cannot delete sub car park with existing tenancies',
   };
 
+  public static readonly SUB_CAR_PARK_NOT_ASSIGNED_TO_USER = {
+    key: 'SUB_CAR_PARK_NOT_ASSIGNED_TO_USER',
+    code: 'SUB_CAR_PARK_NOT_ASSIGNED_TO_USER',
+    message: 'Sub car park not assigned to user',
+  };
+
   public static readonly CAR_MAKE_ALREADY_EXISTS = {
     key: 'CAR_MAKE_ALREADY_EXISTS',
     code: 'CAR_MAKE_ALREADY_EXISTS',
