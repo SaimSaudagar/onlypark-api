@@ -7,10 +7,6 @@ export class CreateCarparkManagerRequest {
   @IsString()
   userId: string;
 
-  @IsNotEmpty()
-  @IsString()
-  managerCode: string;
-
   @IsOptional()
   subCarParks?: SubCarParkRequest[];
 
@@ -38,7 +34,6 @@ export class UpdateCarparkManagerRequest extends PartialType(CreateCarparkManage
 export interface GetCarparkManagerResponse {
   id: string;
   userId: string;
-  managerCode: string;
   subCarParks?: string[];
   yearsOfExperience?: number;
   specializations?: string;

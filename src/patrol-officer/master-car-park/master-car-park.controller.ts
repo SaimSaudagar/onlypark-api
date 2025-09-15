@@ -6,15 +6,36 @@ import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Patrol Officer => Master Car Park')
-@Controller('patrol-officer/master-car-park')
+@Controller({ path: 'patrol-officer/master-car-park', version: '1' })
 @UseGuards(JwtAuthenticationGuard)
 export class MasterCarParkController {
     constructor(private readonly masterCarParkService: MasterCarParkService) { }
 
-    @Get()
+    @Get('list')
     async findAll(
         @Query() request: FindMasterCarParkRequest,
     ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
         return await this.masterCarParkService.findAll(request);
+    }
+
+    @Get('visitor')
+    async findVisitorMasterCarParks(
+        @Query() request: FindMasterCarParkRequest,
+    ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+        return await this.masterCarParkService.findByAssignmentType(request, 'visitor');
+    }
+
+    @Get('whitelist')
+    async findWhitelistMasterCarParks(
+        @Query() request: FindMasterCarParkRequest,
+    ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+        return await this.masterCarParkService.findByAssignmentType(request, 'whitelist');
+    }
+
+    @Get('blacklist')
+    async findBlacklistMasterCarParks(
+        @Query() request: FindMasterCarParkRequest,
+    ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+        return await this.masterCarParkService.findByAssignmentType(request, 'blacklist');
     }
 }

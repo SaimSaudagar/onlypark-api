@@ -245,10 +245,10 @@ export class ErrorCode {
     message: 'Car make not found',
   };
 
-  public static readonly MANAGER_CODE_ALREADY_EXISTS = {
-    key: 'MANAGER_CODE_ALREADY_EXISTS',
-    code: 'MANAGER_CODE_ALREADY_EXISTS',
-    message: 'Manager code already exists',
+  public static readonly CARPARK_MANAGER_ALREADY_EXISTS = {
+    key: 'CARPARK_MANAGER_ALREADY_EXISTS',
+    code: 'CARPARK_MANAGER_ALREADY_EXISTS',
+    message: 'Carpark manager already exists',
   };
 
   public static readonly CARPARK_MANAGER_NOT_FOUND = {

@@ -1,38 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsEnum, IsNumber, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
+import { ApiGetBaseRequest } from '../../common/types';
 import { ParkingSpotStatus } from '../../common/enums';
 
-export class FindMasterCarParkRequest {
-    @ApiProperty({ required: false, default: 1 })
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
-    @Min(1)
-    pageNo?: number = 1;
-
-    @ApiProperty({ required: false, default: 10 })
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
-    @Min(1)
-    @Max(100)
-    pageSize?: number = 10;
-
+export class FindMasterCarParkRequest extends ApiGetBaseRequest {
     @ApiProperty({ required: false })
     @IsOptional()
     @IsString()
     search?: string;
-
-    @ApiProperty({ required: false })
-    @IsOptional()
-    @IsString()
-    sortField?: string;
-
-    @ApiProperty({ required: false, enum: ['ASC', 'DESC'] })
-    @IsOptional()
-    @IsString()
-    sortOrder?: 'ASC' | 'DESC';
 
     @ApiProperty({ required: false })
     @IsOptional()

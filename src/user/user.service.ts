@@ -92,7 +92,7 @@ export class UserService {
       } else if (type === UserType.CARPARK_MANAGER) {
         await queryRunner.manager.save(CarparkManager, {
           userId: savedUser.id,
-          managerCode: savedUser.id,
+          user: savedUser,
           subCarParks: [],
           status: CarparkManagerStatus.ACTIVE,
         });

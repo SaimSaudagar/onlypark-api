@@ -10,14 +10,13 @@ import { User } from '../../user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
+import { CarparkManagerVisitorSubCarPark } from './carpark-manager-visitor-sub-car-park.entity';
+import { CarparkManagerWhitelistSubCarPark } from './carpark-manager-whitelist-sub-car-park.entity';
+import { CarparkManagerBlacklistSubCarPark } from './carpark-manager-blacklist-sub-car-park.entity';
 
 @Entity('carpark_manager')
 @Auditable()
 export class CarparkManager extends BaseEntity {
-
-  @Column({ type: 'varchar', unique: true, nullable: false })
-  managerCode: string;
-
   @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.carparkManager)
   subCarParks: SubCarPark[];
 
@@ -55,4 +54,16 @@ export class CarparkManager extends BaseEntity {
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column({ type: 'varchar', nullable: false })
+  userId: string;
+
+  @OneToMany(() => CarparkManagerVisitorSubCarPark, (carparkManagerVisitorSubCarPark) => carparkManagerVisitorSubCarPark.carparkManager)
+  carparkManagerVisitorSubCarParks: CarparkManagerVisitorSubCarPark[];
+
+  @OneToMany(() => CarparkManagerWhitelistSubCarPark, (carparkManagerWhitelistSubCarPark) => carparkManagerWhitelistSubCarPark.carparkManager)
+  carparkManagerWhitelistSubCarParks: CarparkManagerWhitelistSubCarPark[];
+
+  @OneToMany(() => CarparkManagerBlacklistSubCarPark, (carparkManagerBlacklistSubCarPark) => carparkManagerBlacklistSubCarPark.carparkManager)
+  carparkManagerBlacklistSubCarParks: CarparkManagerBlacklistSubCarPark[];
 }

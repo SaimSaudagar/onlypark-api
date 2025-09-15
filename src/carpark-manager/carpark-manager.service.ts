@@ -9,7 +9,6 @@ import {
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { SubCarParkService } from '../admin/sub-car-park/sub-car-park.service';
 
 @Injectable()
 export class CarparkManagerService {
@@ -21,16 +20,16 @@ export class CarparkManagerService {
   async create(carparkManagerDto: CreateCarparkManagerRequest): Promise<CarparkManager> {
     // check if the manager code exists in the db
     const managerInDb = await this.carparkManagerRepository.findOne({
-      where: { managerCode: carparkManagerDto.managerCode },
+      where: { user: { id: carparkManagerDto.userId } },
     });
     if (managerInDb) {
       throw new CustomException(
-        ErrorCode.MANAGER_CODE_ALREADY_EXISTS.key,
+        ErrorCode.CARPARK_MANAGER_ALREADY_EXISTS.key,
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const { subCarParks, ...entityData } = carparkManagerDto;
+    const { ...entityData } = carparkManagerDto;
 
     const carparkManager = this.carparkManagerRepository.create(entityData);
     return await this.carparkManagerRepository.create(carparkManager);

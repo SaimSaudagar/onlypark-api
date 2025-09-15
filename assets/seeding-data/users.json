@@ -8,11 +8,62 @@
     "status": "Active"
   },
   {
-    "name": "Carpark Manager User",
-    "email": "carparkmanager@gmail.com",
-    "password": "carparkmanager1234",
+    "name": "John Smith - Patrol Officer",
+    "email": "john.smith@patrol.com",
+    "password": "patrol1234",
+    "type": "patrol_officer",
+    "phone": "+1234567891",
+    "status": "Active",
+    "subCarParks": {
+      "visitor": [
+        "SCDT01",
+        "SCDT02",
+        "SCDT03"
+      ],
+      "whitelist": [
+        "SCDT04",
+        "SCDT05",
+        "SCRC01",
+        "SCRC02",
+        "SCUC01",
+        "SCUC02"
+      ],
+      "blacklist": [
+        "SCBD01",
+        "SCBD02",
+        "SCAT01",
+        "SCAT02"
+      ]
+    }
+  },
+  {
+    "name": "Sarah Johnson - Carpark Manager",
+    "email": "sarah.johnson@carpark.com",
+    "password": "manager1234",
     "type": "carpark_manager",
-    "phone": "+1234567890",
-    "status": "Active"
+    "phone": "+1234567892",
+    "status": "Active",
+    "subCarParks": {
+      "visitor": [
+        "SCDT01",
+        "SCDT02",
+        "SCDT03",
+        "SCDT04"
+      ],
+      "whitelist": [
+        "SCDT05",
+        "SCRC01",
+        "SCRC02",
+        "SCUC01",
+        "SCUC02",
+        "SCBD01"
+      ],
+      "blacklist": [
+        "SCBD02",
+        "SCAT01",
+        "SCAT02",
+        "SCDT01"
+      ]
+    }
   }
 ]
