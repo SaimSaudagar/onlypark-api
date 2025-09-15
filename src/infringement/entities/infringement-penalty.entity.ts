@@ -2,8 +2,11 @@ import {
   Entity,
   Column,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Infringement } from './infringement.entity';
+import { InfringementCarPark } from './infringement-car-park.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 
@@ -11,7 +14,11 @@ import { BaseEntity } from '../../common/entities/base.entity';
 @Auditable()
 export class InfringementPenalty extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
-  carParkName: string;
+  infringementCarParkId: string;
+
+  @ManyToOne(() => InfringementCarPark, (carPark) => carPark.infringements)
+  @JoinColumn({ name: 'infringementCarParkId' })
+  infringementCarPark: InfringementCarPark;
 
   @Column({ type: 'varchar', nullable: false })
   penaltyName: string;

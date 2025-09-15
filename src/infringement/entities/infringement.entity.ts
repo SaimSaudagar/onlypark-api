@@ -13,6 +13,7 @@ import { InfringementPenalty } from './infringement-penalty.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { CarMake } from '../../car-make/entities/car-make.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { InfringementCarPark } from './infringement-car-park.entity';
 
 @Entity('infringements')
 @Auditable()
@@ -24,7 +25,11 @@ export class Infringement extends BaseEntity {
   ticketDate: Date;
 
   @Column({ type: 'varchar', nullable: true })
-  carParkName: string;
+  infringementCarParkId: string;
+
+  @ManyToOne(() => InfringementCarPark, (carPark) => carPark.infringements)
+  @JoinColumn({ name: 'infringementCarParkId' })
+  infringementCarPark: InfringementCarPark;
 
   @Column({ type: 'text', nullable: true })
   comments: string;

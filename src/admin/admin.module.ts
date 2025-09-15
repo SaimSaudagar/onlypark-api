@@ -5,6 +5,8 @@ import { MasterCarParkModule } from './master-car-park/master-car-park.module';
 import { SubCarParkModule } from './sub-car-park/sub-car-park.module';
 import { VisitorBookingModule } from './visitor-booking/visitor-booking.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { InfringementModule } from './infringement/infringement.module';
+import { DisputeModule } from './dispute/dispute.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     SubCarParkModule,
     VisitorBookingModule,
     BlacklistModule,
+    InfringementModule,
+    DisputeModule,
   ],
 })
 export class AdminModule { }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
-import { Infringement } from './entities/infringement.entity';
+import { Infringement } from '../../infringement/entities/infringement.entity';
 import {
   CreateInfringementRequest,
   CreateInfringementResponse,
@@ -15,12 +15,12 @@ import {
   ScanInfringementResponse,
   UpdateInfringementRequest,
 } from './infringement.dto';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
+import { CustomException } from '../../common/exceptions/custom.exception';
+import { ErrorCode } from '../../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { InfringementStatus } from '../common/enums';
-import { ApiGetBaseResponse } from '../common';
-import { InfringementPenalty } from './entities/infringement-penalty.entity';
+import { InfringementStatus } from '../../common/enums';
+import { ApiGetBaseResponse } from '../../common';
+import { InfringementPenalty } from '../../infringement/entities/infringement-penalty.entity';
 
 @Injectable()
 export class InfringementService {
@@ -42,47 +42,14 @@ export class InfringementService {
   }
 
   async create(request: CreateInfringementRequest | UpdateInfringementRequest): Promise<CreateInfringementResponse> {
-    const { id, carParkName, carMakeId, reasonId, penaltyId, photos, comments } = request;
+    const { id, infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
     // Calculate due date as 14 days from now at end of day
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
     dueDate.setHours(23, 59, 59, 999); // Set to end of day
 
-    if (id) {
-      const existingInfringement = await this.infringementRepository.findOne({
-        where: { id }
-      });
-
-      if (!existingInfringement) {
-        throw new CustomException(
-          ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      Object.assign(existingInfringement, {
-        carParkName,
-        carMakeId,
-        reasonId,
-        penaltyId,
-        photos,
-        status: InfringementStatus.PENDING,
-        dueDate,
-        comments,
-      });
-
-      const updatedInfringement = await this.infringementRepository.save(existingInfringement);
-      return {
-        id: updatedInfringement.id,
-        ticketNumber: updatedInfringement.ticketNumber,
-        registrationNo: updatedInfringement.registrationNo,
-      };
-    }
-
-
-
     const infringement = await this.infringementRepository.save({
-      carParkName,
+      infringementCarParkId,
       carMakeId,
       reasonId,
       penaltyId,
@@ -202,10 +169,10 @@ export class InfringementService {
     return infringement.id;
   }
 
-  async getPenalty(carParkName: string): Promise<GetPenaltyResponse[]> {
+  async getPenalty(infringementCarParkId: string): Promise<GetPenaltyResponse[]> {
     return await this.infringementPenaltyRepository.find({
       where: {
-        carParkName: carParkName,
+        infringementCarParkId: infringementCarParkId,
       },
     });
   }

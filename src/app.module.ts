@@ -29,7 +29,6 @@ import { ProfileModule as CarparkManagerProfileModule } from './carpark-manager/
 import { TenancyModule } from './tenancy/tenancy.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
-import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
 import { ProfileModule as PatrolOfficerProfileModule } from './patrol-officer/profile/profile.module';
@@ -106,7 +105,6 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     TenancyModule,
     WhitelistModule,
     WhitelistCompanyModule,
-    InfringementModule,
     DisputeModule,
     PatrolOfficerModule,
     PatrolOfficerProfileModule,

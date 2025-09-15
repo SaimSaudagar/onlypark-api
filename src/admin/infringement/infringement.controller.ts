@@ -12,11 +12,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RequirePermissions } from '../common/decorators/permission.decorator';
-import { PermissionsGuard } from '../common/guards/permission.guard';
-import { UserType, AdminPermission, UserPermission, CarparkManagerPermission, PatrolOfficerPermission } from '../common/enums';
+import { RoleGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RequirePermissions } from '../../common/decorators/permission.decorator';
+import { PermissionsGuard } from '../../common/guards/permission.guard';
+import { UserType, AdminPermission, UserPermission, CarparkManagerPermission, PatrolOfficerPermission } from '../../common/enums';
 import { InfringementService } from './infringement.service';
 import {
   CreateInfringementRequest,
@@ -25,9 +25,9 @@ import {
   FindInfringementRequest,
 } from './infringement.dto';
 
-@ApiTags('Infringement')
+@ApiTags('Admin => Infringement')
 @UseGuards(RoleGuard, PermissionsGuard)
-@Controller({ path: 'infringement', version: '1' })
+@Controller({ path: 'admin/infringement', version: '1' })
 export class InfringementController {
   constructor(private readonly infringementService: InfringementService) { }
 
@@ -69,8 +69,8 @@ export class InfringementController {
     return this.infringementService.remove(id);
   }
 
-  @Get('penalty/:carParkName')
-  getPenalty(@Param('carParkName') carParkName: string) {
-    return this.infringementService.getPenalty(carParkName);
+  @Get('penalty/:infringementCarParkId')
+  getPenalty(@Param('infringementCarParkId') infringementCarParkId: string) {
+    return this.infringementService.getPenalty(infringementCarParkId);
   }
 }

@@ -1,19 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { InfringementModule } from '../admin/infringement/infringement.module';
 import { DisputeController } from './dispute.controller';
 import { DisputeService } from './dispute.service';
 import { Dispute } from './entities/dispute.entity';
-import { InfringementModule } from '../infringement/infringement.module';
-import { CarMakeModule } from '../car-make/car-make.module';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Dispute]),
-        InfringementModule,
-        CarMakeModule,
-    ],
+    imports: [TypeOrmModule.forFeature([Dispute]), InfringementModule],
     controllers: [DisputeController],
     providers: [DisputeService],
-    exports: [DisputeService],
 })
 export class DisputeModule { }
