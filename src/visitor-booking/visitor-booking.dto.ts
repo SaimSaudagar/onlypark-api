@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional, IsDateString, IsEnum } from "class-validator";
 
-export class CreateBookingRequest {
+export class CreateVisitorBookingRequest {
     @IsOptional()
     @IsUUID()
     id?: string;
@@ -38,9 +38,9 @@ export class CreateBookingRequest {
     comments?: string;
 }
 
-export class UpdateBookingRequest extends CreateBookingRequest { }
+export class UpdateVisitorBookingRequest extends CreateVisitorBookingRequest { }
 
-export class BookingResponse {
+export class VisitorBookingResponse {
     id: string;
     email: string;
     vehicleReg: string;
@@ -71,7 +71,7 @@ export class SubCarParkResponse {
     carSpace: number;
 }
 
-export class BookingCreateResponse {
+export class VisitorBookingCreateResponse {
     id: string;
     email: string;
     vehicleReg: string;
@@ -83,7 +83,7 @@ export class BookingCreateResponse {
     createdAt: Date;
 }
 
-export class BookingUpdateResponse {
+export class VisitorBookingUpdateResponse {
     id: string;
     email: string;
     vehicleReg: string;
@@ -96,7 +96,7 @@ export class BookingUpdateResponse {
     message: string;
 }
 
-export class BookingDeleteResponse {
+export class VisitorBookingDeleteResponse {
     id: string;
     email: string;
     vehicleReg: string;
@@ -104,7 +104,7 @@ export class BookingDeleteResponse {
     deletedAt: Date;
 }
 
-export class BookingListResponse {
+export class VisitorBookingListResponse {
     id: string;
     email: string;
     vehicleReg: string;

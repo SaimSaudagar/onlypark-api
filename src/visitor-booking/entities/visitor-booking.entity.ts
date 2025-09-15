@@ -11,9 +11,9 @@ import { Auditable } from '../../common/decorators';
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
 
-@Entity('bookings')
+@Entity('visitor_bookings')
 @Auditable()
-export class Booking extends BaseEntity {
+export class VisitorBooking extends BaseEntity {
 
     @Column({ type: 'varchar', nullable: false })
     email: string;
@@ -50,7 +50,6 @@ export class Booking extends BaseEntity {
     @JoinColumn({ name: 'subCarParkId' })
     subCarPark: SubCarPark
 
-    @OneToMany(() => VehicleRegChangeOtp, (otp) => otp.booking)
+    @OneToMany(() => VehicleRegChangeOtp, (otp) => otp.visitorBooking)
     vehicleRegChangeOtps: VehicleRegChangeOtp[];
 }
-

@@ -10,7 +10,7 @@ import {
 } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
 import { MasterCarPark } from '../../master-car-park/entities/master-car-park.entity';
-import { Booking } from '../../booking/entities/booking.entity';
+import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { Whitelist } from '../../whitelist/entities/whitelist.entity';
 import { WhitelistCompany } from '../../whitelist-company/entities/whitelist-company.entity';
@@ -78,8 +78,8 @@ export class SubCarPark extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   masterCarParkId: string;
 
-  @OneToMany(() => Booking, (booking) => booking.subCarPark)
-  bookings: Booking[];
+  @OneToMany(() => VisitorBooking, (visitorBooking) => visitorBooking.subCarPark)
+  visitorBookings: VisitorBooking[];
 
   @OneToMany(() => Tenancy, (tenancy) => tenancy.subCarPark)
   tenancies: Tenancy[];

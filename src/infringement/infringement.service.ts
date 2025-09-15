@@ -18,8 +18,8 @@ import {
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { InfringementStatus } from 'src/common/enums';
-import { ApiGetBaseResponse } from 'src/common';
+import { InfringementStatus } from '../common/enums';
+import { ApiGetBaseResponse } from '../common';
 import { InfringementPenalty } from './entities/infringement-penalty.entity';
 
 @Injectable()

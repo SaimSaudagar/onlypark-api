@@ -47,7 +47,7 @@ export class UserSeederService {
           status: userData.status,
         });
 
-        const savedUser = await this.userRepository.create(user);
+        const savedUser = await this.userRepository.save(user);
 
         // Assign role based on user type
         await this.assignRoleToUser(savedUser, userData.type);
@@ -69,8 +69,11 @@ export class UserSeederService {
     let roleName: string;
 
     switch (userType) {
+      case 'super_admin':
+        roleName = 'Super Admin';
+        break;
       case 'admin':
-        roleName = user.email.includes('superadmin') ? 'Super Admin' : 'Admin';
+        roleName = 'Admin';
         break;
       case 'carparkManager':
         roleName = 'Carpark Manager';

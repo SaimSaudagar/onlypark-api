@@ -29,7 +29,7 @@ export class PermissionController {
   constructor(private readonly permissionService: PermissionService) { }
 
   @Get()
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.PERMISSION_LIST)
   @UseGuards(RoleGuard, PermissionsGuard)
   findAll() {
@@ -37,7 +37,7 @@ export class PermissionController {
   }
 
   @Get(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.PERMISSION_VIEW)
   @UseGuards(RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
@@ -46,7 +46,7 @@ export class PermissionController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.PERMISSION_CREATE)
   @UseGuards(RoleGuard, PermissionsGuard)
   create(@Body() createPermissionDto: CreatePermissionRequest) {
@@ -54,7 +54,7 @@ export class PermissionController {
   }
 
   @Patch(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.PERMISSION_EDIT)
   @UseGuards(RoleGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionRequest) {
@@ -63,7 +63,7 @@ export class PermissionController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.PERMISSION_DELETE)
   @UseGuards(RoleGuard, PermissionsGuard)
   remove(@Param('id') id: string) {

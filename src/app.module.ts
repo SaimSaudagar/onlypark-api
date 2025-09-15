@@ -33,7 +33,7 @@ import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
 import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
-import { BookingModule } from './booking/booking.module';
+import { VisitorBookingModule } from './visitor-booking/visitor-booking.module';
 import { OutstandingRegistrationModule } from './outstanding-registration/outstanding-registration.module';
 import { AuditLogModule } from './common/services/audit-log/audit-log.module';
 import { RequestContextModule } from './common/services/request-context/request-context.module';
@@ -112,7 +112,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     InfringementModule,
     DisputeModule,
     PatrolOfficerModule,
-    BookingModule,
+    VisitorBookingModule,
     OutstandingRegistrationModule,
     AuditLogModule,
     RequestContextModule,

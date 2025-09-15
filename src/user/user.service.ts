@@ -44,6 +44,13 @@ export class UserService {
   async create(userDto: CreateUserRequest): Promise<CreateUserResponse> {
     const { name, email, type, phoneNumber, image, whitelist, blacklist } = userDto;
 
+    if (type === UserType.SUPER_ADMIN) {
+      throw new CustomException(
+        ErrorCode.INVALID_USER_TYPE.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     // Check if user already exists
     const userInDb = await this.usersRepository.findOne({
       where: { email },

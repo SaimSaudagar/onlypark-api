@@ -688,7 +688,7 @@ export class SubCarParkService {
     const subCarPark = await this.subCarParkRepository.findOne({
       where: { id },
       relations: {
-        bookings: true,
+        visitorBookings: true,
         tenancies: true,
         whitelists: true,
       },
@@ -701,7 +701,7 @@ export class SubCarParkService {
       );
     }
 
-    if (subCarPark.bookings && subCarPark.bookings.length > 0) {
+    if (subCarPark.visitorBookings && subCarPark.visitorBookings.length > 0) {
       throw new CustomException(
         ErrorCode.CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS.key,
         HttpStatus.BAD_REQUEST,

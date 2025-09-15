@@ -31,7 +31,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
   @Get()
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.ROLE_LIST)
   @UseGuards(RoleGuard, PermissionsGuard)
   async findAll() {
@@ -39,7 +39,7 @@ export class RoleController {
   }
 
   @Get(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.ROLE_VIEW)
   @UseGuards(RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
@@ -48,7 +48,7 @@ export class RoleController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.ROLE_CREATE)
   @UseGuards(RoleGuard, PermissionsGuard)
   create(@Body() createRoleDto: CreateRoleRequest) {
@@ -56,7 +56,7 @@ export class RoleController {
   }
 
   @Patch(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.ROLE_EDIT)
   @UseGuards(RoleGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleRequest) {
@@ -65,7 +65,7 @@ export class RoleController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.ROLE_DELETE)
   @UseGuards(RoleGuard, PermissionsGuard)
   remove(@Param('id') id: string) {

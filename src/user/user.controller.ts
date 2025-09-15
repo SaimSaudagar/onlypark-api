@@ -35,7 +35,7 @@ export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Get()
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_LIST)
   @UseGuards(RoleGuard, PermissionsGuard)
   findAll() {
@@ -43,7 +43,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_VIEW)
   @UseGuards(RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
@@ -66,9 +66,9 @@ export class UserController {
   }
 
   @Post()
-  // @AllowedRoles(UserType.ADMIN)
-  // @RequirePermissions(AdminPermission.USER_CREATE)
-  // @UseGuards(RoleGuard, PermissionsGuard)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @RequirePermissions(AdminPermission.USER_CREATE)
+  @UseGuards(RoleGuard, PermissionsGuard)
   async create(@Body() request: CreateUserRequest) {
     return this.userService.create(request);
   }
@@ -87,7 +87,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(RoleGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -105,7 +105,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_DELETE)
   @UseGuards(RoleGuard, PermissionsGuard)
   remove(@Param('id') id: string) {

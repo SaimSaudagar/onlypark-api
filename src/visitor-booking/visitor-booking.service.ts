@@ -1,0 +1,312 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { VisitorBooking } from './entities/visitor-booking.entity';
+import {
+    CreateVisitorBookingRequest,
+    VisitorBookingResponse,
+    VisitorBookingListResponse,
+    VisitorBookingCreateResponse,
+    VisitorBookingDeleteResponse,
+} from './visitor-booking.dto';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { HttpStatus } from '@nestjs/common';
+import { BookingStatus } from '../common/enums';
+import { TenancyService } from '../tenancy/tenancy.service';
+import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
+
+@Injectable()
+export class VisitorBookingService {
+    constructor(
+        @InjectRepository(VisitorBooking)
+        private visitorBookingRepository: Repository<VisitorBooking>,
+        private tenancyService: TenancyService,
+        private subCarParkService: SubCarParkService,
+    ) { }
+
+    async create(request: CreateVisitorBookingRequest): Promise<VisitorBookingCreateResponse> {
+        const {
+            referenceNumber,
+            subCarParkId,
+            registrationNo,
+            email,
+            timeTo,
+            timeFrom,
+            comments,
+            tenancyId,
+        } = request;
+
+        const startDate = new Date(timeFrom);
+        const endDate = new Date(timeTo);
+
+        if (startDate >= endDate) {
+            throw new CustomException(
+                ErrorCode.INVALID_BOOKING_DATES.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const durationHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+        if (durationHours > 24) {
+            throw new CustomException(
+                ErrorCode.BOOKING_DURATION_EXCEEDED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        if (tenancyId) {
+            const tenancy = await this.tenancyService.findOne({
+                where: { id: tenancyId },
+            });
+
+            if (!tenancy) {
+                throw new CustomException(
+                    ErrorCode.TENANT_NOT_FOUND.key,
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+
+        const subCarPark = await this.subCarParkService.findOne({
+            where: { id: subCarParkId },
+        });
+
+        if (!subCarPark) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const existingBooking = await this.visitorBookingRepository
+            .createQueryBuilder('visitorBooking')
+            .where('visitorBooking.vehicleReg = :vehicleReg', { vehicleReg: registrationNo })
+            .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
+            .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
+            .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
+            .getOne();
+
+        if (existingBooking) {
+            throw new CustomException(
+                ErrorCode.BOOKING_TIME_CONFLICT.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Check capacity (simplified - in real app, this would be more complex)
+        const activeBookingsCount = await this.visitorBookingRepository
+            .createQueryBuilder('visitorBooking')
+            .where('visitorBooking.subCarParkId = :subCarParkId', { subCarParkId: subCarPark.id })
+            .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
+            .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
+            .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
+            .getCount();
+
+        if (activeBookingsCount >= subCarPark.carSpace) {
+            throw new CustomException(
+                ErrorCode.BOOKING_CAPACITY_EXCEEDED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Create booking
+        const visitorBooking = await this.visitorBookingRepository.save({
+            email,
+            vehicleReg: registrationNo,
+            tenancyId,
+            subCarParkCode: subCarPark.subCarParkCode,
+            subCarParkId: subCarPark.id,
+            startTime: timeFrom,
+            endTime: timeTo,
+            status: BookingStatus.ACTIVE,
+        });
+
+        return {
+            id: visitorBooking.id,
+            email: visitorBooking.email,
+            vehicleReg: visitorBooking.vehicleReg,
+            subCarParkCode: visitorBooking.subCarParkCode,
+            property: visitorBooking.property,
+            startTime: visitorBooking.startTime,
+            endTime: visitorBooking.endTime,
+            status: visitorBooking.status,
+            createdAt: visitorBooking.createdAt,
+        };
+    }
+
+    async findAll(options?: FindManyOptions<VisitorBooking>): Promise<VisitorBookingListResponse[]> {
+        const visitorBookings = await this.visitorBookingRepository.find({
+            ...options,
+            relations: {
+                tenancy: true,
+                subCarPark: true,
+            },
+        });
+
+        return visitorBookings.map(visitorBooking => ({
+            id: visitorBooking.id,
+            email: visitorBooking.email,
+            vehicleReg: visitorBooking.vehicleReg,
+            subCarParkCode: visitorBooking.subCarParkCode,
+            property: visitorBooking.property,
+            startTime: visitorBooking.startTime,
+            endTime: visitorBooking.endTime,
+            status: visitorBooking.status,
+            tenancyName: visitorBooking.tenancy?.tenantName,
+            subCarParkName: visitorBooking.subCarPark?.carParkName,
+            createdAt: visitorBooking.createdAt,
+            updatedAt: visitorBooking.updatedAt,
+        }));
+    }
+
+    async findOne(options?: FindOneOptions<VisitorBooking>): Promise<VisitorBookingResponse | null> {
+        const visitorBooking = await this.visitorBookingRepository.findOne({
+            ...options,
+            relations: {
+                tenancy: true,
+                subCarPark: true,
+            },
+        });
+
+        if (!visitorBooking) {
+            return null;
+        }
+
+        return {
+            id: visitorBooking.id,
+            email: visitorBooking.email,
+            vehicleReg: visitorBooking.vehicleReg,
+            tenancyId: visitorBooking.tenancyId,
+            tenancy: visitorBooking.tenancy ? {
+                id: visitorBooking.tenancy.id,
+                tenantName: visitorBooking.tenancy.tenantName,
+                tenantEmail: visitorBooking.tenancy.tenantEmail,
+            } : undefined,
+            subCarParkCode: visitorBooking.subCarParkCode,
+            subCarParkId: visitorBooking.subCarParkId,
+            subCarPark: visitorBooking.subCarPark ? {
+                id: visitorBooking.subCarPark.id,
+                carParkName: visitorBooking.subCarPark.carParkName,
+                subCarParkCode: visitorBooking.subCarPark.subCarParkCode,
+                location: visitorBooking.subCarPark.location,
+                carSpace: visitorBooking.subCarPark.carSpace,
+            } : undefined,
+            property: visitorBooking.property,
+            startTime: visitorBooking.startTime,
+            endTime: visitorBooking.endTime,
+            status: visitorBooking.status,
+            createdAt: visitorBooking.createdAt,
+            updatedAt: visitorBooking.updatedAt,
+        };
+    }
+
+    // async update(id: string, updateDto: UpdateVisitorBookingRequest): Promise<VisitorBookingUpdateResponse> {
+    //   const visitorBooking = await this.visitorBookingRepository.findOne({
+    //     where: { id },
+    //     relations: {
+    //       tenancy: true,
+    //       subCarPark: true,
+    //     },
+    //   });
+
+    //   if (!visitorBooking) {
+    //     throw new CustomException(
+    //       ErrorCode.BOOKING_NOT_FOUND.key,
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //   }
+
+    //   // Validate status transitions
+    //   if (updateDto.status) {
+    //     if (visitorBooking.status === BookingStatus.EXPIRED && updateDto.status !== BookingStatus.EXPIRED) {
+    //       throw new CustomException(
+    //         ErrorCode.BOOKING_EXPIRED.key,
+    //         HttpStatus.BAD_REQUEST,
+    //       );
+    //     }
+
+    //     if (visitorBooking.status === BookingStatus.CHECKOUT && updateDto.status !== BookingStatus.CHECKOUT) {
+    //       throw new CustomException(
+    //         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
+    //         HttpStatus.BAD_REQUEST,
+    //       );
+    //     }
+    //   }
+
+    //   // Validate dates if being updated
+    //   if (updateDto.startTime || updateDto.endTime) {
+    //     const startTime = updateDto.startTime ? new Date(updateDto.startTime) : new Date(visitorBooking.startTime);
+    //     const endTime = updateDto.endTime ? new Date(updateDto.endTime) : new Date(visitorBooking.endTime);
+
+    //     if (startTime >= endTime) {
+    //       throw new CustomException(
+    //         ErrorCode.INVALID_BOOKING_DATES.key,
+    //         HttpStatus.BAD_REQUEST,
+    //       );
+    //     }
+    //   }
+
+    //   // Validate vehicle registration if being updated
+    //   if (updateDto.vehicleReg && !this.isValidVehicleRegistration(updateDto.vehicleReg)) {
+    //     throw new CustomException(
+    //       ErrorCode.INVALID_VEHICLE_REGISTRATION.key,
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //   }
+
+    //   Object.assign(visitorBooking, updateDto);
+    //   const updatedVisitorBooking = await this.visitorBookingRepository.create(visitorBooking);
+
+    //   return {
+    //     id: updatedVisitorBooking.id,
+    //     email: updatedVisitorBooking.email,
+    //     vehicleReg: updatedVisitorBooking.vehicleReg,
+    //     subCarParkCode: updatedVisitorBooking.subCarParkCode,
+    //     property: updatedVisitorBooking.property,
+    //     startTime: updatedVisitorBooking.startTime,
+    //     endTime: updatedVisitorBooking.endTime,
+    //     status: updatedVisitorBooking.status,
+    //     updatedAt: updatedVisitorBooking.updatedAt,
+    //     message: 'Visitor booking updated successfully',
+    //   };
+    // }
+
+    async remove(id: string): Promise<VisitorBookingDeleteResponse> {
+        const visitorBooking = await this.visitorBookingRepository.findOne({
+            where: { id },
+        });
+
+        if (!visitorBooking) {
+            throw new CustomException(
+                ErrorCode.BOOKING_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+            throw new CustomException(
+                ErrorCode.BOOKING_ALREADY_COMPLETED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const email = visitorBooking.email;
+        const vehicleReg = visitorBooking.vehicleReg;
+        await this.visitorBookingRepository.remove(visitorBooking);
+
+        return {
+            id,
+            email,
+            vehicleReg,
+            message: 'Visitor booking deleted successfully',
+            deletedAt: new Date(),
+        };
+    }
+
+    private isValidVehicleRegistration(vehicleReg: string): boolean {
+        // Basic validation - can be enhanced based on requirements
+        const regex = /^[A-Z0-9]{1,10}$/i;
+        return regex.test(vehicleReg) && vehicleReg.length >= 3;
+    }
+}

@@ -14,7 +14,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) { }
 
   @Post()
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_CREATE)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
   create(@Body() createAdminDto: CreateAdminDto) {
@@ -22,7 +22,7 @@ export class AdminController {
   }
 
   @Get()
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_LIST)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
   findAll() {
@@ -30,7 +30,7 @@ export class AdminController {
   }
 
   @Get(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_VIEW)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
@@ -38,7 +38,7 @@ export class AdminController {
   }
 
   @Patch(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
@@ -46,7 +46,7 @@ export class AdminController {
   }
 
   @Delete(':id')
-  @AllowedRoles(UserType.ADMIN)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
   remove(@Param('id') id: string) {

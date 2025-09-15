@@ -1,5 +1,6 @@
 // User Management Enums
 export enum UserType {
+  SUPER_ADMIN = 'super_admin',
   ADMIN = 'admin',
   CARPARK_MANAGER = 'carpark_manager',
   PATROL_OFFICER = 'patrol_officer',
