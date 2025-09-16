@@ -3,7 +3,7 @@
     "name": "Super Admin User",
     "email": "saudagarsaim@gmail.com",
     "password": "saim1234",
-    "type": "super_admin",
+    "type": "SUPER_ADMIN",
     "phone": "+1234567890",
     "status": "Active"
   },
@@ -11,7 +11,7 @@
     "name": "John Smith - Patrol Officer",
     "email": "john.smith@patrol.com",
     "password": "patrol1234",
-    "type": "patrol_officer",
+    "type": "PATROL_OFFICER",
     "phone": "+1234567891",
     "status": "Active",
     "subCarParks": {
@@ -40,7 +40,7 @@
     "name": "Sarah Johnson - Carpark Manager",
     "email": "sarah.johnson@carpark.com",
     "password": "manager1234",
-    "type": "carpark_manager",
+    "type": "CARPARK_MANAGER",
     "phone": "+1234567892",
     "status": "Active",
     "subCarParks": {
