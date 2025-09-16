@@ -33,6 +33,9 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
         synchronize: false,
         logging: process.env.NODE_ENV === 'development',
         timezone: 'Z',
+        ...(process.env.NODE_ENV === 'production' && {
+          ssl: { rejectUnauthorized: false },
+        }),
       }),
       inject: [ConfigService],
     }),
