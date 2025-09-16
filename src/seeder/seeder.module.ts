@@ -24,9 +24,9 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST') || 'localhost',
+        host: configService.get<string>('DB_HOST_NAME') || 'localhost',
         port: parseInt(configService.get<string>('DB_PORT') || '5432'),
-        username: configService.get<string>('DB_USERNAME') || 'postgres',
+        username: configService.get<string>('DB_USER') || 'postgres',
         password: configService.get<string>('DB_PASSWORD') || 'password',
         database: configService.get<string>('DB_NAME') || 'onlypark',
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
@@ -47,4 +47,4 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
     SubCarParkSeederModule,
   ],
 })
-export class SeederModule {}
+export class SeederModule { }
