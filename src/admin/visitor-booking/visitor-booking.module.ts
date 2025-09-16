@@ -3,13 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { VisitorBookingController } from './visitor-booking.controller';
 import { VisitorBookingService } from './visitor-booking.service';
 import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
-import { VehicleRegChangeOtp } from '../../visitor-booking/entities/vehicle-reg-change-otp.entity';
 import { TenancyModule } from '../../tenancy/tenancy.module';
 import { SubCarParkModule } from '../sub-car-park/sub-car-park.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([VisitorBooking, VehicleRegChangeOtp]),
+        TypeOrmModule.forFeature([VisitorBooking]),
         TenancyModule,
         SubCarParkModule
     ],

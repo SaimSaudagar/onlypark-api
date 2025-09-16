@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1757959726391 implements MigrationInterface {
-    name = 'Migrations1757959726391'
+export class Migrations1758058912532 implements MigrationInterface {
+    name = 'Migrations1758058912532'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -49,7 +49,7 @@ export class Migrations1757959726391 implements MigrationInterface {
                 "otp" character varying NOT NULL,
                 "status" boolean NOT NULL DEFAULT false,
                 "expiresAt" TIMESTAMP NOT NULL,
-                "visitorBookingId" uuid,
+                "whitelistId" uuid NOT NULL,
                 CONSTRAINT "PK_c024306edae7e8b04500dbe52d9" PRIMARY KEY ("id")
             )
         `);
@@ -87,14 +87,14 @@ export class Migrations1757959726391 implements MigrationInterface {
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "email" character varying NOT NULL,
-                "vehicleReg" character varying NOT NULL,
-                "tenancyId" uuid,
-                "subCarParkCode" character varying NOT NULL,
-                "property" character varying NOT NULL,
+                "registrationNumber" character varying NOT NULL,
+                "tenancyId" uuid NOT NULL,
                 "startTime" character varying NOT NULL,
                 "endTime" character varying NOT NULL,
-                "status" character varying NOT NULL DEFAULT 'active',
+                "status" character varying NOT NULL DEFAULT 'Active',
                 "subCarParkId" uuid NOT NULL,
+                "token" character varying NOT NULL,
+                CONSTRAINT "UQ_c338a9adbec0ff023d2acdd8c18" UNIQUE ("token"),
                 CONSTRAINT "PK_3a3788b6b61f1a62a951c08ecb4" PRIMARY KEY ("id")
             )
         `);
@@ -138,10 +138,10 @@ export class Migrations1757959726391 implements MigrationInterface {
         `);
         await queryRunner.query(`
             CREATE TYPE "public"."users_type_enum" AS ENUM(
-                'super_admin',
-                'admin',
-                'carpark_manager',
-                'patrol_officer'
+                'SUPER_ADMIN',
+                'ADMIN',
+                'CARPARK_MANAGER',
+                'PATROL_OFFICER'
             )
         `);
         await queryRunner.query(`
@@ -463,7 +463,7 @@ export class Migrations1757959726391 implements MigrationInterface {
         `);
         await queryRunner.query(`
             ALTER TABLE "vehicle_reg_change_otps"
-            ADD CONSTRAINT "FK_c93e8ad5e4cde7a3964dc6147d0" FOREIGN KEY ("visitorBookingId") REFERENCES "visitor_bookings"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_64ae04c0eadca772eecef5de2e0" FOREIGN KEY ("whitelistId") REFERENCES "whitelist"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "whitelist"
@@ -707,7 +707,7 @@ export class Migrations1757959726391 implements MigrationInterface {
             ALTER TABLE "whitelist" DROP CONSTRAINT "FK_6bff1cb2b238cab33d02750dc64"
         `);
         await queryRunner.query(`
-            ALTER TABLE "vehicle_reg_change_otps" DROP CONSTRAINT "FK_c93e8ad5e4cde7a3964dc6147d0"
+            ALTER TABLE "vehicle_reg_change_otps" DROP CONSTRAINT "FK_64ae04c0eadca772eecef5de2e0"
         `);
         await queryRunner.query(`
             ALTER TABLE "black_list" DROP CONSTRAINT "FK_3fb9f911abfbed08c967c3624a1"

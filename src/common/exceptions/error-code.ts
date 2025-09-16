@@ -79,6 +79,12 @@ export class ErrorCode {
     message: 'Tenant with {{tenantEmail}} already exists',
   };
 
+  public static readonly TENANCY_NOT_FOUND = {
+    key: 'TENANCY_NOT_FOUND',
+    code: 'TENANCY_NOT_FOUND',
+    message: 'Tenancy not found',
+  };
+
   public static readonly NOT_SPECIFIED = {
     key: 'NOT_SPECIFIED',
     code: 'NOT_SPECIFIED',
@@ -394,6 +400,18 @@ export class ErrorCode {
     key: 'BOOKING_ALREADY_COMPLETED',
     code: 'BOOKING_ALREADY_COMPLETED',
     message: 'Booking has already been completed',
+  };
+
+  public static readonly VISITOR_BOOKING_NOT_FOUND = {
+    key: 'VISITOR_BOOKING_NOT_FOUND',
+    code: 'VISITOR_BOOKING_NOT_FOUND',
+    message: 'Visitor booking not found',
+  };
+
+  public static readonly VEHICLE_ALREADY_BOOKED = {
+    key: 'VEHICLE_ALREADY_BOOKED',
+    code: 'VEHICLE_ALREADY_BOOKED',
+    message: 'Vehicle is already booked for the specified time period',
   };
 
   // Geolocation Errors

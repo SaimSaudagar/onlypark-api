@@ -1,9 +1,9 @@
 // User Management Enums
 export enum UserType {
-  SUPER_ADMIN = 'super_admin',
-  ADMIN = 'admin',
-  CARPARK_MANAGER = 'carpark_manager',
-  PATROL_OFFICER = 'patrol_officer',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN = 'ADMIN',
+  CARPARK_MANAGER = 'CARPARK_MANAGER',
+  PATROL_OFFICER = 'PATROL_OFFICER',
 }
 
 export enum UserStatus {
@@ -31,14 +31,6 @@ export enum PatrolOfficerStatus {
 }
 
 // Booking System Enums
-export enum BookingType {
-  SCAN_AND_STAY = 'Scan and Stay',
-  SELF_SERVE_PERMIT = 'Self Serve Permit',
-  SCHEDULED_PERMIT = 'Scheduled Permit',
-  SHORT_STAY_PERMIT = 'Short Stay Permit',
-  PERMANENT_PERMIT = 'Permanent Permit',
-}
-
 export enum BookingStatus {
   ACTIVE = 'Active',
   EXPIRED = 'Expired',
@@ -86,6 +78,7 @@ export enum WhitelistType {
   HOUR = 'Hour',
   DATE = 'Date',
   PERMANENT = 'Permanent',
+  SELF_SERVE = 'Self Serve',
 }
 
 export enum DisputeStatus {

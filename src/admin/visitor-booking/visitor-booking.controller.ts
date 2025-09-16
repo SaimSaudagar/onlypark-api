@@ -19,7 +19,6 @@ import {
     VisitorBookingResponse,
     VisitorBookingListResponse,
     VisitorBookingCreateResponse,
-    VisitorBookingUpdateResponse,
     VisitorBookingDeleteResponse,
 } from './visitor-booking.dto';
 

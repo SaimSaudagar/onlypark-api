@@ -22,6 +22,7 @@ export class ConfigKeys {
   public static readonly EMAIL_PASSWORD = 'EMAIL_PASSWORD';
   public static readonly EMAIL_FROM = 'EMAIL_FROM';
   public static readonly EMAIL_SENDER_NAME = 'EMAIL_SENDER_NAME';
+  public static readonly EMAIL_TEMPLATE_PARAMS = 'EMAIL_TEMPLATE_PARAMS';
 
   // Email Template URLs
   public static readonly EMAIL_CONFIRMATION_URL = 'EMAIL_CONFIRMATION_URL';

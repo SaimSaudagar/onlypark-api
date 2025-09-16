@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus } from '../common';
+import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus, TemplateKeys } from '../common';
 import { User } from './entities/user.entity';
 import {
   CreateUserRequest,
@@ -11,7 +11,7 @@ import {
   UpdateUserDto,
   UpdateUserProfileRequest,
 } from './user.dto';
-import { EmailService } from '../common/services/email/email.service';
+import { EmailNotificationService } from '../common/services/email/email-notification.service';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { DataSource } from 'typeorm';
@@ -26,7 +26,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private emailService: EmailService,
+    private emailNotificationService: EmailNotificationService,
     private configService: ConfigService,
     private dataSource: DataSource,
   ) { }
@@ -121,16 +121,23 @@ export class UserService {
       const passwordSetupUrl = `${this.configService.get('APP_URL')}/auth/setup-password?token=${passwordResetToken}`;
 
       try {
-        await this.emailService.sendUserRegistrationEmail(
-          savedUser.email,
-          savedUser.name,
-          savedUser.email,
-          savedUser.type,
-          savedUser.phoneNumber || '',
-          passwordSetupUrl,
-        );
+        await this.emailNotificationService.sendUsingTemplate({
+          to: [savedUser.email],
+          templateKey: TemplateKeys.USER_REGISTRATION,
+          data: {
+            name: savedUser.name,
+            email: savedUser.email,
+            role: savedUser.type,
+            phoneNumber: savedUser.phoneNumber || 'Not provided',
+            passwordSetupUrl: passwordSetupUrl,
+          },
+        });
       } catch (emailError) {
-        console.error(`Failed to send email to ${savedUser.email}: ${emailError.message}`);
+        throw new CustomException(
+          ErrorCode.EMAIL_SEND_FAILED.key,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { email: savedUser.email, error: emailError.message }
+        );
       }
 
       // Commit transaction

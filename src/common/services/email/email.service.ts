@@ -5,23 +5,11 @@ import { TemplateKeys } from '../../constants/template-keys';
 import { MailgunService } from './mailgun.service';
 import { CustomException } from '../../exceptions/custom.exception';
 import { ErrorCode } from '../../exceptions/error-code';
-
-export interface SendEmailRequest {
-  to: string;
-  subject: string;
-  body: string;
-  from?: string;
-  senderName?: string;
-  attachments?: any[]; // For Mailgun, this would be an array of { filename: string, content: string }
-}
-
-export interface SendEmailResponse {
-  sent: boolean;
-  errorMessage?: string;
-}
+import { IEmailService } from './email.interface';
+import { SendEmailRequest, SendEmailResponse } from './email-notification.dto';
 
 @Injectable()
-export class EmailService {
+export class EmailService implements IEmailService {
   private readonly logger = new Logger(EmailService.name);
 
   constructor(
@@ -30,13 +18,16 @@ export class EmailService {
     private readonly mailgunService: MailgunService,
   ) { }
 
-  async sendEmail(request: SendEmailRequest): Promise<SendEmailResponse> {
+  async send(request: SendEmailRequest): Promise<SendEmailResponse> {
     try {
       const { to, subject, body, from, senderName, attachments } = request;
 
+      // Convert array to single string for Mailgun compatibility
+      const toEmail = Array.isArray(to) ? to[0] : to;
+
       // Use Mailgun service to send the actual email
       const result = await this.mailgunService.send({
-        to,
+        to: [toEmail],
         subject,
         body,
         from: from || this.configService.get('EMAIL_FROM'),
@@ -88,8 +79,8 @@ export class EmailService {
         passwordSetupUrl,
       });
 
-      return await this.sendEmail({
-        to,
+      return await this.send({
+        to: [to],
         subject,
         body,
         senderName: 'OnlyPark',
@@ -99,6 +90,51 @@ export class EmailService {
         throw error;
       }
       this.logger.error(`Failed to send user registration email: ${error.message}`);
+      throw new CustomException(
+        ErrorCode.EMAIL_SEND_FAILED.key,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { email: to, error: error.message }
+      );
+    }
+  }
+
+  async sendVisitorBookingConfirmationEmail(
+    to: string,
+    registrationNumber: string,
+    carParkName: string,
+    carParkCode: string,
+    startTime: string,
+    endTime: string,
+    status: string,
+    tenancyName: string,
+    bookingUrl: string,
+  ): Promise<SendEmailResponse> {
+    try {
+      const templateName = TemplateKeys.VISITOR_BOOKING_CONFIRMATION;
+      const subject = 'Visitor Parking Booking Confirmation - OnlyPark';
+
+      const body = await this.templateEngine.compileFromFile(templateName, {
+        registrationNumber,
+        carParkName,
+        carParkCode,
+        startTime,
+        endTime,
+        status,
+        tenancyName: tenancyName || '',
+        bookingUrl,
+      });
+
+      return await this.send({
+        to: [to],
+        subject,
+        body,
+        senderName: 'OnlyPark',
+      });
+    } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
+      this.logger.error(`Failed to send visitor booking confirmation email: ${error.message}`);
       throw new CustomException(
         ErrorCode.EMAIL_SEND_FAILED.key,
         HttpStatus.INTERNAL_SERVER_ERROR,

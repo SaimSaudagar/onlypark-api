@@ -11,7 +11,7 @@ import { RequestContextService } from '../../common/services/request-context/req
 import { DataSource } from 'typeorm';
 import { CarParkType } from '../../common/enums';
 import { CustomException } from '../../common/exceptions/custom.exception';
-import { ErrorCode } from 'src/common/exceptions/error-code';
+import { ErrorCode } from '../../common/exceptions/error-code';
 import { PatrolOfficer } from '../entities/patrol-officer.entity';
 
 @Injectable()

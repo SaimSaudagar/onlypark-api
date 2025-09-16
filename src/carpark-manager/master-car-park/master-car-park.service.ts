@@ -10,8 +10,8 @@ import { ConfigService } from '@nestjs/config';
 import { RequestContextService } from '../../common/services/request-context/request-context.service';
 import { DataSource } from 'typeorm';
 import { CarParkType } from '../../common/enums';
-import { CustomException } from 'src/common/exceptions/custom.exception';
-import { ErrorCode } from 'src/common/exceptions/error-code';
+import { CustomException } from '../../common/exceptions/custom.exception';
+import { ErrorCode } from '../../common/exceptions/error-code';
 import { CarparkManager } from '../entities/carpark-manager.entity';
 
 @Injectable()
