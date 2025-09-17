@@ -139,6 +139,6 @@ export class BlacklistService {
                 HttpStatus.BAD_REQUEST,
             );
         }
-        await this.blacklistRepository.delete(id);
+        await this.blacklistRepository.softRemove(entity);
     }
 }
