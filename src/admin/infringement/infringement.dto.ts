@@ -89,6 +89,10 @@ export class FindInfringementRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: InfringementStatus;
 }
 
 export class FindInfringementResponse {
@@ -112,4 +116,15 @@ export class GetPenaltyResponse {
   penaltyName: string;
   amountBeforeDue: number;
   amountAfterDue: number;
+}
+
+export class UpdateInfringementStatusRequest {
+  @IsNotEmpty()
+  @IsString()
+  status: InfringementStatus;
+}
+
+export class UpdateInfringementStatusResponse {
+  id: string;
+  status: InfringementStatus;
 }

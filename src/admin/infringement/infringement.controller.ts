@@ -21,6 +21,7 @@ import { InfringementService } from './infringement.service';
 import {
   CreateInfringementRequest,
   UpdateInfringementRequest,
+  UpdateInfringementStatusRequest,
   ScanInfringementRequest,
   FindInfringementRequest,
 } from './infringement.dto';
@@ -53,14 +54,19 @@ export class InfringementController {
     return this.infringementService.create(request);
   }
 
-  @Patch('update')
-  update(@Body() request: UpdateInfringementRequest) {
-    return this.infringementService.create(request);
+  @Patch('update/:id')
+  update(@Param('id') id: string, @Body() request: UpdateInfringementRequest) {
+    return this.infringementService.update(id, request);
   }
 
   @Patch('mark-as-waived/:id')
   markAsWaived(@Param('id') id: string) {
     return this.infringementService.markAsWaived(id);
+  }
+
+  @Patch('update-status/:id')
+  updateStatus(@Param('id') id: string, @Body() request: UpdateInfringementStatusRequest) {
+    return this.infringementService.updateStatus(id, request);
   }
 
   @Delete(':id')

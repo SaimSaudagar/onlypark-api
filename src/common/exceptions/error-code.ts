@@ -460,6 +460,12 @@ export class ErrorCode {
     message: 'Dispute already exists for this infringement',
   };
 
+  public static readonly DISPUTE_STATUS_NOT_FOUND = {
+    key: 'DISPUTE_STATUS_NOT_FOUND',
+    code: 'DISPUTE_STATUS_NOT_FOUND',
+    message: 'Dispute status not found',
+  };
+
   public static readonly DISPUTE_DEADLINE_PASSED = {
     key: 'DISPUTE_DEADLINE_PASSED',
     code: 'DISPUTE_DEADLINE_PASSED',

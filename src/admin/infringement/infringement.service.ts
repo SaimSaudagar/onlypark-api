@@ -14,6 +14,8 @@ import {
   ScanInfringementRequest,
   ScanInfringementResponse,
   UpdateInfringementRequest,
+  UpdateInfringementStatusRequest,
+  UpdateInfringementStatusResponse,
 } from './infringement.dto';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
@@ -38,11 +40,16 @@ export class InfringementService {
       registrationNo,
     });
 
-    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo };
+    const response = new ScanInfringementResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.registrationNo = infringement.registrationNo;
+
+    return response;
   }
 
-  async create(request: CreateInfringementRequest | UpdateInfringementRequest): Promise<CreateInfringementResponse> {
-    const { id, infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
+  async create(request: CreateInfringementRequest): Promise<CreateInfringementResponse> {
+    const { infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
     // Calculate due date as 14 days from now at end of day
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
@@ -59,11 +66,53 @@ export class InfringementService {
       comments,
     });
 
-    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo: infringement.registrationNo };
+    const response = new CreateInfringementResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.registrationNo = infringement.registrationNo;
+
+    return response;
+  }
+
+  async update(id: string, request: UpdateInfringementRequest): Promise<CreateInfringementResponse> {
+    const infringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
+
+    // Update the infringement with new data
+    await this.infringementRepository.update(id, {
+      infringementCarParkId,
+      carMakeId,
+      reasonId,
+      penaltyId,
+      photos,
+      comments,
+    });
+
+    // Fetch the updated infringement
+    const updatedInfringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    const response = new CreateInfringementResponse();
+    response.id = updatedInfringement.id;
+    response.ticketNumber = updatedInfringement.ticketNumber;
+    response.registrationNo = updatedInfringement.registrationNo;
+
+    return response;
   }
 
   async findAll(request: FindInfringementRequest): Promise<ApiGetBaseResponse<FindInfringementResponse>> {
-    const { search, sortField, sortOrder, pageNo, pageSize } = request;
+    const { search, status, sortField, sortOrder, pageNo, pageSize } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -72,6 +121,10 @@ export class InfringementService {
 
     if (search) {
       whereOptions.registrationNo = ILike(`%${search}%`);
+    }
+
+    if (status) {
+      whereOptions.status = status;
     }
 
     if (sortField) {
@@ -116,19 +169,18 @@ export class InfringementService {
       );
     }
 
-    let response: FindInfringementByIdResponse = {
-      id: infringement.id,
-      ticketNumber: infringement.ticketNumber,
-      registrationNo: infringement.registrationNo,
-      status: infringement.status,
-      ticketDate: infringement.ticketDate,
-    };
+    const response = new FindInfringementByIdResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.registrationNo = infringement.registrationNo;
+    response.status = infringement.status;
+    response.ticketDate = infringement.ticketDate;
 
     return response;
   }
 
   async remove(id: string) {
-    const infringement = this.infringementRepository.findOne({ where: { ticketNumber: Number(id) } });
+    const infringement = await this.infringementRepository.findOne({ where: { id } });
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
@@ -136,7 +188,7 @@ export class InfringementService {
       );
     }
 
-    return await this.infringementRepository.delete(id);
+    return await this.infringementRepository.softRemove(infringement);
   }
 
   async markAsWaived(id: string): Promise<MarkAsWaivedResponse> {
@@ -150,10 +202,11 @@ export class InfringementService {
 
     await this.infringementRepository.update(id, { status: InfringementStatus.WAIVED });
 
-    return {
-      id,
-      status: InfringementStatus.WAIVED,
-    };
+    const response = new MarkAsWaivedResponse();
+    response.id = id;
+    response.status = InfringementStatus.WAIVED;
+
+    return response;
   }
 
   async getInfringementId(request: GetTicketNumberRequest): Promise<string> {
@@ -175,5 +228,28 @@ export class InfringementService {
         infringementCarParkId: infringementCarParkId,
       },
     });
+  }
+
+  async updateStatus(id: string, request: UpdateInfringementStatusRequest): Promise<UpdateInfringementStatusResponse> {
+    const infringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { status } = request;
+
+    await this.infringementRepository.update(id, { status });
+
+    const response = new UpdateInfringementStatusResponse();
+    response.id = id;
+    response.status = status;
+
+    return response;
   }
 }

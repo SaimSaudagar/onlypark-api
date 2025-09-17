@@ -78,6 +78,7 @@ export enum Status {
 export enum InfringementStatus {
   PENDING = 'Pending',
   PAID = 'Paid',
+  NOT_PAID = 'Not Paid',
   DISPUTED = 'Disputed',
   WAIVED = 'Waived',
 }
@@ -92,6 +93,8 @@ export enum DisputeStatus {
   PENDING = 'Pending',
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
+  // Approved with Admin Fees
+  APPROVED_WITH_ADMIN_FEES = 'Approved with Admin Fees',
 }
 
 // Audit System Enums

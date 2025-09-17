@@ -3,6 +3,7 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
+    DeleteDateColumn,
 } from 'typeorm';
 import { DisputeStatus } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
@@ -75,4 +76,7 @@ export class Dispute extends BaseEntity {
         default: DisputeStatus.PENDING,
     })
     status: DisputeStatus;
+
+    @DeleteDateColumn({ type: 'timestamptz' })
+    deletedAt: Date;
 }
