@@ -7,6 +7,7 @@ import { VisitorBookingModule } from './visitor-booking/visitor-booking.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
+import { WhitelistModule } from './whitelist/whitelist.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DisputeModule } from './dispute/dispute.module';
     BlacklistModule,
     InfringementModule,
     DisputeModule,
+    WhitelistModule,
   ],
 })
 export class AdminModule { }

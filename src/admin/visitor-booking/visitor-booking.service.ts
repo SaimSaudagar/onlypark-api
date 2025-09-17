@@ -126,8 +126,8 @@ export class VisitorBookingService {
             id: visitorBooking.id,
             email: visitorBooking.email,
             registrationNumber: visitorBooking.registrationNumber,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
         };
     }
@@ -145,8 +145,8 @@ export class VisitorBookingService {
             id: visitorBooking.id,
             email: visitorBooking.email,
             registrationNumber: visitorBooking.registrationNumber,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
             tenancyName: visitorBooking.tenancy?.tenantName,
             subCarParkName: visitorBooking.subCarPark?.carParkName,
@@ -184,8 +184,8 @@ export class VisitorBookingService {
                 location: visitorBooking.subCarPark.location,
                 carSpace: visitorBooking.subCarPark.carSpace,
             } : undefined,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
         };
     }

@@ -7,6 +7,7 @@ import { UserSeederService } from './user/user-seeder.service';
 import { CarMakeSeederService } from './car-make/car-make-seeder.service';
 import { MasterCarParkSeederService } from './master-car-park/master-car-park-seeder.service';
 import { SubCarParkSeederService } from './sub-car-park/sub-car-park-seeder.service';
+import { TenancySeederService } from './tenancy/tenancy-seeder.service';
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeederModule);
@@ -37,6 +38,10 @@ const runSeed = async () => {
     // Seed sub car parks
     console.log('Seeding sub car parks...');
     await app.get(SubCarParkSeederService).run();
+
+    // Seed tenancies
+    console.log('Seeding tenancies...');
+    await app.get(TenancySeederService).run();
 
     // Seed users last (after roles and permissions are set up)
     console.log('Seeding users...');

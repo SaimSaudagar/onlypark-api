@@ -57,6 +57,20 @@ export class VisitorBookingService {
             }
         }
 
+        const totalBookings = await this.visitorBookingRepository.count({
+            where: {
+                status: BookingStatus.ACTIVE,
+                subCarParkId,
+            }
+        });
+
+        if (totalBookings >= subCarPark.carSpace) {
+            throw new CustomException(
+                ErrorCode.BOOKING_CAPACITY_EXCEEDED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
         // Check for existing active booking with same vehicle registration and overlapping time
         const existingBookings = await this.visitorBookingRepository.count({
             where: {
@@ -66,9 +80,9 @@ export class VisitorBookingService {
             }
         });
 
-        if (existingBookings >= subCarPark.carSpace) {
+        if (existingBookings >= subCarPark.noOfPermitsPerRegNo) {
             throw new CustomException(
-                ErrorCode.BOOKING_CAPACITY_EXCEEDED.key,
+                ErrorCode.PERMITS_PER_REGISTRATION_EXCEEDED.key,
                 HttpStatus.BAD_REQUEST,
             );
         }
@@ -92,12 +106,12 @@ export class VisitorBookingService {
                     registrationNumber,
                     subCarParkId,
                     tenancyId,
-                    startTime: new Date().toISOString(),
-                    endTime: endTime.toISOString(),
+                    startDate: new Date().toISOString(),
+                    endDate: endTime.toISOString(),
                     status: BookingStatus.ACTIVE,
                     token,
                 })
-                .returning(['id', 'email', 'registrationNumber', 'subCarParkId', 'tenancyId', 'startTime', 'endTime', 'status', 'token', 'createdAt', 'updatedAt'])
+                .returning(['id', 'email', 'registrationNumber', 'subCarParkId', 'tenancyId', 'startDate', 'endDate', 'status', 'token'])
                 .execute();
 
             const savedBooking = insertResult.raw[0];
@@ -114,8 +128,8 @@ export class VisitorBookingService {
                 registrationNumber: savedBooking.registrationNumber,
                 subCarParkId: savedBooking.subCarParkId,
                 tenancyId: savedBooking.tenancyId,
-                startTime: savedBooking.startTime,
-                endTime: savedBooking.endTime,
+                startTime: savedBooking.startDate,
+                endTime: savedBooking.endDate,
                 status: savedBooking.status,
                 token: savedBooking.token,
             };
@@ -135,7 +149,10 @@ export class VisitorBookingService {
     async getBookingByToken(token: string): Promise<GetBookingByTokenResponse> {
         const booking = await this.visitorBookingRepository.findOne({
             where: { token },
-            relations: ['subCarPark', 'tenancy'],
+            relations: {
+                subCarPark: true,
+                tenancy: true,
+            },
         });
 
         if (!booking) {
@@ -151,18 +168,17 @@ export class VisitorBookingService {
             registrationNumber: booking.registrationNumber,
             subCarParkId: booking.subCarParkId,
             tenancyId: booking.tenancyId,
-            startTime: booking.startTime,
-            endTime: booking.endTime,
+            startTime: booking.startDate.toISOString(),
+            endTime: booking.endDate.toISOString(),
             status: booking.status,
-            subCarPark: booking.subCarPark ? {
+            subCarPark: {
                 id: booking.subCarPark.id,
                 name: booking.subCarPark.carParkName,
-                code: booking.subCarPark.subCarParkCode,
-            } : undefined,
-            tenancy: booking.tenancy ? {
+            },
+            tenancy: {
                 id: booking.tenancy.id,
                 name: booking.tenancy.tenantName,
-            } : undefined,
+            },
         };
     }
 
@@ -185,8 +201,8 @@ export class VisitorBookingService {
                 registrationNumber: booking.registrationNumber,
                 carParkName: subCarPark.carParkName,
                 carParkCode: subCarPark.subCarParkCode,
-                startTime: new Date(booking.startTime).toLocaleString(),
-                endTime: new Date(booking.endTime).toLocaleString(),
+                startDate: booking.startDate.toISOString(),
+                endDate: booking.endDate.toISOString(),
                 status: booking.status,
                 tenancyName: tenancyName || '',
                 bookingUrl: bookingUrl,

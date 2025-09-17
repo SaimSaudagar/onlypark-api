@@ -17,7 +17,7 @@ import { VehicleRegChangeOtp } from './vehicle-reg-change-otp.entity';
 export class Whitelist extends BaseEntity {
 
     @Column({ type: 'varchar', nullable: false })
-    vehicalRegistration: string;
+    registrationNumber: string;
 
     @Column({ type: 'text', nullable: true })
     comments: string;

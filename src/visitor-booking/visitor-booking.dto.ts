@@ -43,7 +43,6 @@ export class GetBookingByTokenResponse {
     subCarPark?: {
         id: string;
         name: string;
-        code: string;
     };
     tenancy?: {
         id: string;

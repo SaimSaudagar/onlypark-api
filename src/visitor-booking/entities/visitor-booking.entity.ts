@@ -26,11 +26,17 @@ export class VisitorBooking extends BaseEntity {
     @JoinColumn({ name: 'tenancyId' })
     tenancy: Tenancy;
 
-    @Column({ type: 'varchar', nullable: false })
-    startTime: string;
+    @Column({
+        type: 'timestamptz',
+        nullable: false
+    })
+    startDate: Date;
 
-    @Column({ type: 'varchar', nullable: false })
-    endTime: string;
+    @Column({
+        type: 'timestamptz',
+        nullable: false
+    })
+    endDate: Date;
 
     @Column({ type: 'varchar', default: BookingStatus.ACTIVE })
     status: BookingStatus;

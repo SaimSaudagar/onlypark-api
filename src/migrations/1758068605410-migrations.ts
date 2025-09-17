@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1758058912532 implements MigrationInterface {
-    name = 'Migrations1758058912532'
+export class Migrations1758068605410 implements MigrationInterface {
+    name = 'Migrations1758068605410'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -59,7 +59,7 @@ export class Migrations1758058912532 implements MigrationInterface {
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "vehicalRegistration" character varying NOT NULL,
+                "registrationNumber" character varying NOT NULL,
                 "comments" text,
                 "email" character varying NOT NULL,
                 "whitelistType" character varying NOT NULL,
@@ -89,8 +89,8 @@ export class Migrations1758058912532 implements MigrationInterface {
                 "email" character varying NOT NULL,
                 "registrationNumber" character varying NOT NULL,
                 "tenancyId" uuid NOT NULL,
-                "startTime" character varying NOT NULL,
-                "endTime" character varying NOT NULL,
+                "startDate" TIMESTAMP WITH TIME ZONE NOT NULL,
+                "endDate" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "status" character varying NOT NULL DEFAULT 'Active',
                 "subCarParkId" uuid NOT NULL,
                 "token" character varying NOT NULL,
@@ -380,13 +380,13 @@ export class Migrations1758058912532 implements MigrationInterface {
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
                 "ticketNumber" SERIAL,
-                "ticketDate" date,
+                "ticketDate" TIMESTAMP WITH TIME ZONE,
                 "infringementCarParkId" uuid,
                 "comments" text,
                 "registrationNo" character varying NOT NULL,
                 "photos" json,
                 "status" "public"."infringements_status_enum" NOT NULL DEFAULT 'Pending',
-                "dueDate" date,
+                "dueDate" TIMESTAMP WITH TIME ZONE,
                 "reasonId" uuid,
                 "penaltyId" uuid,
                 "carMakeId" uuid,

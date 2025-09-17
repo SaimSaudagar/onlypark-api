@@ -12,6 +12,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Downtown Shopping Center"
   },
   {
@@ -27,6 +28,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 10,
     "masterCarParkName": "Downtown Shopping Center"
   },
   {
@@ -42,6 +44,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 2,
     "masterCarParkName": "Downtown Shopping Center"
   },
   {
@@ -57,6 +60,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 3,
     "masterCarParkName": "Downtown Shopping Center"
   },
   {
@@ -72,6 +76,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 4,
     "masterCarParkName": "Residential Complex A"
   },
   {
@@ -87,6 +92,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 5,
     "masterCarParkName": "Residential Complex A"
   },
   {
@@ -104,6 +110,7 @@
     "eventDate": "2024-12-25T00:00:00.000Z",
     "eventExpiryDate": "2024-12-26T00:00:00.000Z",
     "status": "Active",
+    "noOfPermitsPerRegNo": 6,
     "masterCarParkName": "Business District Plaza"
   },
   {
@@ -121,6 +128,7 @@
     "eventDate": "2024-12-25T00:00:00.000Z",
     "eventExpiryDate": "2024-12-26T00:00:00.000Z",
     "status": "Active",
+    "noOfPermitsPerRegNo": 7,
     "masterCarParkName": "Business District Plaza"
   },
   {
@@ -136,6 +144,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 8,
     "masterCarParkName": "University Campus Parking"
   },
   {
@@ -151,6 +160,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "University Campus Parking"
   },
   {
@@ -166,6 +176,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "University Campus Parking"
   },
   {
@@ -181,6 +192,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Luxury Apartments Tower"
   },
   {
@@ -196,6 +208,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Luxury Apartments Tower"
   },
   {
@@ -211,6 +224,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Luxury Apartments Tower"
   },
   {
@@ -226,6 +240,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Medical Center Parking"
   },
   {
@@ -241,6 +256,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Medical Center Parking"
   },
   {
@@ -256,6 +272,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Medical Center Parking"
   },
   {
@@ -271,6 +288,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Suburban Housing Estate"
   },
   {
@@ -286,6 +304,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Suburban Housing Estate"
   },
   {
@@ -301,6 +320,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Suburban Housing Estate"
   },
   {
@@ -316,6 +336,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Airport Terminal Parking"
   },
   {
@@ -331,6 +352,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Airport Terminal Parking"
   },
   {
@@ -346,6 +368,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Airport Terminal Parking"
   },
   {
@@ -361,6 +384,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Executive Condominiums"
   },
   {
@@ -376,6 +400,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Executive Condominiums"
   },
   {
@@ -391,6 +416,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Executive Condominiums"
   },
   {
@@ -406,6 +432,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Industrial Zone Parking"
   },
   {
@@ -421,6 +448,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Industrial Zone Parking"
   },
   {
@@ -436,6 +464,7 @@
     "geolocation": true,
     "event": false,
     "status": "Active",
+    "noOfPermitsPerRegNo": 1,
     "masterCarParkName": "Industrial Zone Parking"
   }
 ]

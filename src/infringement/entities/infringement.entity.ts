@@ -21,7 +21,10 @@ export class Infringement extends BaseEntity {
   @Column({ type: 'int', generated: 'increment', nullable: true })
   ticketNumber: number;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({
+    type: 'timestamptz',
+    nullable: true
+  })
   ticketDate: Date;
 
   @Column({ type: 'varchar', nullable: true })
@@ -47,7 +50,10 @@ export class Infringement extends BaseEntity {
   })
   status: InfringementStatus;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({
+    type: 'timestamptz',
+    nullable: true
+  })
   dueDate: Date;
 
   @ManyToOne(() => InfringementReason, (reason) => reason.infringements)

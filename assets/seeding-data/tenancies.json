@@ -1,0 +1,127 @@
+[
+    {
+        "tenantName": "Tech Solutions Inc",
+        "tenantEmail": "admin@techsolutions.com",
+        "subCarParkCode": "SCDT01"
+    },
+    {
+        "tenantName": "Global Marketing Ltd",
+        "tenantEmail": "contact@globalmarketing.com",
+        "subCarParkCode": "SCDT02"
+    },
+    {
+        "tenantName": "Sarah Johnson",
+        "tenantEmail": "sarah.johnson@email.com",
+        "subCarParkCode": "SCRC01"
+    },
+    {
+        "tenantName": "Michael Chen",
+        "tenantEmail": "michael.chen@email.com",
+        "subCarParkCode": "SCRC02"
+    },
+    {
+        "tenantName": "Finance Partners Group",
+        "tenantEmail": "info@financepartners.com",
+        "subCarParkCode": "SCBD01"
+    },
+    {
+        "tenantName": "Legal Associates LLP",
+        "tenantEmail": "contact@legalassociates.com",
+        "subCarParkCode": "SCBD02"
+    },
+    {
+        "tenantName": "Dr. Emily Rodriguez",
+        "tenantEmail": "emily.rodriguez@university.edu",
+        "subCarParkCode": "SCUC02"
+    },
+    {
+        "tenantName": "Prof. David Kim",
+        "tenantEmail": "david.kim@university.edu",
+        "subCarParkCode": "SCUC02"
+    },
+    {
+        "tenantName": "Lisa Thompson",
+        "tenantEmail": "lisa.thompson@email.com",
+        "subCarParkCode": "SCLA01"
+    },
+    {
+        "tenantName": "Robert Williams",
+        "tenantEmail": "robert.williams@email.com",
+        "subCarParkCode": "SCLA02"
+    },
+    {
+        "tenantName": "Dr. Amanda Foster",
+        "tenantEmail": "amanda.foster@medicalcenter.com",
+        "subCarParkCode": "SCMC02"
+    },
+    {
+        "tenantName": "Nurse Jennifer Lee",
+        "tenantEmail": "jennifer.lee@medicalcenter.com",
+        "subCarParkCode": "SCMC02"
+    },
+    {
+        "tenantName": "James Anderson",
+        "tenantEmail": "james.anderson@email.com",
+        "subCarParkCode": "SCSH01"
+    },
+    {
+        "tenantName": "Maria Garcia",
+        "tenantEmail": "maria.garcia@email.com",
+        "subCarParkCode": "SCSH02"
+    },
+    {
+        "tenantName": "Airport Services Corp",
+        "tenantEmail": "admin@airportservices.com",
+        "subCarParkCode": "SCAT01"
+    },
+    {
+        "tenantName": "Ground Handling Ltd",
+        "tenantEmail": "contact@groundhandling.com",
+        "subCarParkCode": "SCAT02"
+    },
+    {
+        "tenantName": "Executive Residences LLC",
+        "tenantEmail": "admin@executiveresidences.com",
+        "subCarParkCode": "SCEC01"
+    },
+    {
+        "tenantName": "Premium Living Corp",
+        "tenantEmail": "info@premiumliving.com",
+        "subCarParkCode": "SCEC02"
+    },
+    {
+        "tenantName": "Manufacturing Solutions Inc",
+        "tenantEmail": "admin@manufacturingsolutions.com",
+        "subCarParkCode": "SCIZ01"
+    },
+    {
+        "tenantName": "Industrial Services Group",
+        "tenantEmail": "contact@industrialservices.com",
+        "subCarParkCode": "SCIZ02"
+    },
+    {
+        "tenantName": "Creative Design Studio",
+        "tenantEmail": "hello@creativedesign.com",
+        "subCarParkCode": "SCDT03"
+    },
+    {
+        "tenantName": "Consulting Experts Ltd",
+        "tenantEmail": "info@consultingexperts.com",
+        "subCarParkCode": "SCDT04"
+    },
+    {
+        "tenantName": "Green Energy Corp",
+        "tenantEmail": "contact@greenenergy.com",
+        "subCarParkCode": "SCDT04"
+    },
+    {
+        "tenantName": "Healthcare Partners",
+        "tenantEmail": "admin@healthcarepartners.com",
+        "subCarParkCode": "SCMC01"
+    },
+    {
+        "tenantName": "Research Institute",
+        "tenantEmail": "info@researchinstitute.edu",
+        "subCarParkCode": "SCUC01"
+    }
+]

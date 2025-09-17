@@ -54,6 +54,11 @@ export class ErrorCode {
     message: 'Number of permits per registration must be greater than 0',
   };
 
+  public static readonly PERMITS_PER_REGISTRATION_EXCEEDED = {
+    key: 'PERMITS_PER_REGISTRATION_EXCEEDED',
+    code: 'PERMITS_PER_REGISTRATION_EXCEEDED',
+    message: 'Number of permits per registration exceeded',
+  };
 
   public static readonly COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED = {
     key: 'COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED',
@@ -285,6 +290,18 @@ export class ErrorCode {
     key: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
     code: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
     message: 'Company with this domain name already exists in this car park',
+  };
+
+  public static readonly WHITELIST_NOT_FOUND = {
+    key: 'WHITELIST_NOT_FOUND',
+    code: 'WHITELIST_NOT_FOUND',
+    message: 'Whitelist entry not found',
+  };
+
+  public static readonly WHITELIST_PERMIT_ALREADY_EXISTS = {
+    key: 'WHITELIST_PERMIT_ALREADY_EXISTS',
+    code: 'WHITELIST_PERMIT_ALREADY_EXISTS',
+    message: 'Whitelist permit already exists',
   };
 
   public static readonly TOKEN_REQUIRED = {

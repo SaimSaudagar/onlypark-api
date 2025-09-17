@@ -10,6 +10,7 @@ import { UserSeederModule } from './user/user-seeder.module';
 import { CarMakeSeederModule } from './car-make/car-make-seeder.module';
 import { MasterCarParkSeederModule } from './master-car-park/master-car-park-seeder.module';
 import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.module';
+import { TenancySeederModule } from './tenancy/tenancy-seeder.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
     CarMakeSeederModule,
     MasterCarParkSeederModule,
     SubCarParkSeederModule,
+    TenancySeederModule,
   ],
 })
 export class SeederModule { }
