@@ -121,7 +121,9 @@ export class BlacklistService {
             );
         }
 
-        const updatedEntity = await this.blacklistRepository.save(request);
+        await this.blacklistRepository.update(id, request);
+
+        const updatedEntity = await this.blacklistRepository.findOne({ where: { id } });
 
         return {
             id: updatedEntity.id,
