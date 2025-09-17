@@ -28,6 +28,15 @@ export class Whitelist extends BaseEntity {
     @Column({ type: 'varchar', nullable: false })
     whitelistType: WhitelistType;
 
+    @Column({ type: 'varchar', nullable: true })
+    token: string;
+
+    @Column({ type: 'timestamp', nullable: false })
+    startDate: Date;
+
+    @Column({ type: 'timestamp', nullable: false })
+    endDate: Date;
+
     @ManyToOne(() => SubCarPark, (subCarPark) => subCarPark.whitelists)
     @JoinColumn({ name: 'subCarParkId' })
     subCarPark: SubCarPark;

@@ -16,6 +16,9 @@ export class TemplateKeys {
     // Visitor Booking Templates
     public static readonly VISITOR_BOOKING_CONFIRMATION = 'VISITOR_BOOKING_CONFIRMATION';
 
+    // Whitelist Templates
+    public static readonly WHITELIST_CONFIRMATION = 'WHITELIST_CONFIRMATION';
+
     // Welcome Templates
     public static readonly WELCOME = 'WELCOME';
     public static readonly WELCOME_ADMIN = 'WELCOME_ADMIN';

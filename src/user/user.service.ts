@@ -111,7 +111,6 @@ export class UserService {
             regNo: vehicleReg,
             email: savedUser.email,
             comments: `Created for user: ${savedUser.name}`,
-            subCarParkCode: 'default', // You might want to make this configurable
             status: 'active',
           });
         }
@@ -128,7 +127,7 @@ export class UserService {
             name: savedUser.name,
             email: savedUser.email,
             role: savedUser.type,
-            phoneNumber: savedUser.phoneNumber || 'Not provided',
+            phoneNumber: savedUser.phoneNumber,
             passwordSetupUrl: passwordSetupUrl,
           },
         });

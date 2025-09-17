@@ -30,6 +30,7 @@ export class VisitorBookingController {
     }
 
     @Get(':token')
+    @UseGuards(OptionalJwtAuthGuard)
     async getBookingByToken(@Param('token') token: string): Promise<GetBookingByTokenResponse> {
         return await this.visitorBookingService.getBookingByToken(token);
     }

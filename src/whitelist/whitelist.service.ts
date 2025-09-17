@@ -2,12 +2,15 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Whitelist } from './entities/whitelist.entity';
-import { CreateSelfServeWhitelistRequest, CreateSelfServeWhitelistResponse } from './whitelist.dto';
-import { ErrorCode } from 'src/common/exceptions/error-code';
-import { CustomException } from 'src/common/exceptions/custom.exception';
-import { SubCarPark } from 'src/sub-car-park/entities/sub-car-park.entity';
-import { Tenancy } from 'src/tenancy/entities/tenancy.entity';
-import { WhitelistType } from 'src/common/enums';
+import { CreateSelfServeWhitelistRequest, CreateSelfServeWhitelistResponse, GetWhitelistByTokenResponse } from './whitelist.dto';
+import { ErrorCode } from '../common/exceptions/error-code';
+import { CustomException } from '../common/exceptions/custom.exception';
+import { SubCarPark } from '../sub-car-park/entities/sub-car-park.entity';
+import { Tenancy } from '../tenancy/entities/tenancy.entity';
+import { WhitelistType } from '../common/enums';
+import { EmailNotificationService } from '../common/services/email/email-notification.service';
+import { TemplateKeys } from '../common/constants/template-keys';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class WhitelistService {
@@ -18,6 +21,7 @@ export class WhitelistService {
         private subCarParkRepository: Repository<SubCarPark>,
         @InjectRepository(Tenancy)
         private tenancyRepository: Repository<Tenancy>,
+        private emailNotificationService: EmailNotificationService,
     ) { }
 
     async createSelfServeWhitelist(request: CreateSelfServeWhitelistRequest): Promise<CreateSelfServeWhitelistResponse> {
@@ -47,16 +51,46 @@ export class WhitelistService {
             );
         }
 
-        const entity = this.whitelistRepository.create({
+        const startDate = new Date();
+        const endDate = new Date(startDate.getTime() + 5 * 365 * 24 * 60 * 60 * 1000);
+
+        // Generate a unique token for this whitelist registration
+        const token = crypto.randomBytes(32).toString('hex').toUpperCase();
+
+        const entity = await this.whitelistRepository.save({
             registrationNumber,
             email,
             subCarParkId,
             tenancyId,
             whitelistType: WhitelistType.SELF_SERVE,
-            comments: 'Self serve whitelist',
+            comments: 'Self serve whitelist created by ' + email,
+            startDate,
+            endDate,
+            token, // Add token to the entity
         });
 
         const savedEntity = await this.whitelistRepository.save(entity);
+
+        // Send confirmation email
+        try {
+            await this.emailNotificationService.sendUsingTemplate({
+                to: [email],
+                templateKey: TemplateKeys.WHITELIST_CONFIRMATION,
+                data: {
+                    email: email,
+                    registrationNumber: registrationNumber,
+                    whitelistType: WhitelistType.SELF_SERVE,
+                    startDate: startDate.toLocaleDateString(),
+                    endDate: endDate.toLocaleDateString(),
+                    comments: savedEntity.comments,
+                    token: token,
+                },
+            });
+        } catch (emailError) {
+            // Log email error but don't fail the registration
+            console.error('Failed to send whitelist confirmation email:', emailError);
+        }
+
         return {
             id: savedEntity.id,
             registrationNumber: savedEntity.registrationNumber,
@@ -65,6 +99,48 @@ export class WhitelistService {
             subCarParkId: savedEntity.subCarParkId,
             tenancyId: savedEntity.tenancyId,
             whitelistType: savedEntity.whitelistType,
+            startDate: savedEntity.startDate,
+            endDate: savedEntity.endDate,
+            token: token, // Include token in response
+        };
+    }
+
+    async getWhitelistByToken(token: string): Promise<GetWhitelistByTokenResponse> {
+        const whitelist = await this.whitelistRepository.findOne({
+            where: { token },
+            relations: {
+                subCarPark: true,
+                tenancy: true,
+            },
+        });
+
+        if (!whitelist) {
+            throw new CustomException(
+                ErrorCode.WHITELIST_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        return {
+            id: whitelist.id,
+            registrationNumber: whitelist.registrationNumber,
+            comments: whitelist.comments,
+            email: whitelist.email,
+            subCarParkId: whitelist.subCarParkId,
+            tenancyId: whitelist.tenancyId,
+            whitelistType: whitelist.whitelistType,
+            startDate: whitelist.startDate,
+            endDate: whitelist.endDate,
+            subCarPark: {
+                id: whitelist.subCarPark.id,
+                name: whitelist.subCarPark.carParkName,
+                code: whitelist.subCarPark.subCarParkCode,
+            },
+            tenancy: {
+                id: whitelist.tenancy.id,
+                name: whitelist.tenancy.tenantName,
+                email: whitelist.tenancy.tenantEmail,
+            },
         };
     }
 }

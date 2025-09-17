@@ -34,6 +34,16 @@ export class FileTemplate {
         layout: TemplateKeys.ADMIN_LAYOUT,
     };
 
+    public static readonly WHITELIST_CONFIRMATION = {
+        key: TemplateKeys.WHITELIST_CONFIRMATION,
+        fileName: 'whitelist-confirmation.html',
+        fileType: FileType.HTML,
+        title: 'Whitelist Registration Confirmation - OnlyPark',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
     public static readonly WELCOME_ADMIN = {
         key: TemplateKeys.WELCOME_ADMIN,
         fileName: 'welcome-admin.html',

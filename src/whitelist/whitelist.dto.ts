@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsOptional, IsUUID } from 'class-validator';
-import { WhitelistType } from 'src/common/enums';
+import { WhitelistType } from '../common/enums';
 
 export class CreateSelfServeWhitelistRequest {
     @IsNotEmpty()
@@ -27,4 +27,29 @@ export class CreateSelfServeWhitelistResponse {
     subCarParkId: string;
     tenancyId: string;
     whitelistType: WhitelistType;
+    startDate: Date;
+    endDate: Date;
+    token: string;
+}
+
+export class GetWhitelistByTokenResponse {
+    id: string;
+    registrationNumber: string;
+    comments: string;
+    email: string;
+    subCarParkId: string;
+    tenancyId: string;
+    whitelistType: WhitelistType;
+    startDate: Date;
+    endDate: Date;
+    subCarPark: {
+        id: string;
+        name: string;
+        code: string;
+    };
+    tenancy: {
+        id: string;
+        name: string;
+        email: string;
+    };
 }

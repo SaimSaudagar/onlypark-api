@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitelist Registration Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .confirmation-box {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .details-table th,
+        .details-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .details-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .token-box {
+            background-color: #e9ecef;
+            border: 2px solid #6c757d;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>OnlyPark</h1>
+        <h2>Whitelist Registration Confirmation</h2>
+    </div>
+
+    <div class="content">
+        <p>Dear {{email}},</p>
+
+        <p>Your vehicle has been successfully registered for whitelist parking access. Please find your registration
+            details below:</p>
+
+        <div class="confirmation-box">
+            <h3>✅ Registration Confirmed</h3>
+            <p>Your whitelist registration has been processed and is now active.</p>
+        </div>
+
+        <table class="details-table">
+            <tr>
+                <th>Vehicle Registration</th>
+                <td>{{registrationNumber}}</td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td>{{email}}</td>
+            </tr>
+            <tr>
+                <th>Registration Type</th>
+                <td>{{whitelistType}}</td>
+            </tr>
+            <tr>
+                <th>Valid From</th>
+                <td>{{startDate}}</td>
+            </tr>
+            <tr>
+                <th>Valid Until</th>
+                <td>{{endDate}}</td>
+            </tr>
+            <tr>
+                <th>Comments</th>
+                <td>{{comments}}</td>
+            </tr>
+        </table>
+
+        <div class="token-box">
+            <strong>Your Registration Token:</strong><br>
+            {{token}}
+        </div>
+
+        <div class="warning">
+            <strong>Important:</strong> Please keep this token safe. You may need it for future reference or to update
+            your registration details.
+        </div>
+
+        <h3>What's Next?</h3>
+        <ul>
+            <li>Your vehicle is now registered for whitelist parking access</li>
+            <li>You can park in designated whitelist areas during your registration period</li>
+            <li>Keep this confirmation email for your records</li>
+            <li>Contact support if you need to update your registration details</li>
+        </ul>
+
+        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+
+        <p>Thank you for choosing OnlyPark!</p>
+
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; {{currentYear}} OnlyPark. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>
