@@ -10,6 +10,7 @@ import { UserSeederModule } from './user/user-seeder.module';
 import { CarMakeSeederModule } from './car-make/car-make-seeder.module';
 import { MasterCarParkSeederModule } from './master-car-park/master-car-park-seeder.module';
 import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.module';
+import { TenancySeederModule } from './tenancy/tenancy-seeder.module';
 
 @Module({
   imports: [
@@ -24,15 +25,18 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST') || 'localhost',
+        host: configService.get<string>('DB_HOST_NAME') || 'localhost',
         port: parseInt(configService.get<string>('DB_PORT') || '5432'),
-        username: configService.get<string>('DB_USERNAME') || 'postgres',
+        username: configService.get<string>('DB_USER') || 'postgres',
         password: configService.get<string>('DB_PASSWORD') || 'password',
         database: configService.get<string>('DB_NAME') || 'onlypark',
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: false,
         logging: process.env.NODE_ENV === 'development',
         timezone: 'Z',
+        ...(process.env.NODE_ENV === 'production' && {
+          ssl: { rejectUnauthorized: false },
+        }),
       }),
       inject: [ConfigService],
     }),
@@ -45,6 +49,7 @@ import { SubCarParkSeederModule } from './sub-car-park/sub-car-park-seeder.modul
     CarMakeSeederModule,
     MasterCarParkSeederModule,
     SubCarParkSeederModule,
+    TenancySeederModule,
   ],
 })
-export class SeederModule {}
+export class SeederModule { }

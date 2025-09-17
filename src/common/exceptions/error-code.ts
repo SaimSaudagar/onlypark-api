@@ -54,6 +54,11 @@ export class ErrorCode {
     message: 'Number of permits per registration must be greater than 0',
   };
 
+  public static readonly PERMITS_PER_REGISTRATION_EXCEEDED = {
+    key: 'PERMITS_PER_REGISTRATION_EXCEEDED',
+    code: 'PERMITS_PER_REGISTRATION_EXCEEDED',
+    message: 'Number of permits per registration exceeded',
+  };
 
   public static readonly COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED = {
     key: 'COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED',
@@ -77,6 +82,12 @@ export class ErrorCode {
     key: 'TENANT_ALREADY_EXISTS',
     code: 'TENANT_ALREADY_EXISTS',
     message: 'Tenant with {{tenantEmail}} already exists',
+  };
+
+  public static readonly TENANCY_NOT_FOUND = {
+    key: 'TENANCY_NOT_FOUND',
+    code: 'TENANCY_NOT_FOUND',
+    message: 'Tenancy not found',
   };
 
   public static readonly NOT_SPECIFIED = {
@@ -269,6 +280,12 @@ export class ErrorCode {
     message: 'Blacklist entry not found',
   };
 
+  public static readonly BLACKLIST_ENTRY_ALREADY_EXISTS = {
+    key: 'BLACKLIST_ENTRY_ALREADY_EXISTS',
+    code: 'BLACKLIST_ENTRY_ALREADY_EXISTS',
+    message: 'Blacklist entry already exists',
+  };
+
   public static readonly WHITELIST_COMPANY_NOT_FOUND = {
     key: 'WHITELIST_COMPANY_NOT_FOUND',
     code: 'WHITELIST_COMPANY_NOT_FOUND',
@@ -279,6 +296,18 @@ export class ErrorCode {
     key: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
     code: 'WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS',
     message: 'Company with this domain name already exists in this car park',
+  };
+
+  public static readonly WHITELIST_NOT_FOUND = {
+    key: 'WHITELIST_NOT_FOUND',
+    code: 'WHITELIST_NOT_FOUND',
+    message: 'Whitelist entry not found',
+  };
+
+  public static readonly WHITELIST_PERMIT_ALREADY_EXISTS = {
+    key: 'WHITELIST_PERMIT_ALREADY_EXISTS',
+    code: 'WHITELIST_PERMIT_ALREADY_EXISTS',
+    message: 'Whitelist permit already exists',
   };
 
   public static readonly TOKEN_REQUIRED = {
@@ -394,6 +423,18 @@ export class ErrorCode {
     key: 'BOOKING_ALREADY_COMPLETED',
     code: 'BOOKING_ALREADY_COMPLETED',
     message: 'Booking has already been completed',
+  };
+
+  public static readonly VISITOR_BOOKING_NOT_FOUND = {
+    key: 'VISITOR_BOOKING_NOT_FOUND',
+    code: 'VISITOR_BOOKING_NOT_FOUND',
+    message: 'Visitor booking not found',
+  };
+
+  public static readonly VEHICLE_ALREADY_BOOKED = {
+    key: 'VEHICLE_ALREADY_BOOKED',
+    code: 'VEHICLE_ALREADY_BOOKED',
+    message: 'Vehicle is already booked for the specified time period',
   };
 
   // Geolocation Errors

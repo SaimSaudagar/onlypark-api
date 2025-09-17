@@ -25,38 +25,39 @@ export class BlacklistController {
     constructor(private readonly blacklistService: BlacklistService) { }
 
     @Get()
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
     findAll(@Query() request: FindBlacklistRequest) {
         return this.blacklistService.findAll(request);
     }
 
     @Get(':id')
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
     findOne(@Param('id') id: string) {
         return this.blacklistService.findOne({ where: { id } });
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
     create(@Body() request: CreateBlacklistRequest) {
         return this.blacklistService.create(request);
     }
 
     @Patch(':id')
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
     update(@Param('id') id: string, @Body() request: UpdateBlacklistRequest) {
         return this.blacklistService.update(id, request);
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
     remove(@Param('id') id: string) {
         return this.blacklistService.remove(id);
     }

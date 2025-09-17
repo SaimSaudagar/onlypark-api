@@ -1,65 +1,55 @@
 import { IsNotEmpty, IsString, IsOptional, IsUUID } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PartialType } from '@nestjs/mapped-types';
+import { WhitelistType } from '../common/enums';
 
-export class CreateWhitelistDto {
-    @ApiProperty({ description: 'Vehicle registration number' })
+export class CreateSelfServeWhitelistRequest {
     @IsNotEmpty()
     @IsString()
-    vehicalRegistration: string;
+    registrationNumber: string;
 
-    @ApiPropertyOptional({ description: 'Additional comments' })
-    @IsOptional()
-    @IsString()
-    comments?: string;
-
-    @ApiProperty({ description: 'Email address' })
     @IsNotEmpty()
     @IsString()
     email: string;
 
-    @ApiPropertyOptional({ description: 'Sub car park ID' })
-    @IsOptional()
+    @IsNotEmpty()
     @IsUUID()
-    subCarParkId?: string;
+    subCarParkId: string;
 
-    @ApiPropertyOptional({ description: 'Tenancy ID' })
-    @IsOptional()
+    @IsNotEmpty()
     @IsUUID()
-    tenancyId?: string;
+    tenancyId: string;
 }
 
-export class UpdateWhitelistDto extends PartialType(CreateWhitelistDto) { }
-
-export class WhitelistResponseDto {
-    @ApiProperty({ description: 'Whitelist unique identifier' })
+export class CreateSelfServeWhitelistResponse {
     id: string;
-
-    @ApiProperty({ description: 'Vehicle registration number' })
-    vehicalRegistration: string;
-
-    @ApiPropertyOptional({ description: 'Additional comments' })
-    comments?: string;
-
-    @ApiProperty({ description: 'Email address' })
+    registrationNumber: string;
+    comments: string;
     email: string;
+    subCarParkId: string;
+    tenancyId: string;
+    whitelistType: WhitelistType;
+    startDate: Date;
+    endDate: Date;
+    token: string;
+}
 
-    @ApiProperty({ description: 'Creation timestamp' })
-    createdAt: Date;
-
-    @ApiProperty({ description: 'Last update timestamp' })
-    updatedAt: Date;
-
-    @ApiPropertyOptional({ description: 'Associated car park information' })
-    carPark?: {
+export class GetWhitelistByTokenResponse {
+    id: string;
+    registrationNumber: string;
+    comments: string;
+    email: string;
+    subCarParkId: string;
+    tenancyId: string;
+    whitelistType: WhitelistType;
+    startDate: Date;
+    endDate: Date;
+    subCarPark: {
         id: string;
         name: string;
         code: string;
     };
-
-    @ApiPropertyOptional({ description: 'Associated tenancy information' })
-    tenancy?: {
+    tenancy: {
         id: string;
         name: string;
+        email: string;
     };
 }

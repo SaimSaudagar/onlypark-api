@@ -22,7 +22,10 @@ export class Infringement extends BaseEntity {
   @Column({ type: 'int', generated: 'increment', nullable: false })
   ticketNumber: number;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({
+    type: 'timestamptz',
+    nullable: true
+  })
   ticketDate: Date;
 
   @Column({ type: 'varchar', nullable: true })
@@ -47,7 +50,7 @@ export class Infringement extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   carMakeId: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   dueDate: Date;
 
   @Column({ type: 'varchar', nullable: true })

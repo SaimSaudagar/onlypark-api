@@ -20,14 +20,20 @@ export class BlacklistService {
     async create(request: CreateBlacklistRequest): Promise<CreateBlacklistResponse> {
         const { regNo, email, comments, subCarParkId } = request;
 
-        if (subCarParkId) {
-            const subCarPark = await this.subCarParkService.exists(subCarParkId);
-            if (!subCarPark) {
-                throw new CustomException(
-                    ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
+        const subCarPark = await this.subCarParkService.exists(subCarParkId);
+        if (!subCarPark) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const existingBlacklist = await this.blacklistRepository.findOne({ where: { regNo, email, subCarParkId } });
+        if (existingBlacklist) {
+            throw new CustomException(
+                ErrorCode.BLACKLIST_ENTRY_ALREADY_EXISTS.key,
+                HttpStatus.BAD_REQUEST,
+            );
         }
 
         const savedBlacklist = await this.blacklistRepository.save({
@@ -121,7 +127,15 @@ export class BlacklistService {
             );
         }
 
-        const updatedEntity = await this.blacklistRepository.save(request);
+        const subCarPark = await this.subCarParkService.exists(request.subCarParkId);
+        if (!subCarPark) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const updatedEntity = await this.blacklistRepository.save(entity);
 
         return {
             id: updatedEntity.id,
@@ -139,6 +153,6 @@ export class BlacklistService {
                 HttpStatus.BAD_REQUEST,
             );
         }
-        await this.blacklistRepository.delete(id);
+        await this.blacklistRepository.softRemove(entity);
     }
 }

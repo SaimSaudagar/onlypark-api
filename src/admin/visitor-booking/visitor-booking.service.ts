@@ -125,13 +125,10 @@ export class VisitorBookingService {
         return {
             id: visitorBooking.id,
             email: visitorBooking.email,
-            vehicleReg: visitorBooking.vehicleReg,
-            subCarParkCode: visitorBooking.subCarParkCode,
-            property: visitorBooking.property,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            registrationNumber: visitorBooking.registrationNumber,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
-            createdAt: visitorBooking.createdAt,
         };
     }
 
@@ -147,16 +144,12 @@ export class VisitorBookingService {
         return visitorBookings.map(visitorBooking => ({
             id: visitorBooking.id,
             email: visitorBooking.email,
-            vehicleReg: visitorBooking.vehicleReg,
-            subCarParkCode: visitorBooking.subCarParkCode,
-            property: visitorBooking.property,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            registrationNumber: visitorBooking.registrationNumber,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
             tenancyName: visitorBooking.tenancy?.tenantName,
             subCarParkName: visitorBooking.subCarPark?.carParkName,
-            createdAt: visitorBooking.createdAt,
-            updatedAt: visitorBooking.updatedAt,
         }));
     }
 
@@ -176,14 +169,13 @@ export class VisitorBookingService {
         return {
             id: visitorBooking.id,
             email: visitorBooking.email,
-            vehicleReg: visitorBooking.vehicleReg,
+            registrationNumber: visitorBooking.registrationNumber,
             tenancyId: visitorBooking.tenancyId,
             tenancy: visitorBooking.tenancy ? {
                 id: visitorBooking.tenancy.id,
                 tenantName: visitorBooking.tenancy.tenantName,
                 tenantEmail: visitorBooking.tenancy.tenantEmail,
             } : undefined,
-            subCarParkCode: visitorBooking.subCarParkCode,
             subCarParkId: visitorBooking.subCarParkId,
             subCarPark: visitorBooking.subCarPark ? {
                 id: visitorBooking.subCarPark.id,
@@ -192,12 +184,9 @@ export class VisitorBookingService {
                 location: visitorBooking.subCarPark.location,
                 carSpace: visitorBooking.subCarPark.carSpace,
             } : undefined,
-            property: visitorBooking.property,
-            startTime: visitorBooking.startTime,
-            endTime: visitorBooking.endTime,
+            startTime: visitorBooking.startDate.toISOString(),
+            endTime: visitorBooking.endDate.toISOString(),
             status: visitorBooking.status,
-            createdAt: visitorBooking.createdAt,
-            updatedAt: visitorBooking.updatedAt,
         };
     }
 
@@ -221,13 +210,13 @@ export class VisitorBookingService {
         }
 
         const email = visitorBooking.email;
-        const vehicleReg = visitorBooking.vehicleReg;
+        const registrationNumber = visitorBooking.registrationNumber;
         await this.visitorBookingRepository.remove(visitorBooking);
 
         return {
             id,
             email,
-            vehicleReg,
+            registrationNumber,
             message: 'Visitor booking deleted successfully',
             deletedAt: new Date(),
         };

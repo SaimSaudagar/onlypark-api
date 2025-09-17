@@ -2,7 +2,7 @@ import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as FormData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { SendEmailRequest, SendEmailResponse } from './email.service';
+import { SendEmailRequest, SendEmailResponse } from './email-notification.dto';
 import { CustomException } from '../../exceptions/custom.exception';
 import { ErrorCode } from '../../exceptions/error-code';
 

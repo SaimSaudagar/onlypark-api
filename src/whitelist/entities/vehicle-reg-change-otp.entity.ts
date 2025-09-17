@@ -4,7 +4,7 @@ import {
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
-import { VisitorBooking } from './visitor-booking.entity';
+import { Whitelist } from './whitelist.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 
@@ -30,7 +30,10 @@ export class VehicleRegChangeOtp extends BaseEntity {
     @Column({ type: 'timestamp', nullable: false })
     expiresAt: Date;
 
-    @ManyToOne(() => VisitorBooking, (visitorBooking) => visitorBooking.vehicleRegChangeOtps)
-    @JoinColumn({ name: 'visitorBookingId' })
-    visitorBooking: VisitorBooking;
+    @ManyToOne(() => Whitelist, (whitelist) => whitelist.vehicleRegChangeOtps)
+    @JoinColumn({ name: 'whitelistId' })
+    whitelist: Whitelist;
+
+    @Column({ type: 'varchar', nullable: false })
+    whitelistId: string;
 }

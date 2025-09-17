@@ -43,18 +43,14 @@ export class UpdateVisitorBookingRequest extends CreateVisitorBookingRequest { }
 export class VisitorBookingResponse {
     id: string;
     email: string;
-    vehicleReg: string;
+    registrationNumber: string;
     tenancyId: string;
     tenancy?: TenancyResponse;
-    subCarParkCode: string;
     subCarParkId: string;
     subCarPark?: SubCarParkResponse;
-    property: string;
     startTime: string;
     endTime: string;
     status: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 export class TenancyResponse {
@@ -74,19 +70,16 @@ export class SubCarParkResponse {
 export class VisitorBookingCreateResponse {
     id: string;
     email: string;
-    vehicleReg: string;
-    subCarParkCode: string;
-    property: string;
+    registrationNumber: string;
     startTime: string;
     endTime: string;
     status: string;
-    createdAt: Date;
 }
 
 export class VisitorBookingUpdateResponse {
     id: string;
     email: string;
-    vehicleReg: string;
+    registrationNumber: string;
     subCarParkCode: string;
     property: string;
     startTime: string;
@@ -99,7 +92,7 @@ export class VisitorBookingUpdateResponse {
 export class VisitorBookingDeleteResponse {
     id: string;
     email: string;
-    vehicleReg: string;
+    registrationNumber: string;
     message: string;
     deletedAt: Date;
 }
@@ -107,14 +100,10 @@ export class VisitorBookingDeleteResponse {
 export class VisitorBookingListResponse {
     id: string;
     email: string;
-    vehicleReg: string;
-    subCarParkCode: string;
-    property: string;
+    registrationNumber: string;
     startTime: string;
     endTime: string;
     status: string;
     tenancyName?: string;
     subCarParkName?: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
