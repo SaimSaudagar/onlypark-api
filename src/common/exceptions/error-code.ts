@@ -280,6 +280,12 @@ export class ErrorCode {
     message: 'Blacklist entry not found',
   };
 
+  public static readonly BLACKLIST_ENTRY_ALREADY_EXISTS = {
+    key: 'BLACKLIST_ENTRY_ALREADY_EXISTS',
+    code: 'BLACKLIST_ENTRY_ALREADY_EXISTS',
+    message: 'Blacklist entry already exists',
+  };
+
   public static readonly WHITELIST_COMPANY_NOT_FOUND = {
     key: 'WHITELIST_COMPANY_NOT_FOUND',
     code: 'WHITELIST_COMPANY_NOT_FOUND',
