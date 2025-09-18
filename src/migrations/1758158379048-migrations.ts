@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1758068605410 implements MigrationInterface {
-    name = 'Migrations1758068605410'
+export class Migrations1758158379048 implements MigrationInterface {
+    name = 'Migrations1758158379048'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -63,6 +63,9 @@ export class Migrations1758068605410 implements MigrationInterface {
                 "comments" text,
                 "email" character varying NOT NULL,
                 "whitelistType" character varying NOT NULL,
+                "token" character varying,
+                "startDate" TIMESTAMP NOT NULL,
+                "endDate" TIMESTAMP NOT NULL,
                 "subCarParkId" uuid NOT NULL,
                 "tenancyId" uuid NOT NULL,
                 CONSTRAINT "PK_0169bfbd49b0511243f7a068cec" PRIMARY KEY ("id")
