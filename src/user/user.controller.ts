@@ -35,7 +35,6 @@ export class UserController {
 
   @Get()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @RequirePermissions(AdminPermission.USER_LIST)
   @UseGuards(RoleGuard, PermissionsGuard)
   findAll() {
     return this.userService.findAll();
@@ -43,7 +42,6 @@ export class UserController {
 
   @Get(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @RequirePermissions(AdminPermission.USER_VIEW)
   @UseGuards(RoleGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne({ where: { id } });
@@ -51,30 +49,26 @@ export class UserController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(UserPermission.PROFILE_VIEW)
   async getProfile(@User() user: AuthenticatedUser) {
     return this.userService.getProfile(user.id);
   }
 
   @Get('permissions')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(UserPermission.PROFILE_VIEW)
   async findAllPermissions(@User() user: AuthenticatedUser) {
     const permissions = await this.userService.findAllPermissions(user.id);
     return { permissions };
   }
 
   @Post()
-  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  // @RequirePermissions(AdminPermission.USER_CREATE)
-  // @UseGuards(RoleGuard, PermissionsGuard)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @UseGuards(RoleGuard, PermissionsGuard)
   async create(@Body() request: CreateUserRequest): Promise<CreateUserResponse> {
     return this.userService.create(request);
   }
 
   @Patch('profile')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(UserPermission.PROFILE_EDIT)
   async updateUserProfile(
     @Req() request: any,
     @Body() updateUserProfileDto: UpdateUserProfileRequest,
@@ -87,7 +81,6 @@ export class UserController {
 
   @Patch(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(RoleGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
@@ -95,7 +88,6 @@ export class UserController {
 
   @Patch('notification-token')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermissions(UserPermission.PROFILE_EDIT)
   async updateNotificationToken(
     @User() loggedInUser: AuthenticatedUser,
     @Body() request: UpdateNotificationTokenRequest,
@@ -105,7 +97,6 @@ export class UserController {
 
   @Delete(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @RequirePermissions(AdminPermission.USER_DELETE)
   @UseGuards(RoleGuard, PermissionsGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
