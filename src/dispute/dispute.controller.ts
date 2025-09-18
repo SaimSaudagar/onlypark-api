@@ -9,7 +9,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { DisputeService } from './dispute.service';
 import { CreateDisputeRequest, CreateDisputeResponse } from './dispute.dto';
 
-@ApiTags('Public => Dispute')
+@ApiTags('Dispute')
 @Controller({ path: 'dispute', version: '1' })
 export class DisputeController {
     constructor(private readonly disputeService: DisputeService) { }

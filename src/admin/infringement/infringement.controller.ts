@@ -24,7 +24,10 @@ import {
   UpdateInfringementStatusRequest,
   ScanInfringementRequest,
   FindInfringementRequest,
+  GetTicketResponse,
+  GetTicketRequest,
 } from './infringement.dto';
+
 
 @ApiTags('Admin => Infringement')
 @UseGuards(RoleGuard, PermissionsGuard)
@@ -78,5 +81,10 @@ export class InfringementController {
   @Get('penalty/:infringementCarParkId')
   getPenalty(@Param('infringementCarParkId') infringementCarParkId: string) {
     return this.infringementService.getPenalty(infringementCarParkId);
+  }
+
+  @Get('ticket')
+  getTicket(@Query() request: GetTicketRequest): Promise<GetTicketResponse> {
+    return this.infringementService.getTicket(request);
   }
 }

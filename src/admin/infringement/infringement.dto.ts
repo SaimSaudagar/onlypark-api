@@ -128,3 +128,26 @@ export class UpdateInfringementStatusResponse {
   id: string;
   status: InfringementStatus;
 }
+
+export class GetTicketResponse {
+  id: string;
+  ticketNumber: number;
+  ticketDate: Date;
+  registrationNo: string;
+  status: InfringementStatus;
+  dueDate: Date;
+  comments: string;
+  photos: object;
+  carMakeName: string;
+  carParkName: string;
+  reasonName: string;
+  penaltyName: string;
+  amountBeforeDue: number;
+  amountAfterDue: number;
+}
+
+export class GetTicketRequest {
+  @IsNumber()
+  @IsNotEmpty()
+  ticketNumber: number;
+}

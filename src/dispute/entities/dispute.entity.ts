@@ -77,6 +77,4 @@ export class Dispute extends BaseEntity {
     })
     status: DisputeStatus;
 
-    @DeleteDateColumn({ type: 'timestamptz' })
-    deletedAt: Date;
 }

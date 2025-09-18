@@ -10,6 +10,8 @@ import {
   FindInfringementResponse,
   GetPenaltyResponse,
   GetTicketNumberRequest,
+  GetTicketResponse,
+  GetTicketRequest,
   MarkAsWaivedResponse,
   ScanInfringementRequest,
   ScanInfringementResponse,
@@ -249,6 +251,45 @@ export class InfringementService {
     const response = new UpdateInfringementStatusResponse();
     response.id = id;
     response.status = status;
+
+    return response;
+  }
+
+  async getTicket(request: GetTicketRequest): Promise<GetTicketResponse> {
+    const { ticketNumber } = request;
+
+    const infringement = await this.infringementRepository.findOne({
+      where: { ticketNumber },
+      relations: {
+        infringementCarPark: true,
+        reason: true,
+        penalty: true,
+        carMake: true,
+      },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const response = new GetTicketResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.ticketDate = infringement.ticketDate;
+    response.registrationNo = infringement.registrationNo;
+    response.status = infringement.status;
+    response.dueDate = infringement.dueDate;
+    response.comments = infringement.comments;
+    response.photos = infringement.photos;
+    response.carMakeName = infringement.carMake?.carMakeName || '';
+    response.carParkName = infringement.infringementCarPark?.carParkName || '';
+    response.reasonName = infringement.reason?.reason || '';
+    response.penaltyName = infringement.penalty?.penaltyName || '';
+    response.amountBeforeDue = infringement.penalty?.amountBeforeDue || 0;
+    response.amountAfterDue = infringement.penalty?.amountAfterDue || 0;
 
     return response;
   }
