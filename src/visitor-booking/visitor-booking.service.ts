@@ -35,6 +35,7 @@ export class VisitorBookingService {
         const subCarPark = await this.subCarParkRepository.findOne({
             where: { id: subCarParkId }
         });
+        console.log(subCarPark);
 
         if (!subCarPark) {
             throw new CustomException(
@@ -79,6 +80,9 @@ export class VisitorBookingService {
                 subCarParkId,
             }
         });
+
+        console.log(existingBookings);
+        console.log(subCarPark.noOfPermitsPerRegNo);
 
         if (existingBookings >= subCarPark.noOfPermitsPerRegNo) {
             throw new CustomException(

@@ -52,6 +52,7 @@ export class SubCarParkSeederService {
           description: subCarParkData.description,
           subCarParkCode: subCarParkData.subCarParkCode,
           freeHours: subCarParkData.freeHours,
+          noOfPermitsPerRegNo: subCarParkData.noOfPermitsPerRegNo,
           tenantEmailCheck: subCarParkData.tenantEmailCheck,
           geolocation: subCarParkData.geolocation,
           event: subCarParkData.event,
