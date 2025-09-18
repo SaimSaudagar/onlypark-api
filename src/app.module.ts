@@ -25,7 +25,7 @@ import { AdminModule } from './admin/admin.module';
 import { ProfileModule as AdminProfileModule } from './admin/profile/profile.module';
 import { CarparkManagerModule } from './carpark-manager/carpark-manager.module';
 import { ProfileModule as CarparkManagerProfileModule } from './carpark-manager/profile/profile.module';
-
+import { SubCarParkModule } from './sub-car-park/sub-car-park.module';
 import { TenancyModule } from './tenancy/tenancy.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
@@ -103,6 +103,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     AdminProfileModule,
     CarparkManagerModule,
     CarparkManagerProfileModule,
+    SubCarParkModule,
     TenancyModule,
     WhitelistModule,
     WhitelistCompanyModule,
