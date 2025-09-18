@@ -15,7 +15,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators';
 import { AuthenticatedUser } from '../common';
-import { RoleGuard, AllowedRoles } from '../auth/guards/roles.guard';
+import { AllowedRoles } from '../auth/guards/roles.guard';
 import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
 import { UserType, AdminPermission, UserPermission } from '../common/enums';
@@ -27,22 +27,23 @@ import {
   UpdateUserDto,
   UpdateUserProfileRequest,
 } from './user.dto';
+import JwtAuthenticationGuard from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('User')
-@Controller({ path: 'user', version: '1' })
+@Controller({ path: 'admin/user', version: '1' })
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Get()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne({ where: { id } });
   }
@@ -62,7 +63,7 @@ export class UserController {
 
   @Post()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
   async create(@Body() request: CreateUserRequest): Promise<CreateUserResponse> {
     return this.userService.create(request);
   }
@@ -81,7 +82,7 @@ export class UserController {
 
   @Patch(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
@@ -97,7 +98,7 @@ export class UserController {
 
   @Delete(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(RoleGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
