@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  DeleteDateColumn,
 } from 'typeorm';
 import { InfringementStatus } from '../../common/enums';
 import { Auditable } from '../../common/decorators';
@@ -18,21 +19,14 @@ import { InfringementCarPark } from './infringement-car-park.entity';
 @Entity('infringements')
 @Auditable()
 export class Infringement extends BaseEntity {
-  @Column({ type: 'int', generated: 'increment', nullable: true })
+  @Column({ type: 'int', generated: 'increment', nullable: false })
   ticketNumber: number;
 
-  @Column({
-    type: 'timestamptz',
-    nullable: true
-  })
+  @Column({ type: 'timestamptz', nullable: true })
   ticketDate: Date;
 
   @Column({ type: 'varchar', nullable: true })
   infringementCarParkId: string;
-
-  @ManyToOne(() => InfringementCarPark, (carPark) => carPark.infringements)
-  @JoinColumn({ name: 'infringementCarParkId' })
-  infringementCarPark: InfringementCarPark;
 
   @Column({ type: 'text', nullable: true })
   comments: string;
@@ -50,31 +44,32 @@ export class Infringement extends BaseEntity {
   })
   status: InfringementStatus;
 
-  @Column({
-    type: 'timestamptz',
-    nullable: true
-  })
+  @Column({ type: 'varchar', nullable: true })
+  carMakeId: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
   dueDate: Date;
 
+  @Column({ type: 'varchar', nullable: true })
+  penaltyId: string;
+  
+  @Column({ type: 'varchar', nullable: true })
+  reasonId: string;
+
+  @ManyToOne(() => InfringementCarPark, (carPark) => carPark.infringements)
+  @JoinColumn({ name: 'infringementCarParkId' })
+  infringementCarPark: InfringementCarPark;
+  
   @ManyToOne(() => InfringementReason, (reason) => reason.infringements)
   @JoinColumn({ name: 'reasonId' })
   reason: InfringementReason;
-
-  @Column({ type: 'varchar', nullable: true })
-  reasonId: string;
 
   @ManyToOne(() => InfringementPenalty, (penalty) => penalty.infringements)
   @JoinColumn({ name: 'penaltyId' })
   penalty: InfringementPenalty;
 
-  @Column({ type: 'varchar', nullable: true })
-  penaltyId: string;
-
   @ManyToOne(() => CarMake)
   @JoinColumn({ name: 'carMakeId' })
   carMake: CarMake;
-
-  @Column({ type: 'varchar', nullable: true })
-  carMakeId: string;
 
 }

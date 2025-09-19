@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infringement Notice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .ticket {
+            width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            border: 2px solid #d32f2f;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #d32f2f;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 3px;
+        }
+        
+        .field {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .field-label {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .field-value {
+            color: #333;
+            text-align: right;
+        }
+        
+        .penalty-section {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+        
+        .penalty-title {
+            font-weight: bold;
+            color: #e65100;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        .due-date {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .due-date-text {
+            font-size: 12px;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background: #f5f5f5;
+            padding: 10px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .ticket-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 8px;
+            background: #ffebee;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="header">
+            <h1>PARKING INFRINGEMENT NOTICE</h1>
+            <p>Official Notice - Do Not Ignore</p>
+        </div>
+        
+        <div class="content">
+            <div class="ticket-number">
+                Ticket #{{ticketNumber}}
+            </div>
+            
+            <div class="section">
+                <div class="section-title">VIOLATION DETAILS</div>
+                <div class="field">
+                    <span class="field-label">Date & Time:</span>
+                    <span class="field-value">{{ticketDate}}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">{{carParkName}}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Registration:</span>
+                    <span class="field-value">{{registrationNo}}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Vehicle Make:</span>
+                    <span class="field-value">{{carMakeName}}</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">INFRINGEMENT DETAILS</div>
+                <div class="field">
+                    <span class="field-label">Reason:</span>
+                    <span class="field-value">{{reasonName}}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Penalty Type:</span>
+                    <span class="field-value">{{penaltyName}}</span>
+                </div>
+                {{#if comments}}
+                <div class="field">
+                    <span class="field-label">Comments:</span>
+                    <span class="field-value">{{comments}}</span>
+                </div>
+                {{/if}}
+            </div>
+            
+            <div class="penalty-section">
+                <div class="penalty-title">PAYMENT REQUIRED</div>
+                <div class="field">
+                    <span class="field-label">Amount (Before Due Date):</span>
+                    <span class="field-value amount">${{amountBeforeDue}}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Amount (After Due Date):</span>
+                    <span class="field-value amount">${{amountAfterDue}}</span>
+                </div>
+            </div>
+            
+            <div class="due-date">
+                <div class="due-date-text">
+                    PAYMENT DUE BY: {{dueDate}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This is an official infringement notice. Please pay promptly to avoid additional charges.</p>
+            <p>For inquiries, contact the parking authority.</p>
+        </div>
+    </div>
+</body>
+</html>

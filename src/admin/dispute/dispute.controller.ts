@@ -46,6 +46,15 @@ export class DisputeController {
     }
 
 
+    @Patch('update/:id')
+    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
+    @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)
+    update(@Param('id') id: string, @Body() request: UpdateDisputeRequest) {
+        // Set the id from the URL parameter
+        request.id = id;
+        return this.disputeService.update(request);
+    }
+
     @Patch('/update-status')
     @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
     @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)

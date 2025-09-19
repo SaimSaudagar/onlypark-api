@@ -89,6 +89,7 @@ export class UpdateDisputeResponse {
     id: string;
     status: DisputeStatus;
     responseReason?: string;
+    responsePhotos?: object;
 }
 
 export class UpdateDisputeStatusRequest {

@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { Dispute } from "./entities/dispute.entity";
 import { CreateDisputeRequest, CreateDisputeResponse } from "./dispute.dto";
 import { InfringementService } from "../admin/infringement/infringement.service";
+import { InfringementStatus } from "../common/enums";
 
 @Injectable()
 export class DisputeService {
@@ -31,7 +32,14 @@ export class DisputeService {
             photos,
         } = request;
 
+        //change status to unpaid
         const infringementId = await this.infringementService.getInfringementId({ registrationNo, ticketNumber });
+
+        await this.infringementService.updateStatus(infringementId, { status: InfringementStatus.NOT_PAID });
+
+
+        // Update infringement status to DISPUTED
+        // await this.infringementService.updateStatus(infringementId, { status: InfringementStatus.DISPUTED });
 
         const dispute = await this.disputeRepository.save({
             infringementId,
@@ -51,24 +59,25 @@ export class DisputeService {
             ticketNumber,
         });
 
-        return {
-            id: dispute.id,
-            infringementId: dispute.infringementId,
-            registrationNo: dispute.registrationNo,
-            status: dispute.status,
-            firstName: dispute.firstName,
-            lastName: dispute.lastName,
-            companyName: dispute.companyName,
-            address: dispute.address,
-            state: dispute.state,
-            zipCode: dispute.zipCode,
-            mobileNumber: dispute.mobileNumber,
-            email: dispute.email,
-            carMakeId: dispute.carMakeId,
-            model: dispute.model,
-            appeal: dispute.appeal,
-            photos: dispute.photos,
-            ticketNumber: dispute.ticketNumber,
-        };
+        const response = new CreateDisputeResponse();
+        response.id = dispute.id;
+        response.infringementId = dispute.infringementId;
+        response.registrationNo = dispute.registrationNo;
+        response.status = dispute.status;
+        response.firstName = dispute.firstName;
+        response.lastName = dispute.lastName;
+        response.companyName = dispute.companyName;
+        response.address = dispute.address;
+        response.state = dispute.state;
+        response.zipCode = dispute.zipCode;
+        response.mobileNumber = dispute.mobileNumber;
+        response.email = dispute.email;
+        response.carMakeId = dispute.carMakeId;
+        response.model = dispute.model;
+        response.appeal = dispute.appeal;
+        response.photos = dispute.photos;
+        response.ticketNumber = dispute.ticketNumber;
+
+        return response;
     }
 }

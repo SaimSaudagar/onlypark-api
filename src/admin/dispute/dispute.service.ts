@@ -7,13 +7,14 @@ import {
     FindDisputeRequest,
     FindDisputeResponse,
     FindOneDisputeResponse,
+    UpdateDisputeRequest,
     UpdateDisputeResponse,
     UpdateDisputeStatusRequest,
 } from './dispute.dto';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { DisputeStatus } from '../../common/enums';
+import { DisputeStatus, InfringementStatus } from '../../common/enums';
 import { InfringementService } from '../infringement/infringement.service';
 import { ApiGetBaseResponse } from '../../common';
 import { Dispute } from '../../dispute/entities/dispute.entity';
@@ -26,6 +27,8 @@ export class DisputeService {
         private infringementService: InfringementService,
     ) { }
 
+    
+    //not needed here discuss with saim
     async create(request: CreateDisputeRequest): Promise<CreateDisputeResponse> {
         const {
             firstName,
@@ -63,6 +66,8 @@ export class DisputeService {
             photos,
             status: DisputeStatus.PENDING,
         });
+
+        
 
         return {
             id: dispute.id,
@@ -102,8 +107,8 @@ export class DisputeService {
 
         const [disputes, totalItems] = await this.disputeRepository.findAndCount(query);
 
-        let response: FindDisputeResponse[] = [];
-        response = disputes.map(dispute => ({
+        // let response: FindDisputeResponse[] = [];
+        const response = disputes.map(dispute => ({
             id: dispute.id,
             registrationNo: dispute.registrationNo,
             email: dispute.email,
@@ -169,7 +174,41 @@ export class DisputeService {
             );
         }
 
-        await this.disputeRepository.delete(id);
+        await this.disputeRepository.softRemove(dispute);
+    }
+
+    async update(request: UpdateDisputeRequest): Promise<UpdateDisputeResponse> {
+        const { id, status, responseReason, responsePhotos } = request;
+
+        const dispute = await this.disputeRepository.findOne({ where: { id } });
+        if (!dispute) {
+            throw new CustomException(
+                ErrorCode.DISPUTE_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // If status is provided, call the status-specific function
+        if (status) {
+            await this.handleStatusUpdate(dispute, status, responseReason || '');
+        } else {
+            // Just update the dispute data without status change
+            await this.disputeRepository.update(id, { 
+                responseReason, 
+                responsePhotos 
+            });
+        }
+
+        // Fetch the updated dispute
+        const updatedDispute = await this.disputeRepository.findOne({ where: { id } });
+
+        const response = new UpdateDisputeResponse();
+        response.id = id;
+        response.status = updatedDispute.status;
+        response.responseReason = updatedDispute.responseReason;
+        response.responsePhotos = updatedDispute.responsePhotos;
+
+        return response;
     }
 
     async updateStatus(request: UpdateDisputeStatusRequest): Promise<UpdateDisputeResponse> {
@@ -183,12 +222,75 @@ export class DisputeService {
             );
         }
 
-        await this.disputeRepository.update(id, { status, responseReason });
+        // Call the appropriate status-specific function
+        await this.handleStatusUpdate(dispute, status, responseReason);
 
         return {
             id,
             status,
             responseReason,
         };
+    }
+
+    private async handleStatusUpdate(dispute: Dispute, status: DisputeStatus, responseReason: string): Promise<void> {
+        switch (status) {
+            case DisputeStatus.APPROVED:
+                await this.handleApprovedStatus(dispute, responseReason);
+                break;
+            case DisputeStatus.REJECTED:
+                await this.handleRejectedStatus(dispute, responseReason);
+                break;
+            case DisputeStatus.PENDING:
+                await this.handlePendingStatus(dispute, responseReason);
+                break;
+            case DisputeStatus.APPROVED_WITH_ADMIN_FEES:
+                await this.handleApprovedWithAdminFeesStatus(dispute, responseReason);
+                break;
+            default:
+                // For any other status, throw an error
+                throw new CustomException(
+                    ErrorCode.DISPUTE_STATUS_NOT_FOUND.key,
+                    HttpStatus.BAD_REQUEST,
+                );
+        }
+    }
+
+    private async handleApprovedStatus(dispute: Dispute, responseReason: string): Promise<void> {
+        // Update dispute status to approved
+        await this.disputeRepository.update(dispute.id, { 
+            status: DisputeStatus.APPROVED, 
+            responseReason 
+        });
+
+        // Change infringement status to waived
+        await this.infringementService.updateStatus(dispute.infringementId, { 
+            status: InfringementStatus.WAIVED 
+        });
+    }
+
+    private async handleRejectedStatus(dispute: Dispute, responseReason: string): Promise<void> {
+        // Update dispute status to rejected
+        await this.disputeRepository.update(dispute.id, { 
+            status: DisputeStatus.REJECTED, 
+            responseReason 
+        });
+
+    }
+
+    private async handlePendingStatus(dispute: Dispute, responseReason: string): Promise<void> {
+        // Update dispute status to pending
+        await this.disputeRepository.update(dispute.id, { 
+            status: DisputeStatus.PENDING, 
+            responseReason 
+        });
+
+    }
+
+    private async handleApprovedWithAdminFeesStatus(dispute: Dispute, responseReason: string): Promise<void> {
+        // Update dispute status to approved with admin fees
+        await this.disputeRepository.update(dispute.id, { 
+            status: DisputeStatus.APPROVED_WITH_ADMIN_FEES, 
+            responseReason 
+        });
     }
 }
