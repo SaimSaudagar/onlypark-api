@@ -10,8 +10,10 @@ import {
   HttpCode,
   UseGuards,
   Query,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { RoleGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RequirePermissions } from '../../common/decorators/permission.decorator';
@@ -86,5 +88,18 @@ export class InfringementController {
   @Get('ticket')
   getTicket(@Query() request: GetTicketRequest): Promise<GetTicketResponse> {
     return this.infringementService.getTicket(request);
+  }
+
+  @Get('ticket/:ticketNumber/png')
+  async getTicketPng(@Param('ticketNumber') ticketNumber: number, @Res() res: Response): Promise<void> {
+    const pngBuffer = await this.infringementService.generateTicketPng(ticketNumber);
+    
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': 'inline; filename=ticket.png',
+      'Content-Length': pngBuffer.length.toString(),
+    });
+    
+    res.send(pngBuffer);
   }
 }

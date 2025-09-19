@@ -25,6 +25,10 @@ import { HttpStatus } from '@nestjs/common';
 import { InfringementStatus } from '../../common/enums';
 import { ApiGetBaseResponse } from '../../common';
 import { InfringementPenalty } from '../../infringement/entities/infringement-penalty.entity';
+import * as handlebars from 'handlebars';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class InfringementService {
@@ -292,5 +296,79 @@ export class InfringementService {
     response.amountAfterDue = infringement.penalty?.amountAfterDue || 0;
 
     return response;
+  }
+
+  async generateTicketPng(ticketNumber: number): Promise<Buffer> {
+    try {
+      // Get ticket data using existing method
+      const ticketData = await this.getTicket({ ticketNumber });
+
+      // Load and compile Handlebars template
+      const templatePath = path.join(process.cwd(), 'assets', 'templates', 'html', 'ticket.template.hbs');
+      
+      if (!fs.existsSync(templatePath)) {
+        throw new CustomException(
+          ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const templateContent = fs.readFileSync(templatePath, 'utf-8');
+      const template = handlebars.compile(templateContent);
+
+      // Prepare data for template
+      const templateData = {
+        ticketNumber: ticketData.ticketNumber,
+        ticketDate: ticketData.ticketDate ? new Date(ticketData.ticketDate).toLocaleString() : 'N/A',
+        carParkName: ticketData.carParkName || 'N/A',
+        registrationNo: ticketData.registrationNo || 'N/A',
+        carMakeName: ticketData.carMakeName || 'N/A',
+        reasonName: ticketData.reasonName || 'N/A',
+        penaltyName: ticketData.penaltyName || 'N/A',
+        comments: ticketData.comments || '',
+        amountBeforeDue: ticketData.amountBeforeDue || 0,
+        amountAfterDue: ticketData.amountAfterDue || 0,
+        dueDate: ticketData.dueDate ? new Date(ticketData.dueDate).toLocaleDateString() : 'N/A',
+      };
+
+      // Render HTML
+      const html = template(templateData);
+
+      // Launch Puppeteer and generate PNG
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      // Set viewport for consistent rendering
+      await page.setViewport({
+        width: 400,
+        height: 600,
+        deviceScaleFactor: 2
+      });
+
+      // Generate PNG buffer
+      const pngBuffer = await page.screenshot({
+        type: 'png',
+        fullPage: true,
+        omitBackground: false
+      });
+
+      await browser.close();
+
+      return pngBuffer as Buffer;
+    } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
+      
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
