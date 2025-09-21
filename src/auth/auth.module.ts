@@ -10,8 +10,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import { RoleGuard } from './guards/roles.guard';
 
-import { User } from '../user/entities/user.entity';
-import { UserModule } from '../user/user.module';
+import { User } from '../admin/user/entities/user.entity';
+import { UserModule } from '../admin/user/user.module';
 import { ConfigKeys } from '../common/configs';
 
 @Module({

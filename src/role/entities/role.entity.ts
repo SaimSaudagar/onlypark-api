@@ -4,7 +4,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { RolePermission } from './role-permission.entity';
-import { UserRole } from '../../user/entities/user-role.entity';
+import { UserRole } from '../../admin/user/entities/user-role.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 

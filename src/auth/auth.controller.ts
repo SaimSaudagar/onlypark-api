@@ -19,7 +19,7 @@ import {
   SendLinkForForgetPasswordRequest,
   SetupPasswordRequest,
 } from './auth.dto';
-import { UserService } from '../user/user.service';
+import { UserService } from '../admin/user/user.service';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 
@@ -30,18 +30,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly userService: UserService,
   ) { }
-
-  @Post('signup')
-  @HttpCode(HttpStatus.CREATED)
-  public async signUp(@Body() request: SignUpRequest): Promise<void> {
-    await this.authService.signUp(request);
-  }
-
-  @Post('signup/confirm')
-  @HttpCode(HttpStatus.OK)
-  public async confirm(@Body() request: ConfirmEmailRequest) {
-    return this.authService.confirmEmail(request);
-  }
 
   @Post('login')
   public async login(@Body() request: LoginRequest) {
@@ -55,21 +43,6 @@ export class AuthController {
     @Body() request: SendLinkForForgetPasswordRequest,
   ) {
     return this.authService.sendLinkForForgetPassword(request);
-  }
-
-  @Post('forget-password/confirm-new-password')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async resetPassword(@Body() request: ResetPasswordRequest) {
-    return this.authService.confirmNewPasswordForForgetPassword(request);
-  }
-
-  @Post('change-password')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async changePassword(
-    @Req() request: any,
-    @Body() requestBody: ChangePasswordRequest,
-  ) {
-    return this.authService.changePassword(request.user, requestBody);
   }
 
   @Get('setup-password')

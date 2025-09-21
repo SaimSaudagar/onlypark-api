@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
-import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus, TemplateKeys } from '../common';
+import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus, TemplateKeys } from '../../common';
 import { User } from './entities/user.entity';
 import {
   CreateCarparkManagerRequest,
@@ -16,21 +16,21 @@ import {
   UpdateUserDto,
   UpdateUserProfileRequest,
 } from './user.dto';
-import { EmailNotificationService } from '../common/services/email/email-notification.service';
+import { EmailNotificationService } from '../../common/services/email/email-notification.service';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { DataSource } from 'typeorm';
-import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity';
-import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
-import { Admin } from '../admin/entities/admin.entity';
-import { CarparkManagerVisitorSubCarPark } from 'src/carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
-import { CarparkManagerWhitelistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
-import { CarparkManagerBlacklistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
-import { PatrolOfficerVisitorSubCarPark } from 'src/patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
-import { PatrolOfficerWhitelistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
-import { PatrolOfficerBlacklistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
-import { CarparkManagerService } from '../carpark-manager/profile/profile.service';
-import { PatrolOfficerService } from '../patrol-officer/profile/profile.service';
+import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
+import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
+import { Admin } from '../entities/admin.entity';
+import { CarparkManagerVisitorSubCarPark } from '../../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
+import { CarparkManagerWhitelistSubCarPark } from '../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
+import { CarparkManagerBlacklistSubCarPark } from '../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
+import { PatrolOfficerVisitorSubCarPark } from '../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
+import { PatrolOfficerWhitelistSubCarPark } from '../../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
+import { PatrolOfficerBlacklistSubCarPark } from '../../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
+import { CarparkManagerService } from '../../carpark-manager/profile/profile.service';
+import { PatrolOfficerService } from '../../patrol-officer/profile/profile.service';
 
 @Injectable()
 export class UserService {
@@ -261,6 +261,12 @@ export class UserService {
   async update(id: string, request: UpdateUserDto) {
     const userToBeUpdated = await this.usersRepository.save(request);
     return userToBeUpdated;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.usersRepository.findOne({
+      where: { email },
+    });
   }
 
   async findById(id: string): Promise<FindByIdResponse> {

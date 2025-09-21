@@ -6,7 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { CarparkManagerStatus } from '../../common/enums';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../admin/user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
@@ -17,17 +17,8 @@ import { CarparkManagerBlacklistSubCarPark } from './carpark-manager-blacklist-s
 @Entity('carpark_manager')
 @Auditable()
 export class CarparkManager extends BaseEntity {
-  @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.carparkManager)
-  subCarParks: SubCarPark[];
-
-  @Column({ type: 'varchar', nullable: true })
-  region: string;
-
   @Column({ type: 'varchar', nullable: true })
   contactNumber: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  emergencyContact: string;
 
   @Column({ type: 'boolean', default: true })
   canManagePatrolOfficers: boolean;

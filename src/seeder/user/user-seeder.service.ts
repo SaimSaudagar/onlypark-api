@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../admin/user/entities/user.entity';
 import { Role } from '../../role/entities/role.entity';
-import { UserRole } from '../../user/entities/user-role.entity';
+import { UserRole } from '../../admin/user/entities/user-role.entity';
 import { FileUtils } from '../../common/utils/file.utils';
 import { UserType, CarparkManagerStatus } from '../../common/enums';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';

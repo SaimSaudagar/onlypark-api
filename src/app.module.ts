@@ -18,7 +18,7 @@ import { AppService } from './app.service';
 
 // Feature modules
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { UserModule } from './admin/user/user.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { AdminModule } from './admin/admin.module';

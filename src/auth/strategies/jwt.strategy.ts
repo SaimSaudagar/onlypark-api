@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../admin/user/user.service';
 import { ConfigKeys } from '../../common/configs';
 import { AuthenticatedUser } from '../../common';
 import { RequestContextService } from '../../common/services/request-context/request-context.service';
@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
 
       // Get user permissions
-      const permissions = await this.userService.findAllPermissions(user.id);
+      // const permissions = await this.userService. findAllPermissions(user.id);
 
       // Create AuthenticatedUser object
       const authenticatedUser = new AuthenticatedUser(
@@ -47,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         user.phoneNumber || '',
         user.type,
         [], // roles - add if needed
-        permissions,
+        [], // permissions - add if needed
       );
 
       // Set request context like dawlati implementation
