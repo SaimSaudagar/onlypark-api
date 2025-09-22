@@ -10,10 +10,14 @@ import {
   FindInfringementResponse,
   GetPenaltyResponse,
   GetTicketNumberRequest,
+  GetTicketResponse,
+  GetTicketRequest,
   MarkAsWaivedResponse,
   ScanInfringementRequest,
   ScanInfringementResponse,
   UpdateInfringementRequest,
+  UpdateInfringementStatusRequest,
+  UpdateInfringementStatusResponse,
 } from './infringement.dto';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
@@ -21,6 +25,10 @@ import { HttpStatus } from '@nestjs/common';
 import { InfringementStatus } from '../../common/enums';
 import { ApiGetBaseResponse } from '../../common';
 import { InfringementPenalty } from '../../infringement/entities/infringement-penalty.entity';
+import * as handlebars from 'handlebars';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class InfringementService {
@@ -38,32 +46,96 @@ export class InfringementService {
       registrationNo,
     });
 
-    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo };
+    const response = new ScanInfringementResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.registrationNo = infringement.registrationNo;
+
+    return response;
   }
 
-  async create(request: CreateInfringementRequest | UpdateInfringementRequest): Promise<CreateInfringementResponse> {
+  async create(request: CreateInfringementRequest): Promise<CreateInfringementResponse> {
     const { id, infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
-    // Calculate due date as 14 days from now at end of day
+  
+    // make sure the infringement exists
+    const infringement = await this.infringementRepository.findOne({ where: { id } });
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  
+    // calculate due date = 14 days from now at end of day
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
-    dueDate.setHours(23, 59, 59, 999); // Set to end of day
+    dueDate.setHours(23, 59, 59, 999);
 
-    const infringement = await this.infringementRepository.save({
+      // set today's date for ticket
+    const ticketDate = new Date();
+  
+    // update fields
+    infringement.infringementCarParkId = infringementCarParkId;
+    infringement.carMakeId = carMakeId;
+    infringement.reasonId = reasonId;
+    infringement.penaltyId = penaltyId;
+    infringement.photos = photos;
+    infringement.status = InfringementStatus.PENDING;
+    infringement.dueDate = dueDate;
+    infringement.ticketDate = ticketDate;
+    infringement.comments = comments;
+  
+    // save updated record
+    const updated = await this.infringementRepository.save(infringement);
+  
+    const response = new CreateInfringementResponse();
+    response.id = updated.id;
+    response.ticketNumber = updated.ticketNumber;
+    response.registrationNo = updated.registrationNo;
+  
+    return response;
+  }
+  
+
+  async update(id: string, request: UpdateInfringementRequest): Promise<CreateInfringementResponse> {
+    const infringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
+
+    // Update the infringement with new data
+    await this.infringementRepository.update(id, {
       infringementCarParkId,
       carMakeId,
       reasonId,
       penaltyId,
       photos,
-      status: InfringementStatus.PENDING,
-      dueDate,
       comments,
     });
 
-    return { id: infringement.id, ticketNumber: infringement.ticketNumber, registrationNo: infringement.registrationNo };
+    // Fetch the updated infringement
+    const updatedInfringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    const response = new CreateInfringementResponse();
+    response.id = updatedInfringement.id;
+    response.ticketNumber = updatedInfringement.ticketNumber;
+    response.registrationNo = updatedInfringement.registrationNo;
+
+    return response;
   }
 
   async findAll(request: FindInfringementRequest): Promise<ApiGetBaseResponse<FindInfringementResponse>> {
-    const { search, sortField, sortOrder, pageNo, pageSize } = request;
+    const { search, status, sortField, sortOrder, pageNo, pageSize } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -72,6 +144,10 @@ export class InfringementService {
 
     if (search) {
       whereOptions.registrationNo = ILike(`%${search}%`);
+    }
+
+    if (status) {
+      whereOptions.status = status;
     }
 
     if (sortField) {
@@ -116,19 +192,18 @@ export class InfringementService {
       );
     }
 
-    let response: FindInfringementByIdResponse = {
-      id: infringement.id,
-      ticketNumber: infringement.ticketNumber,
-      registrationNo: infringement.registrationNo,
-      status: infringement.status,
-      ticketDate: infringement.ticketDate,
-    };
+    const response = new FindInfringementByIdResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.registrationNo = infringement.registrationNo;
+    response.status = infringement.status;
+    response.ticketDate = infringement.ticketDate;
 
     return response;
   }
 
   async remove(id: string) {
-    const infringement = this.infringementRepository.findOne({ where: { ticketNumber: Number(id) } });
+    const infringement = await this.infringementRepository.findOne({ where: { id } });
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
@@ -136,7 +211,7 @@ export class InfringementService {
       );
     }
 
-    return await this.infringementRepository.delete(id);
+    return await this.infringementRepository.softRemove(infringement);
   }
 
   async markAsWaived(id: string): Promise<MarkAsWaivedResponse> {
@@ -150,10 +225,11 @@ export class InfringementService {
 
     await this.infringementRepository.update(id, { status: InfringementStatus.WAIVED });
 
-    return {
-      id,
-      status: InfringementStatus.WAIVED,
-    };
+    const response = new MarkAsWaivedResponse();
+    response.id = id;
+    response.status = InfringementStatus.WAIVED;
+
+    return response;
   }
 
   async getInfringementId(request: GetTicketNumberRequest): Promise<string> {
@@ -175,5 +251,141 @@ export class InfringementService {
         infringementCarParkId: infringementCarParkId,
       },
     });
+  }
+
+  async updateStatus(id: string, request: UpdateInfringementStatusRequest): Promise<UpdateInfringementStatusResponse> {
+    const infringement = await this.infringementRepository.findOne({
+      where: { id },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { status } = request;
+
+    await this.infringementRepository.update(id, { status });
+
+    const response = new UpdateInfringementStatusResponse();
+    response.id = id;
+    response.status = status;
+
+    return response;
+  }
+
+  async getTicket(request: GetTicketRequest): Promise<GetTicketResponse> {
+    const { ticketNumber } = request;
+
+    const infringement = await this.infringementRepository.findOne({
+      where: { ticketNumber },
+      relations: {
+        infringementCarPark: true,
+        reason: true,
+        penalty: true,
+        carMake: true,
+      },
+    });
+
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const response = new GetTicketResponse();
+    response.id = infringement.id;
+    response.ticketNumber = infringement.ticketNumber;
+    response.ticketDate = infringement.ticketDate;
+    response.registrationNo = infringement.registrationNo;
+    response.status = infringement.status;
+    response.dueDate = infringement.dueDate;
+    response.comments = infringement.comments;
+    response.photos = infringement.photos;
+    response.carMakeName = infringement.carMake?.carMakeName || '';
+    response.carParkName = infringement.infringementCarPark?.carParkName || '';
+    response.reasonName = infringement.reason?.reason || '';
+    response.penaltyName = infringement.penalty?.penaltyName || '';
+    response.amountBeforeDue = infringement.penalty?.amountBeforeDue || 0;
+    response.amountAfterDue = infringement.penalty?.amountAfterDue || 0;
+
+    return response;
+  }
+
+  async generateTicketPng(ticketNumber: number): Promise<Buffer> {
+    try {
+      // Get ticket data using existing method
+      const ticketData = await this.getTicket({ ticketNumber });
+
+      // Load and compile Handlebars template
+      const templatePath = path.join(process.cwd(), 'assets', 'templates', 'html', 'ticket.template.hbs');
+      
+      if (!fs.existsSync(templatePath)) {
+        throw new CustomException(
+          ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const templateContent = fs.readFileSync(templatePath, 'utf-8');
+      const template = handlebars.compile(templateContent);
+
+      // Prepare data for template
+      const templateData = {
+        ticketNumber: ticketData.ticketNumber,
+        ticketDate: ticketData.ticketDate ? new Date(ticketData.ticketDate).toLocaleString() : 'N/A',
+        carParkName: ticketData.carParkName || 'N/A',
+        registrationNo: ticketData.registrationNo || 'N/A',
+        carMakeName: ticketData.carMakeName || 'N/A',
+        reasonName: ticketData.reasonName || 'N/A',
+        penaltyName: ticketData.penaltyName || 'N/A',
+        comments: ticketData.comments || '',
+        amountBeforeDue: ticketData.amountBeforeDue || 0,
+        amountAfterDue: ticketData.amountAfterDue || 0,
+        dueDate: ticketData.dueDate ? new Date(ticketData.dueDate).toLocaleDateString() : 'N/A',
+      };
+
+      // Render HTML
+      const html = template(templateData);
+
+      // Launch Puppeteer and generate PNG
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      // Set viewport for consistent rendering
+      await page.setViewport({
+        width: 400,
+        height: 600,
+        deviceScaleFactor: 2
+      });
+
+      // Generate PNG buffer
+      const pngBuffer = await page.screenshot({
+        type: 'png',
+        fullPage: true,
+        omitBackground: false
+      });
+
+      await browser.close();
+
+      return pngBuffer as Buffer;
+    } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
+      
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Infringement Ticket</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .ticket {
+      width: 320px; /* narrow like a printed slip */
+      margin: 0 auto;
+      padding: 20px 10px;
+      border: 1px dashed #000;
+    }
+
+    .row {
+      margin: 6px 0;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    .section-title {
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="row"><strong>Location:</strong> {{carParkName}}</div>
+    <div class="row"><strong>Ticket Number:</strong> {{ticketNumber}}</div>
+    <div class="row"><strong>Date:</strong> {{ticketDate}}</div>
+    <div class="row"><strong>Time:</strong> {{ticketTime}}</div>
+    <div class="row"><strong>Reg No:</strong> {{registrationNo}}</div>
+    <div class="row"><strong>Make:</strong> {{carMakeName}}</div>
+
+    <div class="section-title">Non-Compliance</div>
+    <div class="row"><strong>{{reasonName}}</strong></div>
+
+    <div class="section-title">Payment Details</div>
+    <div class="row">Payment of ${{amountBeforeDue}} is due immediately.</div>
+    <div class="row">
+      If payment is not received within 14 days from the issue date,
+      the amount will increase to ${{amountAfterDue}}.
+    </div>
+  </div>
+</body>
+</html>
