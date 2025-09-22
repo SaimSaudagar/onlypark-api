@@ -29,8 +29,6 @@ import { CarparkManagerBlacklistSubCarPark } from 'src/carpark-manager/entities/
 import { PatrolOfficerVisitorSubCarPark } from 'src/patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
 import { PatrolOfficerWhitelistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
 import { PatrolOfficerBlacklistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
-import { CarparkManagerService } from '../carpark-manager/profile/profile.service';
-import { PatrolOfficerService } from '../patrol-officer/profile/profile.service';
 
 @Injectable()
 export class UserService {
@@ -40,8 +38,10 @@ export class UserService {
     private emailNotificationService: EmailNotificationService,
     private configService: ConfigService,
     private dataSource: DataSource,
-    private carparkManagerService: CarparkManagerService,
-    private patrolOfficerService: PatrolOfficerService,
+    @InjectRepository(CarparkManager)
+    private carparkManagerRepository: Repository<CarparkManager>,
+    @InjectRepository(PatrolOfficer)
+    private patrolOfficerRepository: Repository<PatrolOfficer>,
   ) { }
 
   async create(request: CreateUserRequest): Promise<CreateUserResponse> {
@@ -268,19 +268,22 @@ export class UserService {
       where: { id },
     });
 
-    case UserType.CARPARK_MANAGER:
-      const carparkManager = await this.carparkManagerService.findOne({ where: { userId: id } });
-      break;
-    case UserType.PATROL_OFFICER:
-      const patrolOfficer = await this.patrolOfficerService.findOne({ where: { userId: id } });
-      break;
-    }
-
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
         HttpStatus.BAD_REQUEST,
       );
+    }
+
+    let additionalData = null;
+
+    switch (user.type) {
+      case UserType.CARPARK_MANAGER:
+        additionalData = await this.carparkManagerRepository.findOne({ where: { userId: id } });
+        break;
+      case UserType.PATROL_OFFICER:
+        additionalData = await this.patrolOfficerRepository.findOne({ where: { userId: id } });
+        break;
     }
     return {
       id: user.id,
@@ -289,10 +292,9 @@ export class UserService {
       email: user.email,
       type: user.type,
       status: user.status,
-      visitorSubCarParkIds: user.visitorSubCarParks?.map(subCarPark => subCarPark.id),
-      whitelistSubCarParkIds: user.whitelistSubCarParks?.map(subCarPark => subCarPark.id),
-      blacklistSubCarParkIds: user.blacklistSubCarParks?.map(subCarPark => subCarPark.id),
-      blacklistSubCarParkIds: user.blacklistSubCarParkIds,
+      visitorSubCarParkIds: additionalData?.visitorSubCarParkIds || [],
+      whitelistSubCarParkIds: additionalData?.whitelistSubCarParkIds || [],
+      blacklistSubCarParkIds: additionalData?.blacklistSubCarParkIds || [],
     };
   }
 
@@ -356,5 +358,16 @@ export class UserService {
     user.password = newPassword;
     await this.usersRepository.save(user);
     return true;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return user;
   }
 }

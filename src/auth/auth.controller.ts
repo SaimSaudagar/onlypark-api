@@ -19,7 +19,7 @@ import {
   SendLinkForForgetPasswordRequest,
   SetupPasswordRequest,
 } from './auth.dto';
-import { UserService } from '../admin/user/user.service';
+import { UserService } from '../user/user.service';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { ErrorCode } from '../common/exceptions/error-code';
 

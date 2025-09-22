@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AllowedRoles } from '../../auth/guards/roles.guard';
@@ -18,11 +19,12 @@ import {
   CreateUserResponse,
   FindUsersRequest,
   FindUsersResponse,
-  UpdateUserDto,
+  UpdateUserRequest,
+  UpdateUserResponse,
 } from './user.dto';
 import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 
-@ApiTags('User')
+@ApiTags('Admin => User')
 @Controller({ path: 'admin/user', version: '1' })
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -30,7 +32,7 @@ export class UserController {
   @Get()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  findAll(request: FindUsersRequest): Promise<FindUsersResponse> {
+  findAll(@Query() request: FindUsersRequest): Promise<FindUsersResponse> {
     return this.userService.findAll(request);
   }
 
@@ -51,7 +53,7 @@ export class UserController {
   @Patch(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  update(@Param('id') id: string, @Body() request: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() request: UpdateUserRequest): Promise<UpdateUserResponse> {
     return this.userService.update(id, request);
   }
 

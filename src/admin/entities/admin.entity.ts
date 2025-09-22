@@ -5,9 +5,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { AdminStatus } from '../../common/enums';
-import { User } from './user/entities/user.entity';
 import { Auditable } from '../../common/decorators';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('admin')
 @Auditable()

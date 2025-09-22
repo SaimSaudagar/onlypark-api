@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../admin/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Role } from '../../role/entities/role.entity';
-import { UserRole } from '../../admin/user/entities/user-role.entity';
+import { UserRole } from '../../user/entities/user-role.entity';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { PatrolOfficerVisitorSubCarPark } from '../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
@@ -13,12 +13,14 @@ import { CarparkManagerVisitorSubCarPark } from '../../carpark-manager/entities/
 import { CarparkManagerWhitelistSubCarPark } from '../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
 import { CarparkManagerBlacklistSubCarPark } from '../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
 import { UserSeederService } from './user-seeder.service';
+import { Admin } from '../../admin/entities/admin.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     User,
     Role,
     UserRole,
+    Admin,
     PatrolOfficer,
     SubCarPark,
     PatrolOfficerVisitorSubCarPark,

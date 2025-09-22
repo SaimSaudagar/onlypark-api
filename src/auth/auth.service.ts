@@ -1,21 +1,12 @@
 import { Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { User } from '../admin/user/entities/user.entity';
-import { UserService } from '../admin/user/user.service';
+import { UserService } from '../user/user.service';
 import { JwtPayload } from '../common/types';
-import { UserStatus, UserType } from '../common/enums';
-
 import {
-  SignUpRequest,
   LoginRequest,
-  ConfirmEmailRequest,
   SendLinkForForgetPasswordRequest,
-  ResetPasswordRequest,
-  ChangePasswordRequest,
 } from './auth.dto';
 import { ErrorCode } from '../common/exceptions/error-code';
 import { CustomException } from '../common/exceptions/custom.exception';
@@ -23,7 +14,6 @@ import { CustomException } from '../common/exceptions/custom.exception';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
     private userService: UserService,
     private jwtService: JwtService,
   ) { }

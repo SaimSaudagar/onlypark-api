@@ -5,7 +5,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { User } from '../../admin/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { PatrolOfficerVisitorSubCarPark } from './patrol-officer-visitor-sub-car-park.entity';
 import { PatrolOfficerWhitelistSubCarPark } from './patrol-officer-whitelist-sub-car-park.entity';

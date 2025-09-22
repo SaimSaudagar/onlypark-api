@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../admin/user/entities/user.entity';
+import { Admin } from '../../admin/entities/admin.entity';
 import { Role } from '../../role/entities/role.entity';
-import { UserRole } from '../../admin/user/entities/user-role.entity';
 import { FileUtils } from '../../common/utils/file.utils';
-import { UserType, CarparkManagerStatus } from '../../common/enums';
+import { UserType, CarparkManagerStatus, AdminStatus, PatrolOfficerStatus } from '../../common/enums';
 import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
 import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { PatrolOfficerVisitorSubCarPark } from '../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
@@ -15,6 +14,8 @@ import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.e
 import { CarparkManagerVisitorSubCarPark } from '../../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
 import { CarparkManagerWhitelistSubCarPark } from '../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
 import { CarparkManagerBlacklistSubCarPark } from '../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
+import { UserRole } from '../../user/entities/user-role.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Injectable()
 export class UserSeederService {
@@ -27,6 +28,8 @@ export class UserSeederService {
     private readonly roleRepository: Repository<Role>,
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
+    @InjectRepository(Admin)
+    private readonly adminRepository: Repository<Admin>,
     @InjectRepository(PatrolOfficer)
     private readonly patrolOfficerRepository: Repository<PatrolOfficer>,
     @InjectRepository(SubCarPark)
@@ -79,13 +82,19 @@ export class UserSeederService {
         // Assign role based on user type
         await this.assignRoleToUser(savedUser, userData.type);
 
+
+        // Handle admin specific logic
+        if (userData.type === UserType.ADMIN || userData.type === UserType.SUPER_ADMIN) {
+          await this.createAdmin(savedUser);
+        }
+
         // Handle patrol officer specific logic
-        if (userData.type === 'patrol_officer' && userData.subCarParks) {
+        if (userData.type === UserType.PATROL_OFFICER && userData.subCarParks) {
           await this.createPatrolOfficer(savedUser, userData);
         }
 
         // Handle carpark manager specific logic
-        if (userData.type === 'carpark_manager' && userData.subCarParks) {
+        if (userData.type === UserType.CARPARK_MANAGER && userData.subCarParks) {
           await this.createCarparkManager(savedUser, userData);
         }
 
@@ -102,33 +111,31 @@ export class UserSeederService {
     }
   }
 
+  private async createAdmin(user: User) {
+    const admin = await this.adminRepository.findOne({ where: { userId: user.id } });
+    if (!admin) {
+      await this.adminRepository.save({
+        userId: user.id,
+        status: AdminStatus.ACTIVE,
+      });
+    }
+  }
+
   private async assignRoleToUser(user: User, userType: string) {
     let roleName: string;
 
     switch (userType) {
-      case 'super_admin':
-        roleName = 'Super Admin';
+      case UserType.SUPER_ADMIN:
+        roleName = UserType.SUPER_ADMIN;
         break;
-      case 'admin':
-        roleName = 'Admin';
+      case UserType.ADMIN:
+        roleName = UserType.ADMIN;
         break;
-      case 'carpark_manager':
-        roleName = 'Carpark Manager';
+      case UserType.CARPARK_MANAGER:
+        roleName = UserType.CARPARK_MANAGER;
         break;
-      case 'carparkManager':
-        roleName = 'Carpark Manager';
-        break;
-      case 'patrol_officer':
-        roleName = 'Patrol Officer';
-        break;
-      case 'officer':
-        roleName = 'Patrol Officer';
-        break;
-      case 'user':
-        roleName = 'User';
-        break;
-      default:
-        roleName = 'User';
+      case UserType.PATROL_OFFICER:
+        roleName = UserType.PATROL_OFFICER;
     }
 
     const role = await this.roleRepository.findOne({
@@ -154,7 +161,7 @@ export class UserSeederService {
       const patrolOfficer = this.patrolOfficerRepository.create({
         officerName: userData.name,
         userId: user.id,
-        status: 'active',
+        status: PatrolOfficerStatus.ACTIVE,
       });
 
       const savedPatrolOfficer = await this.patrolOfficerRepository.save(patrolOfficer);
@@ -245,6 +252,7 @@ export class UserSeederService {
       // Create carpark manager record
       const carparkManager = this.carparkManagerRepository.create({
         userId: user.id,
+        name: userData.name,
         status: CarparkManagerStatus.ACTIVE,
         canManagePatrolOfficers: true,
         canGenerateReports: true,
