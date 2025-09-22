@@ -55,30 +55,43 @@ export class InfringementService {
   }
 
   async create(request: CreateInfringementRequest): Promise<CreateInfringementResponse> {
-    const { infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
-    // Calculate due date as 14 days from now at end of day
+    const { id, infringementCarParkId, carMakeId, reasonId, penaltyId, photos, comments } = request;
+  
+    // make sure the infringement exists
+    const infringement = await this.infringementRepository.findOne({ where: { id } });
+    if (!infringement) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  
+    // calculate due date = 14 days from now at end of day
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
-    dueDate.setHours(23, 59, 59, 999); // Set to end of day
-
-    const infringement = await this.infringementRepository.save({
-      infringementCarParkId,
-      carMakeId,
-      reasonId,
-      penaltyId,
-      photos,
-      status: InfringementStatus.PENDING,
-      dueDate,
-      comments,
-    });
-
+    dueDate.setHours(23, 59, 59, 999);
+  
+    // update fields
+    infringement.infringementCarParkId = infringementCarParkId;
+    infringement.carMakeId = carMakeId;
+    infringement.reasonId = reasonId;
+    infringement.penaltyId = penaltyId;
+    infringement.photos = photos;
+    infringement.status = InfringementStatus.PENDING;
+    infringement.dueDate = dueDate;
+    infringement.comments = comments;
+  
+    // save updated record
+    const updated = await this.infringementRepository.save(infringement);
+  
     const response = new CreateInfringementResponse();
-    response.id = infringement.id;
-    response.ticketNumber = infringement.ticketNumber;
-    response.registrationNo = infringement.registrationNo;
-
+    response.id = updated.id;
+    response.ticketNumber = updated.ticketNumber;
+    response.registrationNo = updated.registrationNo;
+  
     return response;
   }
+  
 
   async update(id: string, request: UpdateInfringementRequest): Promise<CreateInfringementResponse> {
     const infringement = await this.infringementRepository.findOne({
