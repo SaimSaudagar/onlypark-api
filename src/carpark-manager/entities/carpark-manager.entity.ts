@@ -17,17 +17,11 @@ import { CarparkManagerBlacklistSubCarPark } from './carpark-manager-blacklist-s
 @Entity('carpark_manager')
 @Auditable()
 export class CarparkManager extends BaseEntity {
-  @OneToMany(() => SubCarPark, (subCarPark) => subCarPark.carparkManager)
-  subCarParks: SubCarPark[];
-
-  @Column({ type: 'varchar', nullable: true })
-  region: string;
+  @Column({ type: 'varchar', nullable: false })
+  name: string;
 
   @Column({ type: 'varchar', nullable: true })
   contactNumber: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  emergencyContact: string;
 
   @Column({ type: 'boolean', default: true })
   canManagePatrolOfficers: boolean;

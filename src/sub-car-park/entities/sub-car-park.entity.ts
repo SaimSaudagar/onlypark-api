@@ -108,13 +108,6 @@ export class SubCarPark extends BaseEntity {
   @OneToMany(() => PatrolOfficerBlacklistSubCarPark, (patrolOfficerBlacklistSubCarPark) => patrolOfficerBlacklistSubCarPark.subCarPark)
   patrolOfficerBlacklistSubCarParks: PatrolOfficerBlacklistSubCarPark[];
 
-  @ManyToOne(() => CarparkManager, (carparkManager) => carparkManager.subCarParks)
-  @JoinColumn({ name: 'carparkManagerId' })
-  carparkManager: CarparkManager;
-
-  @Column({ type: 'varchar', nullable: true })
-  carparkManagerId: string;
-
   @OneToMany(() => CarparkManagerVisitorSubCarPark, (carparkManagerVisitorSubCarPark) => carparkManagerVisitorSubCarPark.subCarPark)
   carparkManagerVisitorSubCarParks: CarparkManagerVisitorSubCarPark[];
 

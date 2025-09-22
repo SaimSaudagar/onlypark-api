@@ -1,11 +1,16 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus, TemplateKeys } from '../common';
 import { User } from './entities/user.entity';
 import {
+  CreateCarparkManagerRequest,
+  CreatePatrolOfficerRequest,
   CreateUserRequest,
   CreateUserResponse,
+  FindByIdResponse,
+  FindUsersRequest,
+  FindUsersResponse,
   GetProfileResponse,
   UpdateNotificationTokenRequest,
   UpdateUserDto,
@@ -18,8 +23,12 @@ import { DataSource } from 'typeorm';
 import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity';
 import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
 import { Admin } from '../admin/entities/admin.entity';
-import { Whitelist } from '../whitelist/entities/whitelist.entity';
-import { Blacklist } from '../blacklist/entities/blacklist-reg.entity';
+import { CarparkManagerVisitorSubCarPark } from 'src/carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
+import { CarparkManagerWhitelistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
+import { CarparkManagerBlacklistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
+import { PatrolOfficerVisitorSubCarPark } from 'src/patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
+import { PatrolOfficerWhitelistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
+import { PatrolOfficerBlacklistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
 
 @Injectable()
 export class UserService {
@@ -29,10 +38,14 @@ export class UserService {
     private emailNotificationService: EmailNotificationService,
     private configService: ConfigService,
     private dataSource: DataSource,
+    @InjectRepository(CarparkManager)
+    private carparkManagerRepository: Repository<CarparkManager>,
+    @InjectRepository(PatrolOfficer)
+    private patrolOfficerRepository: Repository<PatrolOfficer>,
   ) { }
 
-  async create(userDto: CreateUserRequest): Promise<CreateUserResponse> {
-    const { name, email, type, phoneNumber, image, whitelist, blacklist } = userDto;
+  async create(request: CreateUserRequest): Promise<CreateUserResponse> {
+    const { name, email, type, phoneNumber, image } = request;
 
     if (type === UserType.SUPER_ADMIN) {
       throw new CustomException(
@@ -74,46 +87,36 @@ export class UserService {
 
       const savedUser = await queryRunner.manager.save(User, user);
 
-      if (type === UserType.ADMIN) {
-        await queryRunner.manager.save(Admin, {
-          userId: savedUser.id,
-          status: AdminStatus.ACTIVE,
-        });
-      } else if (type === UserType.CARPARK_MANAGER) {
-        await queryRunner.manager.save(CarparkManager, {
-          userId: savedUser.id,
-          user: savedUser,
-          subCarParks: [],
-          status: CarparkManagerStatus.ACTIVE,
-        });
-      } else if (type === UserType.PATROL_OFFICER) {
-        await queryRunner.manager.save(PatrolOfficer, {
-          userId: savedUser.id,
-          status: PatrolOfficerStatus.ACTIVE,
-        });
-      }
+      // Create user type specific records using case condition
+      switch (type) {
+        case UserType.ADMIN:
+          await this.createAdmin(queryRunner, savedUser);
+          break;
+        case UserType.CARPARK_MANAGER:
+          const carparkManagerRequest: CreateCarparkManagerRequest = {
+            name: savedUser.name,
+            visitorSubCarParkIds: request.visitorSubCarParkIds,
+            whitelistSubCarParkIds: request.whitelistSubCarParkIds,
+            blacklistSubCarParkIds: request.blacklistSubCarParkIds,
+          };
 
-      // Create whitelist entries if provided
-      if (whitelist && whitelist.length > 0) {
-        for (const vehicleReg of whitelist) {
-          await queryRunner.manager.save(Whitelist, {
-            vehicalRegistration: vehicleReg,
-            email: savedUser.email,
-            comments: `Created for user: ${savedUser.name}`,
-          });
-        }
-      }
+          await this.createCarparkManager(queryRunner, savedUser, carparkManagerRequest);
+          break;
+        case UserType.PATROL_OFFICER:
+          const patrolOfficerRequest: CreatePatrolOfficerRequest = {
+            name: savedUser.name,
+            visitorSubCarParkIds: request.visitorSubCarParkIds,
+            whitelistSubCarParkIds: request.whitelistSubCarParkIds,
+            blacklistSubCarParkIds: request.blacklistSubCarParkIds,
+          };
 
-      // Create blacklist entries if provided
-      if (blacklist && blacklist.length > 0) {
-        for (const vehicleReg of blacklist) {
-          await queryRunner.manager.save(Blacklist, {
-            regNo: vehicleReg,
-            email: savedUser.email,
-            comments: `Created for user: ${savedUser.name}`,
-            status: 'active',
-          });
-        }
+          await this.createPatrolOfficer(queryRunner, savedUser, patrolOfficerRequest);
+          break;
+        default:
+          throw new CustomException(
+            ErrorCode.INVALID_USER_TYPE.key,
+            HttpStatus.BAD_REQUEST,
+          );
       }
 
       // Send registration email
@@ -165,33 +168,137 @@ export class UserService {
     }
   }
 
-  async findAll(options?: FindManyOptions<User>): Promise<User[]> {
-    return await this.usersRepository.find(options);
+  private async createAdmin(queryRunner: any, savedUser: User): Promise<void> {
+    await queryRunner.manager.save(Admin, {
+      userId: savedUser.id,
+      status: AdminStatus.ACTIVE,
+    });
   }
 
-  async findOne(options?: FindOneOptions<User>): Promise<User> {
-    const user = await this.usersRepository.findOne(options);
-    return user;
+  private async createCarparkManager(queryRunner: any, savedUser: User, request: CreateCarparkManagerRequest): Promise<void> {
+    const carparkManager = await queryRunner.manager.save(CarparkManager, {
+      userId: savedUser.id,
+      status: CarparkManagerStatus.ACTIVE,
+    });
+
+    await queryRunner.manager.save(CarparkManagerVisitorSubCarPark, {
+      carparkManagerId: carparkManager.id,
+      subCarParkId: request.visitorSubCarParkIds,
+    });
+
+    await queryRunner.manager.save(CarparkManagerWhitelistSubCarPark, {
+      carparkManagerId: carparkManager.id,
+      subCarParkId: request.whitelistSubCarParkIds,
+    });
+
+    await queryRunner.manager.save(CarparkManagerBlacklistSubCarPark, {
+      carparkManagerId: carparkManager.id,
+      subCarParkId: request.blacklistSubCarParkIds,
+    });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const userToBeUpdated = await this.usersRepository.create(updateUserDto);
-    const updatedUser = await this.usersRepository.create(userToBeUpdated);
-    return updatedUser;
+  private async createPatrolOfficer(queryRunner: any, savedUser: User, request: CreatePatrolOfficerRequest): Promise<void> {
+    const patrolOfficer = await queryRunner.manager.save(PatrolOfficer, {
+      userId: savedUser.id,
+      status: PatrolOfficerStatus.ACTIVE,
+    });
+
+    await queryRunner.manager.save(PatrolOfficerVisitorSubCarPark, {
+      patrolOfficerId: patrolOfficer.id,
+      subCarParkId: request.visitorSubCarParkIds,
+    });
+
+    await queryRunner.manager.save(PatrolOfficerWhitelistSubCarPark, {
+      patrolOfficerId: patrolOfficer.id,
+      subCarParkId: request.whitelistSubCarParkIds,
+    });
+
+    await queryRunner.manager.save(PatrolOfficerBlacklistSubCarPark, {
+      patrolOfficerId: patrolOfficer.id,
+      subCarParkId: request.blacklistSubCarParkIds,
+    });
   }
 
-  async updateUserProfile(
-    user: User,
-    updatedProfile: UpdateUserProfileRequest,
-  ) {
-    const updatedUser = await this.usersRepository.update(
-      user.id,
-      updatedProfile,
-    );
-    return updatedUser;
+  async findAll(request: FindUsersRequest): Promise<FindUsersResponse> {
+    const { pageNo, pageSize, sortField, sortOrder, search } = request;
+    const skip = (pageNo - 1) * pageSize;
+    const take = pageSize;
+
+    const whereOptions: FindOptionsWhere<User>[] = [];
+    const orderOptions: FindOptionsOrder<User> = {};
+
+    if (search) {
+      whereOptions.push(
+        { email: ILike(`%${search}%`) },
+        { name: ILike(`%${search}%`) },
+      );
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    const options: FindManyOptions<User> = {
+      where: whereOptions,
+      order: orderOptions,
+      skip,
+      take,
+    };
+
+    const [users, totalItems] = await this.usersRepository.findAndCount(options);
+
+    return {
+      rows: users,
+      pagination: {
+        size: pageSize,
+        page: pageNo,
+        totalPages: Math.ceil(totalItems / pageSize),
+        totalItems,
+      },
+    };
   }
 
-  async findById(id: string): Promise<User> {
+  async update(id: string, request: UpdateUserDto) {
+    const userToBeUpdated = await this.usersRepository.save(request);
+    return userToBeUpdated;
+  }
+
+  async findById(id: string): Promise<FindByIdResponse> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    let additionalData = null;
+
+    switch (user.type) {
+      case UserType.CARPARK_MANAGER:
+        additionalData = await this.carparkManagerRepository.findOne({ where: { userId: id } });
+        break;
+      case UserType.PATROL_OFFICER:
+        additionalData = await this.patrolOfficerRepository.findOne({ where: { userId: id } });
+        break;
+    }
+    return {
+      id: user.id,
+      name: user.name,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+      type: user.type,
+      status: user.status,
+      visitorSubCarParkIds: additionalData?.visitorSubCarParkIds || [],
+      whitelistSubCarParkIds: additionalData?.whitelistSubCarParkIds || [],
+      blacklistSubCarParkIds: additionalData?.blacklistSubCarParkIds || [],
+    };
+  }
+
+  async remove(id: string) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
       throw new CustomException(
@@ -199,11 +306,10 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return user;
-  }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+    user.status = UserStatus.INACTIVE;
+    await this.usersRepository.save(user);
+    return this.usersRepository.softRemove(user);
   }
 
   async updateNotificationToken(
@@ -213,51 +319,6 @@ export class UserService {
     await this.usersRepository.update(loggedInUser.id, {
       // notificationToken: request.token, // Add this field to User entity if needed
     });
-  }
-
-  //TODO: Remove <any>
-  async findAllPermissions(id: string): Promise<any> {
-    const user = await this.usersRepository.findOne({
-      where: { id },
-      relations: { userRoles: { role: { rolePermissions: { permission: true } } } },
-    });
-    const permissions: string[] = [];
-
-    user?.userRoles?.forEach((userRole) => {
-      userRole.role?.rolePermissions?.forEach((rolePermission) => {
-        permissions.push(rolePermission.permission.name);
-      });
-    });
-    return permissions;
-  }
-
-  async getProfile(id: string): Promise<GetProfileResponse> {
-    try {
-      const user = await this.findOne({
-        where: { id },
-        relations: ['userRoles', 'userRoles.role'],
-      });
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        type: user.type,
-        phoneNumber: user.phoneNumber,
-        status: user.status,
-        emailVerifiedAt: user.emailVerifiedAt,
-        createdAt: user.createdAt,
-        roles:
-          user.userRoles?.map((userRole) => ({
-            id: userRole.role.id,
-            name: userRole.role.name,
-          })) || [],
-      };
-    } catch (error) {
-      throw new CustomException(
-        ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
   }
 
   async verifyPasswordResetToken(token: string): Promise<User | null> {
@@ -287,5 +348,26 @@ export class UserService {
 
     await this.usersRepository.save(user);
     return true;
+  }
+
+  async changePassword(id: string, newPassword: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      return false;
+    }
+    user.password = newPassword;
+    await this.usersRepository.save(user);
+    return true;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new CustomException(
+        ErrorCode.USER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return user;
   }
 }

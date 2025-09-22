@@ -6,26 +6,19 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
-  HttpStatus,
-  HttpCode,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from '../common/decorators';
-import { AuthenticatedUser } from '../common';
 import { AllowedRoles } from '../auth/guards/roles.guard';
-import { RequirePermissions } from '../common/decorators/permission.decorator';
 import { PermissionsGuard } from '../common/guards/permission.guard';
-import { UserType, AdminPermission, UserPermission } from '../common/enums';
+import { UserType } from '../common/enums';
 import { UserService } from './user.service';
 import {
   CreateUserRequest,
   CreateUserResponse,
-  UpdateNotificationTokenRequest,
+  FindUsersRequest,
+  FindUsersResponse,
   UpdateUserDto,
-  UpdateUserProfileRequest,
 } from './user.dto';
 import JwtAuthenticationGuard from '../auth/guards/jwt-auth.guard';
 
@@ -34,72 +27,38 @@ import JwtAuthenticationGuard from '../auth/guards/jwt-auth.guard';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Get()
-  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  findAll() {
-    return this.userService.findAll();
-  }
+  // @Get()
+  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  // @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  // findAll(request: FindUsersRequest): Promise<FindUsersResponse> {
+  //   return this.userService.findAll(request);
+  // }
 
-  @Get(':id')
-  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne({ where: { id } });
-  }
+  // @Get(':id')
+  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  // @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  // findById(@Param('id') id: string) {
+  //   return this.userService.findById(id);
+  // }
 
-  @Get('me')
-  @HttpCode(HttpStatus.OK)
-  async getProfile(@User() user: AuthenticatedUser) {
-    return this.userService.getProfile(user.id);
-  }
+  // @Post()
+  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  // @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  // async create(@Body() request: CreateUserRequest): Promise<CreateUserResponse> {
+  //   return this.userService.create(request);
+  // }
 
-  @Get('permissions')
-  @HttpCode(HttpStatus.OK)
-  async findAllPermissions(@User() user: AuthenticatedUser) {
-    const permissions = await this.userService.findAllPermissions(user.id);
-    return { permissions };
-  }
+  // @Patch(':id')
+  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  // @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  // update(@Param('id') id: string, @Body() request: UpdateUserDto) {
+  //   return this.userService.update(id, request);
+  // }
 
-  @Post()
-  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  async create(@Body() request: CreateUserRequest): Promise<CreateUserResponse> {
-    return this.userService.create(request);
-  }
-
-  @Patch('profile')
-  @HttpCode(HttpStatus.OK)
-  async updateUserProfile(
-    @Req() request: any,
-    @Body() updateUserProfileDto: UpdateUserProfileRequest,
-  ) {
-    return this.userService.updateUserProfile(
-      request.user,
-      updateUserProfileDto,
-    );
-  }
-
-  @Patch(':id')
-  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
-  }
-
-  @Patch('notification-token')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async updateNotificationToken(
-    @User() loggedInUser: AuthenticatedUser,
-    @Body() request: UpdateNotificationTokenRequest,
-  ) {
-    await this.userService.updateNotificationToken(request, loggedInUser);
-  }
-
-  @Delete(':id')
-  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
-  }
+  // @Delete(':id')
+  // @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  // @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(id);
+  // }
 }
