@@ -42,6 +42,11 @@ export class InfringementController {
     return this.infringementService.findAll(request);
   }
 
+  @Get('ticket')
+  getTicket(@Query() request: GetTicketRequest): Promise<GetTicketResponse> {
+    return this.infringementService.getTicket(request);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.infringementService.findById(id);
@@ -85,10 +90,7 @@ export class InfringementController {
     return this.infringementService.getPenalty(infringementCarParkId);
   }
 
-  @Get('ticket')
-  getTicket(@Query() request: GetTicketRequest): Promise<GetTicketResponse> {
-    return this.infringementService.getTicket(request);
-  }
+
 
   @Get('ticket/:ticketNumber/png')
   async getTicketPng(@Param('ticketNumber') ticketNumber: number, @Res() res: Response): Promise<void> {

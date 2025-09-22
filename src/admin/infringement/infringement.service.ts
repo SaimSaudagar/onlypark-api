@@ -70,6 +70,9 @@ export class InfringementService {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
     dueDate.setHours(23, 59, 59, 999);
+
+      // set today's date for ticket
+    const ticketDate = new Date();
   
     // update fields
     infringement.infringementCarParkId = infringementCarParkId;
@@ -79,6 +82,7 @@ export class InfringementService {
     infringement.photos = photos;
     infringement.status = InfringementStatus.PENDING;
     infringement.dueDate = dueDate;
+    infringement.ticketDate = ticketDate;
     infringement.comments = comments;
   
     // save updated record
