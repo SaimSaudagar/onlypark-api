@@ -18,7 +18,6 @@ import { AppService } from './app.service';
 
 // Feature modules
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { AdminModule } from './admin/admin.module';
@@ -48,6 +47,7 @@ import { GeolocationModule } from './common/services/geolocation/geolocation.mod
 import { PaymentModule } from './common/services/payment/payment.module';
 import { FileUploadModule } from './common/services/file-upload/file-upload.module';
 import { TemplateEngineModule } from './common/services/template-engine/template-engine.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

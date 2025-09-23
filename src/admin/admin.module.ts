@@ -8,6 +8,8 @@ import { BlacklistModule } from './blacklist/blacklist.module';
 import { InfringementModule } from './infringement/infringement.module';
 import { DisputeModule } from './dispute/dispute.module';
 import { WhitelistModule } from './whitelist/whitelist.module';
+import { CronJobsModule } from './cron-jobs/cron-jobs.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { WhitelistModule } from './whitelist/whitelist.module';
     InfringementModule,
     DisputeModule,
     WhitelistModule,
+    CronJobsModule,
+    UserModule,
   ],
 })
 export class AdminModule { }

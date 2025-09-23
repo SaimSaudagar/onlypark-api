@@ -15,25 +15,22 @@ export enum UserStatus {
 export enum AdminStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 export enum CarparkManagerStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 export enum PatrolOfficerStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 // Booking System Enums
 export enum BookingStatus {
   ACTIVE = 'Active',
-  EXPIRED = 'Expired',
+  PENDING = 'Pending',
   CHECKOUT = 'Checkout',
 }
 
@@ -70,6 +67,7 @@ export enum Status {
 export enum InfringementStatus {
   PENDING = 'Pending',
   PAID = 'Paid',
+  NOT_PAID = 'Not Paid',
   DISPUTED = 'Disputed',
   WAIVED = 'Waived',
 }
@@ -85,6 +83,8 @@ export enum DisputeStatus {
   PENDING = 'Pending',
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
+  // Approved with Admin Fees
+  APPROVED_WITH_ADMIN_FEES = 'Approved with Admin Fees',
 }
 
 // Audit System Enums

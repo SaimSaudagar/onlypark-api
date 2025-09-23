@@ -1,8 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray, IsUUID } from 'class-validator';
-import { UserType, AddressType, UserStatus } from '../common/enums';
-import { ApiGetBaseRequest, ApiGetBaseResponse } from '../common';
+import { UserType, AddressType, UserStatus } from '../../common/enums';
+import { ApiGetBaseRequest, ApiGetBaseResponse } from '../../common';
+import { OmitType } from '@nestjs/swagger';
 
 export class CreateUserRequest {
   @IsNotEmpty()
@@ -30,7 +31,6 @@ export class CreateUserRequest {
   @IsUUID(4, { each: true })
   visitorSubCarParkIds: string[];
 
-
   @IsOptional()
   @IsArray()
   @IsUUID(4, { each: true })
@@ -40,9 +40,6 @@ export class CreateUserRequest {
   @IsArray()
   @IsUUID(4, { each: true })
   blacklistSubCarParkIds: string[];
-  // @IsOptional()
-  // @IsArray()
-  // @IsString({ each: true })
 }
 
 export class CreateUserResponse {
@@ -56,11 +53,9 @@ export class CreateUserResponse {
   passwordResetExpires: Date;
 }
 
-export class UpdateUserDto extends CreateUserRequest {
-  @IsOptional()
-  @IsUUID()
-  id?: string;
-}
+export class UpdateUserResponse extends OmitType(CreateUserResponse, ['passwordResetToken', 'passwordResetExpires']) { }
+
+export class UpdateUserRequest extends CreateUserRequest { }
 
 export class UpdateUserProfileRequest {
   @IsNotEmpty()

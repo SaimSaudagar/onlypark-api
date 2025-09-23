@@ -232,6 +232,24 @@ export class ErrorCode {
     message: 'Sub car park not found',
   };
 
+  public static readonly PATROL_OFFICER_VISITOR_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'PATROL_OFFICER_VISITOR_SUB_CAR_PARK_NOT_FOUND',
+    code: 'PATROL_OFFICER_VISITOR_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Patrol officer visitor sub car park not found',
+  };
+
+  public static readonly PATROL_OFFICER_WHITELIST_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'PATROL_OFFICER_WHITELIST_SUB_CAR_PARK_NOT_FOUND',
+    code: 'PATROL_OFFICER_WHITELIST_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Patrol officer whitelist sub car park not found',
+  };
+
+  public static readonly PATROL_OFFICER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'PATROL_OFFICER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND',
+    code: 'PATROL_OFFICER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Patrol officer blacklist sub car park not found',
+  };
+
   public static readonly CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS = {
     key: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS',
     code: 'CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS',
@@ -499,6 +517,12 @@ export class ErrorCode {
     key: 'DISPUTE_ALREADY_EXISTS',
     code: 'DISPUTE_ALREADY_EXISTS',
     message: 'Dispute already exists for this infringement',
+  };
+
+  public static readonly DISPUTE_STATUS_NOT_FOUND = {
+    key: 'DISPUTE_STATUS_NOT_FOUND',
+    code: 'DISPUTE_STATUS_NOT_FOUND',
+    message: 'Dispute status not found',
   };
 
   public static readonly DISPUTE_DEADLINE_PASSED = {
