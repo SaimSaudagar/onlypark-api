@@ -481,7 +481,7 @@ export class UserService {
   }
 
   async findAll(request: FindUsersRequest): Promise<FindUsersResponse> {
-    const { pageNo, pageSize, sortField, sortOrder, search } = request;
+    const { pageNo, pageSize, sortField, sortOrder, search, type, status } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -493,6 +493,14 @@ export class UserService {
         { email: ILike(`%${search}%`) },
         { name: ILike(`%${search}%`) },
       );
+    }
+
+    if (type) {
+      whereOptions.push({ type });
+    }
+
+    if (status) {
+      whereOptions.push({ status });
     }
 
     if (sortField) {
