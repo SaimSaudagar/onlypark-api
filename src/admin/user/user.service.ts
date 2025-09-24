@@ -575,12 +575,14 @@ export class UserService {
 
     switch (user.type) {
       case UserType.CARPARK_MANAGER:
-        additionalData = await this.carparkManagerRepository.findOne({ where: { userId: id } });
+        additionalData = await this.carparkManagerRepository.findOne({ where: { userId: id }, relations: { carparkManagerVisitorSubCarParks: true, carparkManagerWhitelistSubCarParks: true, carparkManagerBlacklistSubCarParks: true } });
         break;
       case UserType.PATROL_OFFICER:
-        additionalData = await this.patrolOfficerRepository.findOne({ where: { userId: id } });
+        additionalData = await this.patrolOfficerRepository.findOne({ where: { userId: id }, relations: { patrolOfficerVisitorSubCarParks: true, patrolOfficerWhitelistSubCarParks: true, patrolOfficerBlacklistSubCarParks: true } });
         break;
     }
+
+
 
     return {
       id: user.id,
@@ -589,9 +591,9 @@ export class UserService {
       email: user.email,
       type: user.type,
       status: user.status,
-      visitorSubCarParkIds: additionalData?.visitorSubCarParkIds || [],
-      whitelistSubCarParkIds: additionalData?.whitelistSubCarParkIds || [],
-      blacklistSubCarParkIds: additionalData?.blacklistSubCarParkIds || [],
+      visitorSubCarParkIds: additionalData?.carparkManagerVisitorSubCarParks?.map(subCarPark => subCarPark.subCarParkId) || [],
+      whitelistSubCarParkIds: additionalData?.carparkManagerWhitelistSubCarParks?.map(subCarPark => subCarPark.subCarParkId) || [],
+      blacklistSubCarParkIds: additionalData?.carparkManagerBlacklistSubCarParks?.map(subCarPark => subCarPark.subCarParkId) || [],
     };
   }
 
