@@ -292,6 +292,24 @@ export class ErrorCode {
     message: 'Carpark manager not found',
   };
 
+  public static readonly CARPARK_MANAGER_VISITOR_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'CARPARK_MANAGER_VISITOR_SUB_CAR_PARK_NOT_FOUND',
+    code: 'CARPARK_MANAGER_VISITOR_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Carpark manager visitor sub car park not found',
+  };
+
+  public static readonly CARPARK_MANAGER_WHITELIST_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'CARPARK_MANAGER_WHITELIST_SUB_CAR_PARK_NOT_FOUND',
+    code: 'CARPARK_MANAGER_WHITELIST_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Carpark manager whitelist sub car park not found',
+  };
+
+  public static readonly CARPARK_MANAGER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND = {
+    key: 'CARPARK_MANAGER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND',
+    code: 'CARPARK_MANAGER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND',
+    message: 'Carpark manager blacklist sub car park not found',
+  };
+
   public static readonly BLACKLIST_ENTRY_NOT_FOUND = {
     key: 'BLACKLIST_ENTRY_NOT_FOUND',
     code: 'BLACKLIST_ENTRY_NOT_FOUND',

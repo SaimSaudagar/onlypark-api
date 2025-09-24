@@ -1,19 +1,21 @@
-import { NestFactory } from '@nestjs/core';
-import { SeederModule } from './seeder.module';
-import { RoleSeederService } from './role/role-seeder.service';
-import { PermissionSeederService } from './permission/permission-seeder.service';
-import { RolePermissionSeederService } from './role-permission/role-permission-seeder.service';
-import { UserSeederService } from './user/user-seeder.service';
-import { CarMakeSeederService } from './car-make/car-make-seeder.service';
-import { MasterCarParkSeederService } from './master-car-park/master-car-park-seeder.service';
-import { SubCarParkSeederService } from './sub-car-park/sub-car-park-seeder.service';
-import { TenancySeederService } from './tenancy/tenancy-seeder.service';
+import { NestFactory } from "@nestjs/core";
+import { SeederModule } from "./seeder.module";
+import { RoleSeederService } from "./role/role-seeder.service";
+import { PermissionSeederService } from "./permission/permission-seeder.service";
+import { RolePermissionSeederService } from "./role-permission/role-permission-seeder.service";
+import { UserSeederService } from "./user/user-seeder.service";
+import { CarMakeSeederService } from "./car-make/car-make-seeder.service";
+import { MasterCarParkSeederService } from "./master-car-park/master-car-park-seeder.service";
+import { SubCarParkSeederService } from "./sub-car-park/sub-car-park-seeder.service";
+import { TenancySeederService } from "./tenancy/tenancy-seeder.service";
+import { InfringementCarParkSeederService } from "./infringement-car-park/infringement-car-park-seeder.service";
+import { InfringementPenaltySeederService } from "./infringement-penalty/infringement-penalty-seeder.service";
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeederModule);
 
   try {
-    console.log('Starting seeding process...');
+    console.log("Starting seeding process...");
 
     // // Seed roles first
     // console.log('Seeding roles...');
@@ -32,24 +34,32 @@ const runSeed = async () => {
     // await app.get(CarMakeSeederService).run();
 
     // Seed master car parks
-    console.log('Seeding master car parks...');
+    console.log("Seeding master car parks...");
     await app.get(MasterCarParkSeederService).run();
 
     // Seed sub car parks
-    console.log('Seeding sub car parks...');
+    console.log("Seeding sub car parks...");
     await app.get(SubCarParkSeederService).run();
 
     // Seed tenancies
-    console.log('Seeding tenancies...');
+    console.log("Seeding tenancies...");
     await app.get(TenancySeederService).run();
 
+    // Seed infringement car parks
+    console.log("Seeding infringement car parks...");
+    await app.get(InfringementCarParkSeederService).run();
+
+    // Seed infringement penalties (after car parks are created)
+    console.log("Seeding infringement penalties...");
+    await app.get(InfringementPenaltySeederService).run();
+
     // Seed users last (after roles and permissions are set up)
-    console.log('Seeding users...');
+    console.log("Seeding users...");
     await app.get(UserSeederService).run();
 
-    console.log('Seeding completed successfully!');
+    console.log("Seeding completed successfully!");
   } catch (error) {
-    console.error('Error during seeding:', error);
+    console.error("Error during seeding:", error);
     throw error;
   } finally {
     await app.close();

@@ -1,9 +1,19 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray, IsUUID } from 'class-validator';
-import { UserType, AddressType, UserStatus } from '../../common/enums';
-import { ApiGetBaseRequest, ApiGetBaseResponse } from '../../common';
-import { OmitType } from '@nestjs/swagger';
+import { PartialType } from "@nestjs/mapped-types";
+import { Type } from "class-transformer";
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsString,
+  ValidateNested,
+  IsOptional,
+  IsEnum,
+  MinLength,
+  IsArray,
+  IsUUID,
+} from "class-validator";
+import { UserType, AddressType, UserStatus } from "../../common/enums";
+import { ApiGetBaseRequest, ApiGetBaseResponse } from "../../common";
+import { OmitType } from "@nestjs/swagger";
 
 export class CreateUserRequest {
   @IsNotEmpty()
@@ -51,11 +61,17 @@ export class CreateUserResponse {
   image: string;
   passwordResetToken: string;
   passwordResetExpires: Date;
+  visitorSubCarParkIds: string[];
+  whitelistSubCarParkIds: string[];
+  blacklistSubCarParkIds: string[];
 }
 
-export class UpdateUserResponse extends OmitType(CreateUserResponse, ['passwordResetToken', 'passwordResetExpires']) { }
+export class UpdateUserResponse extends OmitType(CreateUserResponse, [
+  "passwordResetToken",
+  "passwordResetExpires",
+]) {}
 
-export class UpdateUserRequest extends CreateUserRequest { }
+export class UpdateUserRequest extends CreateUserRequest {}
 
 export class UpdateUserProfileRequest {
   @IsNotEmpty()

@@ -141,7 +141,6 @@ export class UserService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: savedUser.email, error: emailError.message }
         );
       }
 
@@ -157,6 +156,9 @@ export class UserService {
         image: savedUser.image,
         passwordResetToken: savedUser.passwordResetToken,
         passwordResetExpires: savedUser.passwordResetExpires,
+        visitorSubCarParkIds: request.visitorSubCarParkIds,
+        whitelistSubCarParkIds: request.whitelistSubCarParkIds,
+        blacklistSubCarParkIds: request.blacklistSubCarParkIds,
       };
     } catch (error) {
       // Rollback transaction on any error
@@ -184,6 +186,13 @@ export class UserService {
 
     if (request.visitorSubCarParkIds && request.visitorSubCarParkIds.length > 0) {
       for (const subCarParkId of request.visitorSubCarParkIds) {
+        const subCarPark = await queryRunner.manager.findOne(SubCarPark, { where: { id: subCarParkId } });
+        if (!subCarPark) {
+          throw new CustomException(
+            ErrorCode.CARPARK_MANAGER_VISITOR_SUB_CAR_PARK_NOT_FOUND.key,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         await queryRunner.manager.save(CarparkManagerVisitorSubCarPark, {
           carparkManagerId: carparkManager.id,
           subCarParkId: subCarParkId,
@@ -193,6 +202,13 @@ export class UserService {
 
     if (request.whitelistSubCarParkIds && request.whitelistSubCarParkIds.length > 0) {
       for (const subCarParkId of request.whitelistSubCarParkIds) {
+        const subCarPark = await queryRunner.manager.findOne(SubCarPark, { where: { id: subCarParkId } });
+        if (!subCarPark) {
+          throw new CustomException(
+            ErrorCode.CARPARK_MANAGER_WHITELIST_SUB_CAR_PARK_NOT_FOUND.key,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         await queryRunner.manager.save(CarparkManagerWhitelistSubCarPark, {
           carparkManagerId: carparkManager.id,
           subCarParkId: subCarParkId,
@@ -202,6 +218,13 @@ export class UserService {
 
     if (request.blacklistSubCarParkIds && request.blacklistSubCarParkIds.length > 0) {
       for (const subCarParkId of request.blacklistSubCarParkIds) {
+        const subCarPark = await queryRunner.manager.findOne(SubCarPark, { where: { id: subCarParkId } });
+        if (!subCarPark) {
+          throw new CustomException(
+            ErrorCode.CARPARK_MANAGER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND.key,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         await queryRunner.manager.save(CarparkManagerBlacklistSubCarPark, {
           carparkManagerId: carparkManager.id,
           subCarParkId: subCarParkId,
@@ -469,6 +492,9 @@ export class UserService {
         type: savedUser.type,
         phoneNumber: savedUser.phoneNumber,
         image: savedUser.image,
+        visitorSubCarParkIds: request.visitorSubCarParkIds,
+        whitelistSubCarParkIds: request.whitelistSubCarParkIds,
+        blacklistSubCarParkIds: request.blacklistSubCarParkIds,
       };
     } catch (error) {
       // Rollback transaction on any error
