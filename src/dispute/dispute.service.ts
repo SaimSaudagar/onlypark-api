@@ -1,10 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm";
 import { Dispute } from "./entities/dispute.entity";
 import { CreateDisputeRequest, CreateDisputeResponse } from "./dispute.dto";
 import { InfringementService } from "../admin/infringement/infringement.service";
 import { InfringementStatus } from "../common/enums";
+import { CustomException, ErrorCode } from "src/common";
+import { EmailNotificationService } from "../common/services/email/email-notification.service";
+import { TemplateKeys } from "../common/constants/template-keys";
 
 @Injectable()
 export class DisputeService {
@@ -12,6 +15,8 @@ export class DisputeService {
         @InjectRepository(Dispute)
         private disputeRepository: Repository<Dispute>,
         private infringementService: InfringementService,
+        private emailNotificationService: EmailNotificationService,
+        private dataSource: DataSource,
     ) { }
 
     async create(request: CreateDisputeRequest): Promise<CreateDisputeResponse> {
@@ -32,52 +37,97 @@ export class DisputeService {
             photos,
         } = request;
 
-        //change status to unpaid
+        // Get infringement details before starting transaction
         const infringementId = await this.infringementService.getInfringementId({ registrationNo, ticketNumber });
+        const infringement = await this.infringementService.findById(infringementId);
+        if (infringement.status === InfringementStatus.PAID) {
+            throw new CustomException(
+                ErrorCode.INFRINGEMENT_ALREADY_PAID.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
 
-        await this.infringementService.updateStatus(infringementId, { status: InfringementStatus.NOT_PAID });
+        // Start database transaction
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
+        try {
+            // Update infringement status to unpaid
+            await this.infringementService.updateStatus(infringementId, { status: InfringementStatus.NOT_PAID });
 
-        // Update infringement status to DISPUTED
-        // await this.infringementService.updateStatus(infringementId, { status: InfringementStatus.DISPUTED });
+            // Create dispute record
+            const dispute = await queryRunner.manager.save(Dispute, {
+                infringementId,
+                firstName,
+                lastName,
+                companyName,
+                address,
+                state,
+                zipCode,
+                mobileNumber,
+                email,
+                carMakeId,
+                model,
+                registrationNo,
+                appeal,
+                photos,
+                ticketNumber,
+            });
 
-        const dispute = await this.disputeRepository.save({
-            infringementId,
-            firstName,
-            lastName,
-            companyName,
-            address,
-            state,
-            zipCode,
-            mobileNumber,
-            email,
-            carMakeId,
-            model,
-            registrationNo,
-            appeal,
-            photos,
-            ticketNumber,
-        });
+            // Send email notification to user
+            try {
+                await this.emailNotificationService.sendUsingTemplate({
+                    to: [dispute.email],
+                    templateKey: TemplateKeys.DISPUTE_RECEIVED,
+                    data: {
+                        name: `${dispute.firstName} ${dispute.lastName}`,
+                        ticketNumber: infringement.ticketNumber.toString(),
+                    },
+                });
+            } catch (emailError) {
+                // If email fails, rollback the transaction
+                await queryRunner.rollbackTransaction();
+                throw new CustomException(
+                    ErrorCode.EMAIL_SEND_FAILED.key,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    { email: dispute.email, error: emailError.message }
+                );
+            }
 
-        const response = new CreateDisputeResponse();
-        response.id = dispute.id;
-        response.infringementId = dispute.infringementId;
-        response.registrationNo = dispute.registrationNo;
-        response.status = dispute.status;
-        response.firstName = dispute.firstName;
-        response.lastName = dispute.lastName;
-        response.companyName = dispute.companyName;
-        response.address = dispute.address;
-        response.state = dispute.state;
-        response.zipCode = dispute.zipCode;
-        response.mobileNumber = dispute.mobileNumber;
-        response.email = dispute.email;
-        response.carMakeId = dispute.carMakeId;
-        response.model = dispute.model;
-        response.appeal = dispute.appeal;
-        response.photos = dispute.photos;
-        response.ticketNumber = dispute.ticketNumber;
+            // Commit transaction
+            await queryRunner.commitTransaction();
 
-        return response;
+            const response = new CreateDisputeResponse();
+            response.id = dispute.id;
+            response.infringementId = dispute.infringementId;
+            response.registrationNo = dispute.registrationNo;
+            response.status = dispute.status;
+            response.firstName = dispute.firstName;
+            response.lastName = dispute.lastName;
+            response.companyName = dispute.companyName;
+            response.address = dispute.address;
+            response.state = dispute.state;
+            response.zipCode = dispute.zipCode;
+            response.mobileNumber = dispute.mobileNumber;
+            response.email = dispute.email;
+            response.carMakeId = dispute.carMakeId;
+            response.model = dispute.model;
+            response.appeal = dispute.appeal;
+            response.photos = dispute.photos;
+            response.ticketNumber = dispute.ticketNumber;
+
+            return response;
+        } catch (error) {
+            // Rollback transaction on any error
+            await queryRunner.rollbackTransaction();
+            throw new CustomException(
+                ErrorCode.CLIENT_ERROR.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        } finally {
+            // Release query runner
+            await queryRunner.release();
+        }
     }
 }

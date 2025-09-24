@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository, DataSource } from 'typeorm';
 import {
     CreateDisputeRequest,
     CreateDisputeResponse,
@@ -13,11 +13,12 @@ import {
 } from './dispute.dto';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
-import { HttpStatus } from '@nestjs/common';
 import { DisputeStatus, InfringementStatus } from '../../common/enums';
 import { InfringementService } from '../infringement/infringement.service';
 import { ApiGetBaseResponse } from '../../common';
 import { Dispute } from '../../dispute/entities/dispute.entity';
+import { EmailNotificationService } from '../../common/services/email/email-notification.service';
+import { TemplateKeys } from '../../common/constants/template-keys';
 
 @Injectable()
 export class DisputeService {
@@ -25,6 +26,8 @@ export class DisputeService {
         @InjectRepository(Dispute)
         private disputeRepository: Repository<Dispute>,
         private infringementService: InfringementService,
+        private emailNotificationService: EmailNotificationService,
+        private dataSource: DataSource,
     ) { }
 
     
@@ -256,25 +259,97 @@ export class DisputeService {
     }
 
     private async handleApprovedStatus(dispute: Dispute, responseReason: string): Promise<void> {
-        // Update dispute status to approved
-        await this.disputeRepository.update(dispute.id, { 
-            status: DisputeStatus.APPROVED, 
-            responseReason 
-        });
+        // Start database transaction
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        // Change infringement status to waived
-        await this.infringementService.updateStatus(dispute.infringementId, { 
-            status: InfringementStatus.WAIVED 
-        });
+        try {
+            // Update dispute status to approved
+            await queryRunner.manager.update(Dispute, dispute.id, { 
+                status: DisputeStatus.APPROVED, 
+                responseReason 
+            });
+
+            // Change infringement status to waived
+            await this.infringementService.updateStatus(dispute.infringementId, { 
+                status: InfringementStatus.WAIVED 
+            });
+
+            // Send email notification
+            try {
+                await this.emailNotificationService.sendUsingTemplate({
+                    to: [dispute.email],
+                    templateKey: TemplateKeys.DISPUTE_ACCEPTED,
+                    data: {
+                        name: `${dispute.firstName} ${dispute.lastName}`,
+                    },
+                });
+            } catch (emailError) {
+                // If email fails, rollback the transaction
+                await queryRunner.rollbackTransaction();
+                throw new CustomException(
+                    ErrorCode.EMAIL_SEND_FAILED.key,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    { email: dispute.email, error: emailError.message }
+                );
+            }
+
+            // Commit transaction
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            // Rollback transaction on any error
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            // Release query runner
+            await queryRunner.release();
+        }
     }
 
     private async handleRejectedStatus(dispute: Dispute, responseReason: string): Promise<void> {
-        // Update dispute status to rejected
-        await this.disputeRepository.update(dispute.id, { 
-            status: DisputeStatus.REJECTED, 
-            responseReason 
-        });
+        // Start database transaction
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
+        try {
+            // Update dispute status to rejected
+            await queryRunner.manager.update(Dispute, dispute.id, { 
+                status: DisputeStatus.REJECTED, 
+                responseReason 
+            });
+
+            // Send email notification
+            try {
+                await this.emailNotificationService.sendUsingTemplate({
+                    to: [dispute.email],
+                    templateKey: TemplateKeys.DISPUTE_REJECTED,
+                    data: {
+                        name: `${dispute.firstName} ${dispute.lastName}`,
+                        reason: responseReason,
+                    },
+                });
+            } catch (emailError) {
+                // If email fails, rollback the transaction
+                await queryRunner.rollbackTransaction();
+                throw new CustomException(
+                    ErrorCode.EMAIL_SEND_FAILED.key,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    { email: dispute.email, error: emailError.message }
+                );
+            }
+
+            // Commit transaction
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            // Rollback transaction on any error
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            // Release query runner
+            await queryRunner.release();
+        }
     }
 
     private async handlePendingStatus(dispute: Dispute, responseReason: string): Promise<void> {
@@ -287,10 +362,46 @@ export class DisputeService {
     }
 
     private async handleApprovedWithAdminFeesStatus(dispute: Dispute, responseReason: string): Promise<void> {
-        // Update dispute status to approved with admin fees
-        await this.disputeRepository.update(dispute.id, { 
-            status: DisputeStatus.APPROVED_WITH_ADMIN_FEES, 
-            responseReason 
-        });
+        // Start database transaction
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            // Update dispute status to approved with admin fees
+            await queryRunner.manager.update(Dispute, dispute.id, { 
+                status: DisputeStatus.APPROVED_WITH_ADMIN_FEES, 
+                responseReason 
+            });
+
+            // Send email notification
+            try {
+                await this.emailNotificationService.sendUsingTemplate({
+                    to: [dispute.email],
+                    templateKey: TemplateKeys.DISPUTE_ACCEPTED_WITH_ADMIN_FEES,
+                    data: {
+                        name: `${dispute.firstName} ${dispute.lastName}`,
+                    },
+                });
+            } catch (emailError) {
+                // If email fails, rollback the transaction
+                await queryRunner.rollbackTransaction();
+                throw new CustomException(
+                    ErrorCode.EMAIL_SEND_FAILED.key,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    { email: dispute.email, error: emailError.message }
+                );
+            }
+
+            // Commit transaction
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            // Rollback transaction on any error
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            // Release query runner
+            await queryRunner.release();
+        }
     }
 }
