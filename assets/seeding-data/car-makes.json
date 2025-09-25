@@ -1,74 +1,185 @@
 [
   {
-    "name": "Toyota"
+    "name": "Abrath"
   },
   {
-    "name": "Honda"
+    "name": "Alfa Romeo"
   },
   {
-    "name": "Ford"
+    "name": "Alpine"
   },
   {
-    "name": "Chevrolet"
-  },
-  {
-    "name": "Nissan"
-  },
-  {
-    "name": "BMW"
-  },
-  {
-    "name": "Mercedes-Benz"
+    "name": "Aston Martin"
   },
   {
     "name": "Audi"
   },
   {
-    "name": "Volkswagen"
+    "name": "Bently"
   },
   {
-    "name": "Hyundai"
+    "name": "BMW"
   },
   {
-    "name": "Kia"
+    "name": "BYD"
   },
   {
-    "name": "Mazda"
+    "name": "Cherry"
   },
   {
-    "name": "Subaru"
+    "name": "Chevrolet"
   },
   {
-    "name": "Lexus"
+    "name": "Chrysler"
   },
   {
-    "name": "Acura"
+    "name": "Citroen"
   },
   {
-    "name": "Infiniti"
-  },
-  {
-    "name": "Volvo"
-  },
-  {
-    "name": "Jaguar"
-  },
-  {
-    "name": "Land Rover"
-  },
-  {
-    "name": "Porsche"
+    "name": "Cupra"
   },
   {
     "name": "Ferrari"
   },
   {
+    "name": "Fiat"
+  },
+  {
+    "name": "Ford"
+  },
+  {
+    "name": "Genesis"
+  },
+  {
+    "name": "GWM"
+  },
+  {
+    "name": "Havel"
+  },
+  {
+    "name": "Honda"
+  },
+  {
+    "name": "Hyundai"
+  },
+  {
+    "name": "Ineos"
+  },
+  {
+    "name": "Isuzu"
+  },
+  {
+    "name": "Jaguar"
+  },
+  {
+    "name": "Jeep"
+  },
+  {
+    "name": "Kia"
+  },
+  {
     "name": "Lamborghini"
+  },
+  {
+    "name": "Land Rover"
+  },
+  {
+    "name": "LDV"
+  },
+  {
+    "name": "Lexus"
+  },
+  {
+    "name": "Lotus"
+  },
+  {
+    "name": "Mahindra"
+  },
+  {
+    "name": "Maserati"
+  },
+  {
+    "name": "Mazda"
+  },
+  {
+    "name": "McLaren"
+  },
+  {
+    "name": "Mercedes Benz"
+  },
+  {
+    "name": "MG"
+  },
+  {
+    "name": "Mini"
+  },
+  {
+    "name": "Mitsubishi"
+  },
+  {
+    "name": "Nissan"
+  },
+  {
+    "name": "Peugeot"
+  },
+  {
+    "name": "Polestar"
+  },
+  {
+    "name": "Porsche"
+  },
+  {
+    "name": "Ram"
+  },
+  {
+    "name": "Renault"
+  },
+  {
+    "name": "Rolls - Royce"
+  },
+  {
+    "name": "Skoda"
+  },
+  {
+    "name": "Ssangyong"
+  },
+  {
+    "name": "Subaru"
+  },
+  {
+    "name": "Suzuki"
   },
   {
     "name": "Tesla"
   },
   {
-    "name": "Other"
+    "name": "Toyota"
+  },
+  {
+    "name": "Volkswagen"
+  },
+  {
+    "name": "Volvo"
+  },
+  {
+    "name": "Zeekr"
+  },
+  {
+    "name": "Unkown"
+  },
+  {
+    "name": "Motor Bike"
+  },
+  {
+    "name": "Trailer"
+  },
+  {
+    "name": "Holden"
+  },
+  {
+    "name": "Saab"
+  },
+  {
+    "name": "GMC"
   }
 ]

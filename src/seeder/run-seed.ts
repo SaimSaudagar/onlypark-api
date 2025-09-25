@@ -10,6 +10,7 @@ import { SubCarParkSeederService } from "./sub-car-park/sub-car-park-seeder.serv
 import { TenancySeederService } from "./tenancy/tenancy-seeder.service";
 import { InfringementCarParkSeederService } from "./infringement-car-park/infringement-car-park-seeder.service";
 import { InfringementPenaltySeederService } from "./infringement-penalty/infringement-penalty-seeder.service";
+import { InfringementReasonSeederService } from "./infringement-reason/infringement-reason-seeder.service";
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeederModule);
@@ -29,9 +30,9 @@ const runSeed = async () => {
     // console.log('Assigning permissions to roles...');
     // await app.get(RolePermissionSeederService).run();
 
-    // // Seed car makes
-    // console.log('Seeding car makes...');
-    // await app.get(CarMakeSeederService).run();
+    // Seed car makes
+    console.log("Seeding car makes...");
+    await app.get(CarMakeSeederService).run();
 
     // Seed master car parks
     console.log("Seeding master car parks...");
@@ -52,6 +53,10 @@ const runSeed = async () => {
     // Seed infringement penalties (after car parks are created)
     console.log("Seeding infringement penalties...");
     await app.get(InfringementPenaltySeederService).run();
+
+    // Seed infringement reasons
+    console.log("Seeding infringement reasons...");
+    await app.get(InfringementReasonSeederService).run();
 
     // Seed users last (after roles and permissions are set up)
     console.log("Seeding users...");

@@ -23,12 +23,12 @@ import { DataSource } from 'typeorm';
 import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity';
 import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
 import { Admin } from '../admin/entities/admin.entity';
-import { CarparkManagerVisitorSubCarPark } from 'src/carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
-import { CarparkManagerWhitelistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
-import { CarparkManagerBlacklistSubCarPark } from 'src/carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
-import { PatrolOfficerVisitorSubCarPark } from 'src/patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
-import { PatrolOfficerWhitelistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
-import { PatrolOfficerBlacklistSubCarPark } from 'src/patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
+import { CarparkManagerVisitorSubCarPark } from '../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
+import { CarparkManagerWhitelistSubCarPark } from '../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
+import { CarparkManagerBlacklistSubCarPark } from '../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
+import { PatrolOfficerVisitorSubCarPark } from '../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
+import { PatrolOfficerWhitelistSubCarPark } from '../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
+import { PatrolOfficerBlacklistSubCarPark } from '../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
 
 @Injectable()
 export class UserService {

@@ -13,6 +13,7 @@ import { SubCarParkSeederModule } from "./sub-car-park/sub-car-park-seeder.modul
 import { TenancySeederModule } from "./tenancy/tenancy-seeder.module";
 import { InfringementCarParkSeederModule } from "./infringement-car-park/infringement-car-park-seeder.module";
 import { InfringementPenaltySeederModule } from "./infringement-penalty/infringement-penalty-seeder.module";
+import { InfringementReasonSeederModule } from "./infringement-reason/infringement-reason-seeder.module";
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { InfringementPenaltySeederModule } from "./infringement-penalty/infringe
     TenancySeederModule,
     InfringementCarParkSeederModule,
     InfringementPenaltySeederModule,
+    InfringementReasonSeederModule,
   ],
 })
 export class SeederModule {}

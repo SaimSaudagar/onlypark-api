@@ -1,0 +1,146 @@
+[
+  {
+    "reason": "No active parking from the QR Code as per the signage."
+  },
+  {
+    "reason": "This Rego is not Authorised to Park in this Bay."
+  },
+  {
+    "reason": "No Disabled permit has been displayed on the dashboard."
+  },
+  {
+    "reason": "3 hours of parking has been exceeded,capped to one visit per day."
+  },
+  {
+    "reason": "Resident or tenant parked in visitor bay."
+  },
+  {
+    "reason": "Vehicle not parked in a marked bay."
+  },
+  {
+    "reason": "The vehicle parked on yellow line, which is a no parking area."
+  },
+  {
+    "reason": "Vehicle parked on grass area."
+  },
+  {
+    "reason": "Vehicle parked in motorbike bay."
+  },
+  {
+    "reason": "Only authorised residents or tenants are allowed to park in this area. This Rego is not registered."
+  },
+  {
+    "reason": "No authorised T2 Oracle permit to park in this bay."
+  },
+  {
+    "reason": "No authorised Peppers permit to park in red dot bay."
+  },
+  {
+    "reason": "The payment displayed is not valid in this bay."
+  },
+  {
+    "reason": "No 2025 Bond University digital permit valid against this Rego parked on Bond University private land."
+  },
+  {
+    "reason": "Registered Bond Student parked in no Student parking area."
+  },
+  {
+    "reason": "Registered Bond Student or Staff parked in contractor bay."
+  },
+  {
+    "reason": "Rego is now on a tow list, if seen at any OnlyPark site, the vehicle will be towed if the non-compliance notices are outstanding."
+  },
+  {
+    "reason": "30 minutes of parking has been exceeded."
+  },
+  {
+    "reason": "4 hours of parking has been exceeded at one visit per day."
+  },
+  {
+    "reason": "1 hour of parking has been exceeded at one visit per day."
+  },
+  {
+    "reason": "10 minutes of parking has been exceeded."
+  },
+  {
+    "reason": "Seen walking off-site."
+  },
+  {
+    "reason": "Vehicle not using the EV charger in an EV bay."
+  },
+  {
+    "reason": "Vehicle is not an EV vehicle in a EV bay."
+  },
+  {
+    "reason": "T2 Permit displayed is out of date."
+  },
+  {
+    "reason": "Disabled permit displayed is out of date."
+  },
+  {
+    "reason": "12 hours of parking has been exceeded at one visit per day."
+  },
+  {
+    "reason": "2 hours of parking has been exceeded at one visit per day."
+  },
+  {
+    "reason": "1 hour of parking has been exceeded at one visit per day."
+  },
+  {
+    "reason": "Parked in a taxi bay."
+  },
+  {
+    "reason": "Vehicle has taken up 2 or more parking bay."
+  },
+  {
+    "reason": "No Paid parking made on the Easy Park app."
+  },
+  {
+    "reason": "Bond Permit holder parked in Clinic Patients bays."
+  },
+  {
+    "reason": "Vehicle is not parallel parked in visitors bays."
+  },
+  {
+    "reason": "This Rego is not authorised to park in this car park."
+  },
+  {
+    "reason": "Exceeded 20 mins of parking at one visit per day."
+  },
+  {
+    "reason": "Not Authorised to park in HomeCo Staff Bay."
+  },
+  {
+    "reason": "GoodLife Staff parked in HomeCo Staff Bay."
+  },
+  {
+    "reason": "Good life member parked in Homeco Customer bays only."
+  },
+  {
+    "reason": "Parked in incorrect department bay. Please park in allocated department bays to avoid non compliance of $88.00."
+  },
+  {
+    "reason": "Monthly Parking not parked in Monthly Parking allocated bays."
+  },
+  {
+    "reason": "Vehicle parked in a no parking area."
+  },
+  {
+    "reason": "Visitor not approved to park on site."
+  },
+  {
+    "reason": "Not a commercial vehicle parked in this bay."
+  },
+  {
+    "reason": "No 2025 bond university digital permit."
+  },
+  {
+    "reason": "HomeCo authorised staff member parked in customer parking bay."
+  },
+  {
+    "reason": "No Paid or 3 Hours free parking activated on the Easy Park App."
+  },
+  {
+    "reason": "No paid or 2 Hours parking active using the Easy Park app."
+  }
+] 

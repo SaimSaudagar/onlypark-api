@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CarMake } from '../../car-make/entities/car-make.entity';
-import { FileUtils } from '../../common/utils/file.utils';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CarMake } from "../../car-make/entities/car-make.entity";
+import { FileUtils } from "../../common/utils/file.utils";
 
 @Injectable()
 export class CarMakeSeederService {
@@ -10,7 +10,7 @@ export class CarMakeSeederService {
 
   constructor(
     @InjectRepository(CarMake)
-    private readonly carMakeRepository: Repository<CarMake>,
+    private readonly carMakeRepository: Repository<CarMake>
   ) {
     this.logger = new Logger(this.constructor.name);
   }
@@ -20,8 +20,8 @@ export class CarMakeSeederService {
   }
 
   private async seed() {
-    this.logger.log('Starting Car Make Data seed');
-    const carMakes = FileUtils.getDataForSeeding('car-makes');
+    this.logger.log("Starting Car Make Data seed");
+    const carMakes = FileUtils.getDataForSeeding("car-makes");
 
     for (const carMakeData of carMakes) {
       const existingCarMake = await this.carMakeRepository.findOne({
@@ -33,11 +33,13 @@ export class CarMakeSeederService {
           carMakeName: carMakeData.name,
         });
 
-        await this.carMakeRepository.create(carMake);
+        await this.carMakeRepository.save(carMake);
         this.logger.log(`Car Make ${carMakeData.name} seeded`);
       } else {
         this.logger.log(`Car Make ${carMakeData.name} already exists`);
       }
     }
+
+    this.logger.log("Car Make Data seed completed");
   }
 }
