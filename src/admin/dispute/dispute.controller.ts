@@ -33,14 +33,12 @@ export class DisputeController {
 
     @Get()
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-    @RequirePermissions(AdminPermission.DISPUTE_LIST, CarparkManagerPermission.DISPUTE_LIST, UserPermission.DISPUTE_LIST, PatrolOfficerPermission.DISPUTE_LIST)
     findAll(@Query() request: FindDisputeRequest) {
         return this.disputeService.findAll(request);
     }
 
     @Get(':id')
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-    @RequirePermissions(AdminPermission.DISPUTE_VIEW, CarparkManagerPermission.DISPUTE_VIEW, UserPermission.DISPUTE_VIEW, PatrolOfficerPermission.DISPUTE_VIEW)
     findById(@Param('id') id: string) {
         return this.disputeService.findById(id);
     }
@@ -48,7 +46,6 @@ export class DisputeController {
 
     @Patch('update/:id')
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-    @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)
     update(@Param('id') id: string, @Body() request: UpdateDisputeRequest) {
         // Set the id from the URL parameter
         request.id = id;
@@ -57,7 +54,6 @@ export class DisputeController {
 
     @Patch('/update-status')
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-    @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)
     updateStatus(@Query() request: UpdateDisputeStatusRequest) {
         return this.disputeService.updateStatus(request);
     }
@@ -65,7 +61,6 @@ export class DisputeController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-    @RequirePermissions(AdminPermission.DISPUTE_DELETE, CarparkManagerPermission.DISPUTE_DELETE)
     remove(@Param('id') id: string) {
         return this.disputeService.remove(id);
     }
