@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1758068605410 implements MigrationInterface {
-    name = 'Migrations1758068605410'
+export class Migrations1758627383981 implements MigrationInterface {
+    name = 'Migrations1758627383981'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -63,6 +63,9 @@ export class Migrations1758068605410 implements MigrationInterface {
                 "comments" text,
                 "email" character varying NOT NULL,
                 "whitelistType" character varying NOT NULL,
+                "token" character varying,
+                "startDate" TIMESTAMP NOT NULL,
+                "endDate" TIMESTAMP NOT NULL,
                 "subCarParkId" uuid NOT NULL,
                 "tenancyId" uuid NOT NULL,
                 CONSTRAINT "PK_0169bfbd49b0511243f7a068cec" PRIMARY KEY ("id")
@@ -238,7 +241,7 @@ export class Migrations1758068605410 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('Active', 'Inactive', 'Suspended')
+            CREATE TYPE "public"."carpark_manager_status_enum" AS ENUM('Active', 'Inactive')
         `);
         await queryRunner.query(`
             CREATE TABLE "carpark_manager" (
@@ -246,9 +249,8 @@ export class Migrations1758068605410 implements MigrationInterface {
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "region" character varying,
+                "name" character varying NOT NULL,
                 "contactNumber" character varying,
-                "emergencyContact" character varying,
                 "canManagePatrolOfficers" boolean NOT NULL DEFAULT true,
                 "canGenerateReports" boolean NOT NULL DEFAULT true,
                 "canManageTenancies" boolean NOT NULL DEFAULT true,
@@ -296,7 +298,6 @@ export class Migrations1758068605410 implements MigrationInterface {
                 "eventExpiryDate" TIMESTAMP,
                 "status" "public"."sub_car_park_status_enum" NOT NULL DEFAULT 'Active',
                 "masterCarParkId" uuid NOT NULL,
-                "carparkManagerId" uuid,
                 CONSTRAINT "UQ_4587c51261deab65d55834ba3dd" UNIQUE ("subCarParkCode"),
                 CONSTRAINT "PK_381a7bfb60a409000107881f84b" PRIMARY KEY ("id")
             )
@@ -371,7 +372,13 @@ export class Migrations1758068605410 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."infringements_status_enum" AS ENUM('Pending', 'Paid', 'Disputed', 'Waived')
+            CREATE TYPE "public"."infringements_status_enum" AS ENUM(
+                'Pending',
+                'Paid',
+                'Not Paid',
+                'Disputed',
+                'Waived'
+            )
         `);
         await queryRunner.query(`
             CREATE TABLE "infringements" (
@@ -379,22 +386,27 @@ export class Migrations1758068605410 implements MigrationInterface {
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "ticketNumber" SERIAL,
+                "ticketNumber" SERIAL NOT NULL,
                 "ticketDate" TIMESTAMP WITH TIME ZONE,
                 "infringementCarParkId" uuid,
                 "comments" text,
                 "registrationNo" character varying NOT NULL,
                 "photos" json,
                 "status" "public"."infringements_status_enum" NOT NULL DEFAULT 'Pending',
-                "dueDate" TIMESTAMP WITH TIME ZONE,
-                "reasonId" uuid,
-                "penaltyId" uuid,
                 "carMakeId" uuid,
+                "dueDate" TIMESTAMP WITH TIME ZONE,
+                "penaltyId" uuid,
+                "reasonId" uuid,
                 CONSTRAINT "PK_17d7ed648f5173f967afa8935d9" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."disputes_status_enum" AS ENUM('Pending', 'Approved', 'Rejected')
+            CREATE TYPE "public"."disputes_status_enum" AS ENUM(
+                'Pending',
+                'Approved',
+                'Rejected',
+                'Approved with Admin Fees'
+            )
         `);
         await queryRunner.query(`
             CREATE TABLE "disputes" (
@@ -423,7 +435,7 @@ export class Migrations1758068605410 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."admin_status_enum" AS ENUM('Active', 'Inactive', 'Suspended')
+            CREATE TYPE "public"."admin_status_enum" AS ENUM('Active', 'Inactive')
         `);
         await queryRunner.query(`
             CREATE TABLE "admin" (
@@ -562,10 +574,6 @@ export class Migrations1758068605410 implements MigrationInterface {
             ADD CONSTRAINT "FK_6a241df3b955561b4fe166f451d" FOREIGN KEY ("masterCarParkId") REFERENCES "master_car_park"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "sub_car_park"
-            ADD CONSTRAINT "FK_73afa81bc4c1407e8e79b4cd343" FOREIGN KEY ("carparkManagerId") REFERENCES "carpark_manager"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
             ALTER TABLE "whitelist_company"
             ADD CONSTRAINT "FK_5fa98054ac379a7f5212dd73c0b" FOREIGN KEY ("subCarParkId") REFERENCES "sub_car_park"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -630,9 +638,6 @@ export class Migrations1758068605410 implements MigrationInterface {
         `);
         await queryRunner.query(`
             ALTER TABLE "whitelist_company" DROP CONSTRAINT "FK_5fa98054ac379a7f5212dd73c0b"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "sub_car_park" DROP CONSTRAINT "FK_73afa81bc4c1407e8e79b4cd343"
         `);
         await queryRunner.query(`
             ALTER TABLE "sub_car_park" DROP CONSTRAINT "FK_6a241df3b955561b4fe166f451d"

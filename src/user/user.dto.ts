@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray, IsUUID } from 'class-validator';
 import { UserType, AddressType, UserStatus } from '../common/enums';
 import { ApiGetBaseRequest, ApiGetBaseResponse } from '../common';
 
@@ -27,13 +27,22 @@ export class CreateUserRequest {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  whitelist?: string[];
+  @IsUUID(4, { each: true })
+  visitorSubCarParkIds: string[];
+
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  blacklist?: string[];
+  @IsUUID(4, { each: true })
+  whitelistSubCarParkIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID(4, { each: true })
+  blacklistSubCarParkIds: string[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
 }
 
 export class CreateUserResponse {
@@ -47,7 +56,11 @@ export class CreateUserResponse {
   passwordResetExpires: Date;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserRequest) { }
+export class UpdateUserDto extends CreateUserRequest {
+  @IsOptional()
+  @IsUUID()
+  id?: string;
+}
 
 export class UpdateUserProfileRequest {
   @IsNotEmpty()
@@ -120,11 +133,7 @@ export class UpdateUserAddressRequest {
 export class FindUsersRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsEmail()
-  email?: string;
+  search?: string;
 
   @IsOptional()
   @IsEnum(UserType)
@@ -147,3 +156,56 @@ export interface UserResponse {
 }
 
 export type FindUsersResponse = ApiGetBaseResponse<UserResponse>;
+
+export class CreatePatrolOfficerRequest {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  visitorSubCarParkIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  whitelistSubCarParkIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  blacklistSubCarParkIds: string[];
+}
+export class CreateCarparkManagerRequest {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  visitorSubCarParkIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  whitelistSubCarParkIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  blacklistSubCarParkIds: string[];
+}
+
+export class FindByIdResponse {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  type: UserType;
+  status: UserStatus;
+  visitorSubCarParkIds: string[];
+  whitelistSubCarParkIds: string[];
+  blacklistSubCarParkIds: string[];
+}

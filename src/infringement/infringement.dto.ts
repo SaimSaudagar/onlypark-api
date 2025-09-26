@@ -21,4 +21,5 @@ export class GetInfringementPaymentResponse {
   dueDate: string;
   reason: string;
   photos: object;
+  stripePriceId: string;
 }

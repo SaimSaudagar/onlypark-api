@@ -62,10 +62,6 @@ export class CreateDisputeRequest {
 
 export class UpdateDisputeRequest {
     @IsString()
-    @IsNotEmpty()
-    id: string;
-
-    @IsString()
     @IsOptional()
     responseReason?: string;
 

@@ -134,7 +134,9 @@ export class DisputeService {
         const dispute = await this.disputeRepository.findOne({
             where: { id },
             relations: {
-                infringement: true,
+                infringement: {
+                    infringementCarPark: true,
+                },
                 carMake: true,
             },
         });
@@ -180,8 +182,8 @@ export class DisputeService {
         await this.disputeRepository.softRemove(dispute);
     }
 
-    async update(request: UpdateDisputeRequest): Promise<UpdateDisputeResponse> {
-        const { id, status, responseReason, responsePhotos } = request;
+    async update(id: string, request: UpdateDisputeRequest): Promise<UpdateDisputeResponse> {
+        const { status, responseReason, responsePhotos } = request;
 
         const dispute = await this.disputeRepository.findOne({ where: { id } });
         if (!dispute) {

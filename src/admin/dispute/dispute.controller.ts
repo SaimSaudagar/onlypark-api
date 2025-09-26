@@ -32,40 +32,33 @@ export class DisputeController {
     constructor(private readonly disputeService: DisputeService) { }
 
     @Get()
-    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-    @RequirePermissions(AdminPermission.DISPUTE_LIST, CarparkManagerPermission.DISPUTE_LIST, UserPermission.DISPUTE_LIST, PatrolOfficerPermission.DISPUTE_LIST)
+    @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     findAll(@Query() request: FindDisputeRequest) {
         return this.disputeService.findAll(request);
     }
 
     @Get(':id')
-    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-    @RequirePermissions(AdminPermission.DISPUTE_VIEW, CarparkManagerPermission.DISPUTE_VIEW, UserPermission.DISPUTE_VIEW, PatrolOfficerPermission.DISPUTE_VIEW)
+    @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     findById(@Param('id') id: string) {
         return this.disputeService.findById(id);
     }
 
 
     @Patch('update/:id')
-    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-    @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)
+    @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     update(@Param('id') id: string, @Body() request: UpdateDisputeRequest) {
-        // Set the id from the URL parameter
-        request.id = id;
-        return this.disputeService.update(request);
+        return this.disputeService.update(id, request);
     }
 
     @Patch('/update-status')
-    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER, UserType.PATROL_OFFICER)
-    @RequirePermissions(AdminPermission.DISPUTE_EDIT, CarparkManagerPermission.DISPUTE_EDIT, PatrolOfficerPermission.DISPUTE_EDIT)
+    @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     updateStatus(@Query() request: UpdateDisputeStatusRequest) {
         return this.disputeService.updateStatus(request);
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Roles(UserType.ADMIN, UserType.CARPARK_MANAGER)
-    @RequirePermissions(AdminPermission.DISPUTE_DELETE, CarparkManagerPermission.DISPUTE_DELETE)
+    @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     remove(@Param('id') id: string) {
         return this.disputeService.remove(id);
     }

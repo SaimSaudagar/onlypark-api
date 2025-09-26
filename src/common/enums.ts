@@ -15,25 +15,22 @@ export enum UserStatus {
 export enum AdminStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 export enum CarparkManagerStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 export enum PatrolOfficerStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 // Booking System Enums
 export enum BookingStatus {
   ACTIVE = 'Active',
-  EXPIRED = 'Expired',
+  PENDING = 'Pending',
   CHECKOUT = 'Checkout',
 }
 

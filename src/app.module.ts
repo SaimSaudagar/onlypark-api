@@ -1,60 +1,62 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ScheduleModule } from '@nestjs/schedule';
-import { BullModule } from '@nestjs/bull';
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ScheduleModule } from "@nestjs/schedule";
+import { BullModule } from "@nestjs/bull";
 
 // Middleware imports
-import { RequestContextMiddleware } from './common/middlewares/request-context.middleware';
-import { TraceIdMiddleware } from './common/middlewares/trace-id.middleware';
-import { HttpLoggingMiddleware } from './common/middlewares/http-logging.middleware';
+import { RequestContextMiddleware } from "./common/middlewares/request-context.middleware";
+import { TraceIdMiddleware } from "./common/middlewares/trace-id.middleware";
+import { HttpLoggingMiddleware } from "./common/middlewares/http-logging.middleware";
 
 // Configuration imports
-import { ConfigConstants, ConfigKeys, DependencyInjectionKeys } from './common';
+import { ConfigConstants, ConfigKeys, DependencyInjectionKeys } from "./common";
 
 // Core modules
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 
 // Feature modules
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { RoleModule } from './role/role.module';
-import { PermissionModule } from './permission/permission.module';
-import { AdminModule } from './admin/admin.module';
-import { ProfileModule as AdminProfileModule } from './admin/profile/profile.module';
-import { CarparkManagerModule } from './carpark-manager/carpark-manager.module';
-import { ProfileModule as CarparkManagerProfileModule } from './carpark-manager/profile/profile.module';
-
-import { TenancyModule } from './tenancy/tenancy.module';
-import { WhitelistModule } from './whitelist/whitelist.module';
-import { WhitelistCompanyModule } from './whitelist-company/whitelist-company.module';
-import { DisputeModule } from './dispute/dispute.module';
-import { PatrolOfficerModule } from './patrol-officer/patrol-officer.module';
-import { ProfileModule as PatrolOfficerProfileModule } from './patrol-officer/profile/profile.module';
-import { OutstandingRegistrationModule } from './outstanding-registration/outstanding-registration.module';
-import { VisitorBookingModule } from './visitor-booking/visitor-booking.module';
-import { AuditLogModule } from './common/services/audit-log/audit-log.module';
-import { RequestContextModule } from './common/services/request-context/request-context.module';
-import { AuditSubscriber } from './common/services/audit-log/audit-log.subscriber';
-import { CarMakeModule } from './car-make/car-make.module';
+import { AuthModule } from "./auth/auth.module";
+import { RoleModule } from "./role/role.module";
+import { PermissionModule } from "./permission/permission.module";
+import { AdminModule } from "./admin/admin.module";
+import { ProfileModule as AdminProfileModule } from "./admin/profile/profile.module";
+import { CarparkManagerModule } from "./carpark-manager/carpark-manager.module";
+import { ProfileModule as CarparkManagerProfileModule } from "./carpark-manager/profile/profile.module";
+import { SubCarParkModule } from "./sub-car-park/sub-car-park.module";
+import { TenancyModule } from "./tenancy/tenancy.module";
+import { WhitelistModule } from "./whitelist/whitelist.module";
+import { WhitelistCompanyModule } from "./whitelist-company/whitelist-company.module";
+import { DisputeModule } from "./dispute/dispute.module";
+import { PatrolOfficerModule } from "./patrol-officer/patrol-officer.module";
+import { ProfileModule as PatrolOfficerProfileModule } from "./patrol-officer/profile/profile.module";
+import { OutstandingRegistrationModule } from "./outstanding-registration/outstanding-registration.module";
+import { VisitorBookingModule } from "./visitor-booking/visitor-booking.module";
+import { AuditLogModule } from "./common/services/audit-log/audit-log.module";
+import { RequestContextModule } from "./common/services/request-context/request-context.module";
+import { AuditSubscriber } from "./common/services/audit-log/audit-log.subscriber";
+import { CarMakeModule } from "./car-make/car-make.module";
+import { InfringementModule } from "./infringement/infringement.module";
 
 // Common service modules
-import { EmailModule } from './common/services/email/email.module';
-import { SmsModule } from './common/services/sms/sms.module';
-import { PushNotificationModule } from './common/services/push-notification/push-notification.module';
-import { QrCodeModule } from './common/services/qr-code/qr-code.module';
-import { GeolocationModule } from './common/services/geolocation/geolocation.module';
-import { PaymentModule } from './common/services/payment/payment.module';
-import { FileUploadModule } from './common/services/file-upload/file-upload.module';
-import { TemplateEngineModule } from './common/services/template-engine/template-engine.module';
+import { EmailModule } from "./common/services/email/email.module";
+import { SmsModule } from "./common/services/sms/sms.module";
+import { PushNotificationModule } from "./common/services/push-notification/push-notification.module";
+import { QrCodeModule } from "./common/services/qr-code/qr-code.module";
+import { GeolocationModule } from "./common/services/geolocation/geolocation.module";
+import { PaymentModule } from "./common/services/payment/payment.module";
+import { StripeModule } from "./common/services/payment/stripe.module";
+import { FileUploadModule } from "./common/services/file-upload/file-upload.module";
+import { TemplateEngineModule } from "./common/services/template-engine/template-engine.module";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: [".env.local", ".env"],
     }),
 
     // Database
@@ -63,17 +65,17 @@ import { TemplateEngineModule } from './common/services/template-engine/template
       useFactory: (configService: ConfigService) => ({
         type: ConfigConstants.DB_TYPE,
         host: configService.get<string>(ConfigKeys.DB_HOST_NAME),
-        port: parseInt(configService.get<string>(ConfigKeys.DB_PORT) || '5432'),
+        port: parseInt(configService.get<string>(ConfigKeys.DB_PORT) || "5432"),
         username: configService.get<string>(ConfigKeys.DB_USER),
         password: configService.get<string>(ConfigKeys.DB_PASSWORD),
         database: configService.get<string>(ConfigKeys.DB_NAME),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [__dirname + "/**/*.entity{.ts,.js}"],
         synchronize: false,
-        logging: process.env.NODE_ENV === 'development',
-        ...(process.env.NODE_ENV === 'production' && {
+        logging: process.env.NODE_ENV === "development",
+        ...(process.env.NODE_ENV === "production" && {
           ssl: { rejectUnauthorized: false },
         }),
-        timezone: 'Z',
+        timezone: "Z",
       }),
       inject: [ConfigService],
     }),
@@ -86,9 +88,12 @@ import { TemplateEngineModule } from './common/services/template-engine/template
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         redis: {
-          host: configService.get<string>(ConfigKeys.REDIS_HOST) || 'localhost',
-          port: parseInt(configService.get<string>(ConfigKeys.REDIS_PORT) || '6379'),
-          password: configService.get<string>(ConfigKeys.REDIS_PASSWORD) || undefined,
+          host: configService.get<string>(ConfigKeys.REDIS_HOST) || "localhost",
+          port: parseInt(
+            configService.get<string>(ConfigKeys.REDIS_PORT) || "6379"
+          ),
+          password:
+            configService.get<string>(ConfigKeys.REDIS_PASSWORD) || undefined,
         },
       }),
       inject: [ConfigService],
@@ -103,6 +108,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     AdminProfileModule,
     CarparkManagerModule,
     CarparkManagerProfileModule,
+    SubCarParkModule,
     TenancyModule,
     WhitelistModule,
     WhitelistCompanyModule,
@@ -114,6 +120,7 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     AuditLogModule,
     RequestContextModule,
     CarMakeModule,
+    InfringementModule,
 
     // Common service modules
     EmailModule,
@@ -122,19 +129,17 @@ import { TemplateEngineModule } from './common/services/template-engine/template
     QrCodeModule,
     GeolocationModule,
     PaymentModule,
+    StripeModule,
     FileUploadModule,
     TemplateEngineModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    AuditSubscriber,
-  ],
+  providers: [AppService, AuditSubscriber],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RequestContextMiddleware, HttpLoggingMiddleware)
-      .forRoutes('*');
+      .forRoutes("*");
   }
 }

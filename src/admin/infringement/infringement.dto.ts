@@ -151,3 +151,25 @@ export class GetTicketRequest {
   @IsNotEmpty()
   ticketNumber: number;
 }
+
+export class FindInfringementCarParkRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  search?: string;
+}
+
+export class InfringementCarParkResponse {
+  id: string;
+  carParkName: string;
+}
+
+export class FindInfringementReasonRequest extends ApiGetBaseRequest {
+  @IsOptional()
+  @IsString()
+  search?: string;
+}
+
+export class InfringementReasonResponse {
+  id: string;
+  reason: string;
+}
