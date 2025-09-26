@@ -17,7 +17,7 @@ export class ScanInfringementResponse {
 
 export class CreateInfringementRequest {
   @IsOptional()
-  @IsString()
+  @IsUUID()
   id?: string;
 
   @IsNotEmpty()
@@ -25,15 +25,15 @@ export class CreateInfringementRequest {
   infringementCarParkId: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   carMakeId?: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   reasonId: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   penaltyId: string;
 
   @IsOptional()

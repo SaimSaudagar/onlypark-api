@@ -303,11 +303,30 @@ export class InfringementService {
   async getPenalty(
     infringementCarParkId: string
   ): Promise<GetPenaltyResponse[]> {
-    return await this.infringementPenaltyRepository.find({
+
+    const infringementCarPark = await this.infringementCarParkRepository.findOne({
+      where: { id: infringementCarParkId },
+    });
+    
+    if (!infringementCarPark) {
+      throw new CustomException(
+        ErrorCode.INFRINGEMENT_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const penalties = await this.infringementPenaltyRepository.find({
       where: {
         infringementCarParkId: infringementCarParkId,
       },
     });
+
+    return penalties.map((penalty) => ({
+      id: penalty.id,
+      penaltyName: penalty.penaltyName,
+      amountBeforeDue: penalty.amountBeforeDue,
+      amountAfterDue: penalty.amountAfterDue,
+    }));
   }
 
   async updateStatus(

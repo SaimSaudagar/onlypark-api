@@ -512,6 +512,12 @@ export class ErrorCode {
     message: 'Infringement not found',
   };
 
+  public static readonly INFRINGEMENT_CAR_PARK_NOT_FOUND = {
+    key: 'INFRINGEMENT_CAR_PARK_NOT_FOUND',
+    code: 'INFRINGEMENT_CAR_PARK_NOT_FOUND',
+    message: 'Infringement car park not found',
+  };
+
   public static readonly INFRINGEMENT_ALREADY_PAID = {
     key: 'INFRINGEMENT_ALREADY_PAID',
     code: 'INFRINGEMENT_ALREADY_PAID',

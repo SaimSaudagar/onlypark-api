@@ -1,5 +1,5 @@
 import { DisputeStatus } from "../common/enums";
-import { IsString, IsNotEmpty, IsNumber, IsObject } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsObject, IsEmail } from "class-validator";
 
 export class CreateDisputeResponse {
     id: string;
@@ -58,7 +58,7 @@ export class CreateDisputeRequest {
     @IsNotEmpty()
     mobileNumber: string;
 
-    @IsString()
+    @IsEmail()
     @IsNotEmpty()
     email: string;
 

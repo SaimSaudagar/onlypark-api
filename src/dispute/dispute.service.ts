@@ -76,24 +76,24 @@ export class DisputeService {
             });
 
             // Send email notification to user
-            try {
-                await this.emailNotificationService.sendUsingTemplate({
-                    to: [dispute.email],
-                    templateKey: TemplateKeys.DISPUTE_RECEIVED,
-                    data: {
-                        name: `${dispute.firstName} ${dispute.lastName}`,
-                        ticketNumber: infringement.ticketNumber.toString(),
-                    },
-                });
-            } catch (emailError) {
-                // If email fails, rollback the transaction
-                await queryRunner.rollbackTransaction();
-                throw new CustomException(
-                    ErrorCode.EMAIL_SEND_FAILED.key,
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    { email: dispute.email, error: emailError.message }
-                );
-            }
+            // try {
+            //     await this.emailNotificationService.sendUsingTemplate({
+            //         to: [dispute.email],
+            //         templateKey: TemplateKeys.DISPUTE_RECEIVED,
+            //         data: {
+            //             name: `${dispute.firstName} ${dispute.lastName}`,
+            //             ticketNumber: infringement.ticketNumber.toString(),
+            //         },
+            //     });
+            // } catch (emailError) {
+            //     // If email fails, rollback the transaction
+            //     await queryRunner.rollbackTransaction();
+            //     throw new CustomException(
+            //         ErrorCode.EMAIL_SEND_FAILED.key,
+            //         HttpStatus.INTERNAL_SERVER_ERROR,
+            //         { email: dispute.email, error: emailError.message }
+            //     );
+            // }
 
             // Commit transaction
             await queryRunner.commitTransaction();

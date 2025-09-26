@@ -152,6 +152,46 @@ export class FileTemplate {
         type: TemplateType.EMAIL,
     };
 
+    public static readonly DISPUTE_RECEIVED = {
+        key: TemplateKeys.DISPUTE_RECEIVED,
+        fileName: 'dispute-received.html',
+        fileType: FileType.HTML,
+        title: 'Dispute Received',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
+    public static readonly DISPUTE_ACCEPTED = {
+        key: TemplateKeys.DISPUTE_ACCEPTED,
+        fileName: 'dispute-accepted.html',
+        fileType: FileType.HTML,
+        title: 'Dispute Accepted',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
+    public static readonly DISPUTE_REJECTED = {
+        key: TemplateKeys.DISPUTE_REJECTED,
+        fileName: 'dispute-rejected.html',
+        fileType: FileType.HTML,
+        title: 'Dispute Rejected',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
+    public static readonly DISPUTE_ACCEPTED_WITH_ADMIN_FEES = {
+        key: TemplateKeys.DISPUTE_ACCEPTED_WITH_ADMIN_FEES,
+        fileName: 'dispute-accepted-with-admin-fees.html',
+        fileType: FileType.HTML,
+        title: 'Dispute Accepted with Admin Fees',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
     public static get(key: string) {
         return FileTemplate[key];
     }
