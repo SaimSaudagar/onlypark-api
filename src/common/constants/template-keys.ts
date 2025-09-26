@@ -16,6 +16,12 @@ export class TemplateKeys {
     // Visitor Booking Templates
     public static readonly VISITOR_BOOKING_CONFIRMATION = 'VISITOR_BOOKING_CONFIRMATION';
 
+    // Dispute Templates
+    public static readonly DISPUTE_RECEIVED = 'DISPUTE_RECEIVED';
+    public static readonly DISPUTE_ACCEPTED = 'DISPUTE_ACCEPTED';
+    public static readonly DISPUTE_REJECTED = 'DISPUTE_REJECTED';
+    public static readonly DISPUTE_ACCEPTED_WITH_ADMIN_FEES = 'DISPUTE_ACCEPTED_WITH_ADMIN_FEES';
+
     // Whitelist Templates
     public static readonly WHITELIST_CONFIRMATION = 'WHITELIST_CONFIRMATION';
 
