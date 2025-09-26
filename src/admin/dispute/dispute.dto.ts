@@ -5,7 +5,7 @@ import { ApiGetBaseRequest } from '../../common';
 export class CreateDisputeRequest {
     @IsString()
     @IsNotEmpty()
-    registrationNo: string;
+    registrationNumber: string;
 
     @IsNumber()
     @IsNotEmpty()
@@ -77,7 +77,7 @@ export class UpdateDisputeRequest {
 export class CreateDisputeResponse {
     id: string;
     infringementId: string;
-    registrationNo: string;
+    registrationNumber: string;
     status: DisputeStatus;
 }
 
@@ -115,7 +115,7 @@ export class FindDisputeRequest extends ApiGetBaseRequest {
 
 export class FindDisputeResponse {
     id: string;
-    registrationNo: string;
+    registrationNumber: string;
     email: string;
     date: string;
     status: DisputeStatus;
@@ -132,7 +132,7 @@ export class FindOneDisputeResponse {
     state: string;
     zipCode: string;
     mobileNumber: string;
-    registrationNo: string;
+    registrationNumber: string;
     email: string;
     appeal: string;
     photos: object;

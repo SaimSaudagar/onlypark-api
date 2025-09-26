@@ -50,7 +50,7 @@ export class CronJobsService {
   //         for (const infringement of pendingInfringements) {
   //             try {
   //                 const emailRequest: SendEmailRequest = {
-  //                     to: infringement.registrationNo, // This would need to be mapped to actual email
+  //                     to: infringement.registrationNumber, // This would need to be mapped to actual email
   //                     subject: 'Infringement Reminder Notice',
   //                     body: `
   //           <h2>Infringement Reminder Notice</h2>

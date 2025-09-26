@@ -44,13 +44,13 @@ export class DisputeService {
             email,
             carMakeId,
             model,
-            registrationNo,
+            registrationNumber,
             appeal,
             photos,
             ticketNumber,
         } = request;
 
-        const infringementId = await this.infringementService.getInfringementId({ registrationNo, ticketNumber });
+        const infringementId = await this.infringementService.getInfringementId({ registrationNumber, ticketNumber });
 
         const dispute = await this.disputeRepository.save({
             infringementId,
@@ -64,7 +64,7 @@ export class DisputeService {
             email,
             carMakeId,
             model,
-            registrationNo,
+            registrationNumber,
             appeal,
             photos,
             status: DisputeStatus.PENDING,
@@ -75,7 +75,7 @@ export class DisputeService {
         return {
             id: dispute.id,
             infringementId: dispute.infringementId,
-            registrationNo: dispute.registrationNo,
+            registrationNumber: dispute.registrationNumber,
             status: dispute.status,
         };
     }
@@ -89,7 +89,7 @@ export class DisputeService {
         const orderOptions: FindOptionsOrder<Dispute> = {};
 
         if (search) {
-            whereOptions.registrationNo = ILike(`%${search}%`);
+            whereOptions.registrationNumber = ILike(`%${search}%`);
             whereOptions.email = ILike(`%${search}%`);
         }
 
@@ -113,7 +113,7 @@ export class DisputeService {
         // let response: FindDisputeResponse[] = [];
         const response = disputes.map(dispute => ({
             id: dispute.id,
-            registrationNo: dispute.registrationNo,
+            registrationNumber: dispute.registrationNumber,
             email: dispute.email,
             date: dispute.createdAt.toISOString(),
             status: dispute.status,
@@ -159,7 +159,7 @@ export class DisputeService {
             state: dispute.state,
             zipCode: dispute.zipCode,
             mobileNumber: dispute.mobileNumber,
-            registrationNo: dispute.registrationNo,
+            registrationNumber: dispute.registrationNumber,
             email: dispute.email,
             appeal: dispute.appeal,
             photos: dispute.photos,
@@ -277,6 +277,8 @@ export class DisputeService {
             await this.infringementService.updateStatus(dispute.infringementId, { 
                 status: InfringementStatus.WAIVED 
             });
+
+            console.log('dispute.email', dispute);
 
             // Send email notification
             try {

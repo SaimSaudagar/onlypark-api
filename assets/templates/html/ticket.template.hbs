@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Infringement Ticket</title>
@@ -14,7 +15,8 @@
     }
 
     .ticket {
-      width: 320px; /* narrow like a printed slip */
+      width: 320px;
+      /* narrow like a printed slip */
       margin: 0 auto;
       padding: 20px 10px;
       border: 1px dashed #000;
@@ -36,13 +38,14 @@
     }
   </style>
 </head>
+
 <body>
   <div class="ticket">
     <div class="row"><strong>Location:</strong> {{carParkName}}</div>
     <div class="row"><strong>Ticket Number:</strong> {{ticketNumber}}</div>
     <div class="row"><strong>Date:</strong> {{ticketDate}}</div>
     <div class="row"><strong>Time:</strong> {{ticketTime}}</div>
-    <div class="row"><strong>Reg No:</strong> {{registrationNo}}</div>
+    <div class="row"><strong>Reg No:</strong> {{registrationNumber}}</div>
     <div class="row"><strong>Make:</strong> {{carMakeName}}</div>
 
     <div class="section-title">Non-Compliance</div>
@@ -56,4 +59,5 @@
     </div>
   </div>
 </body>
+
 </html>

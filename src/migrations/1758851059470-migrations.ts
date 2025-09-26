@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1758627383981 implements MigrationInterface {
-    name = 'Migrations1758627383981'
+export class Migrations1758851059470 implements MigrationInterface {
+    name = 'Migrations1758851059470'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -390,7 +390,7 @@ export class Migrations1758627383981 implements MigrationInterface {
                 "ticketDate" TIMESTAMP WITH TIME ZONE,
                 "infringementCarParkId" uuid,
                 "comments" text,
-                "registrationNo" character varying NOT NULL,
+                "registrationNumber" character varying NOT NULL,
                 "photos" json,
                 "status" "public"."infringements_status_enum" NOT NULL DEFAULT 'Pending',
                 "carMakeId" uuid,
@@ -425,7 +425,7 @@ export class Migrations1758627383981 implements MigrationInterface {
                 "email" character varying NOT NULL,
                 "carMakeId" uuid,
                 "model" character varying NOT NULL,
-                "registrationNo" character varying NOT NULL,
+                "registrationNumber" character varying NOT NULL,
                 "appeal" text NOT NULL,
                 "responseReason" character varying,
                 "photos" json,

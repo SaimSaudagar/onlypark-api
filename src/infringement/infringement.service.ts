@@ -21,10 +21,10 @@ export class InfringementService {
   async getInfringementPayment(
     request: GetInfringementPaymentRequest
   ): Promise<GetInfringementPaymentResponse> {
-    const { ticketNumber } = request;
+    const { ticketNumber, registrationNumber } = request;
 
     const infringement = await this.infringementRepository.findOne({
-      where: { ticketNumber },
+      where: { ticketNumber, registrationNumber },
       relations: {
         infringementCarPark: true,
         reason: true,
@@ -68,7 +68,7 @@ export class InfringementService {
 
     const response = new GetInfringementPaymentResponse();
     response.ticketNumber = infringement.ticketNumber;
-    response.registration = infringement.registrationNo;
+    response.registration = infringement.registrationNumber;
     response.carMake = infringement.carMake?.carMakeName || "";
     response.date = date;
     response.time = time;
@@ -82,12 +82,12 @@ export class InfringementService {
   }
 
   async findInfringementForPayment(
-    registrationNo: string,
+    registrationNumber: string,
     ticketNumber: number
   ): Promise<Infringement | null> {
     return await this.infringementRepository.findOne({
       where: {
-        registrationNo,
+        registrationNumber,
         ticketNumber,
       },
       relations: {
@@ -100,13 +100,13 @@ export class InfringementService {
   }
 
   async updatePaymentStatus(
-    registrationNo: string,
+    registrationNumber: string,
     ticketNumber: number,
     status: InfringementStatus
   ): Promise<void> {
     const result = await this.infringementRepository.update(
       {
-        registrationNo,
+        registrationNumber,
         ticketNumber,
         status: InfringementStatus.NOT_PAID, // Only update if not already paid
       },

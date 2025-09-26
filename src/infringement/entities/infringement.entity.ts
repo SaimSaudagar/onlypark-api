@@ -32,7 +32,7 @@ export class Infringement extends BaseEntity {
   comments: string;
 
   @Column({ type: 'varchar', nullable: false })
-  registrationNo: string;
+  registrationNumber: string;
 
   @Column({ type: 'json', nullable: true })
   photos: object;

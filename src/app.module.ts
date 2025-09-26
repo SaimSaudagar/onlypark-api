@@ -45,8 +45,7 @@ import { SmsModule } from "./common/services/sms/sms.module";
 import { PushNotificationModule } from "./common/services/push-notification/push-notification.module";
 import { QrCodeModule } from "./common/services/qr-code/qr-code.module";
 import { GeolocationModule } from "./common/services/geolocation/geolocation.module";
-import { PaymentModule } from "./common/services/payment/payment.module";
-import { StripeModule } from "./common/services/payment/stripe.module";
+import { StripeModule } from "./common/services/stripe/stripe.module";
 import { FileUploadModule } from "./common/services/file-upload/file-upload.module";
 import { TemplateEngineModule } from "./common/services/template-engine/template-engine.module";
 import { UserModule } from "./user/user.module";
@@ -128,7 +127,6 @@ import { UserModule } from "./user/user.module";
     PushNotificationModule,
     QrCodeModule,
     GeolocationModule,
-    PaymentModule,
     StripeModule,
     FileUploadModule,
     TemplateEngineModule,

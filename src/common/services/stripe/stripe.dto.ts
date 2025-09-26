@@ -12,10 +12,6 @@ export class CreateStripeCheckoutRequest {
   @IsString()
   @IsNotEmpty()
   ticket_number: string;
-
-  @IsOptional()
-  @IsString()
-  car_make?: string;
 }
 
 export class CreateStripeCheckoutResponse {

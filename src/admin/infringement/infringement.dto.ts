@@ -6,18 +6,18 @@ import { ApiGetBaseRequest } from '../../common';
 export class ScanInfringementRequest {
   @IsNotEmpty()
   @IsString()
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class ScanInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class CreateInfringementRequest {
   @IsOptional()
-  @IsString()
+  @IsUUID()
   id?: string;
 
   @IsNotEmpty()
@@ -25,15 +25,15 @@ export class CreateInfringementRequest {
   infringementCarParkId: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   carMakeId?: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   reasonId: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   penaltyId: string;
 
   @IsOptional()
@@ -48,7 +48,7 @@ export class CreateInfringementRequest {
 export class CreateInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class UpdateInfringementRequest extends PartialType(CreateInfringementRequest) { }
@@ -82,7 +82,7 @@ export class GetTicketNumberRequest {
 
   @IsNotEmpty()
   @IsString()
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class FindInfringementRequest extends ApiGetBaseRequest {
@@ -98,7 +98,7 @@ export class FindInfringementRequest extends ApiGetBaseRequest {
 export class FindInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   ticketDate: Date;
 }
@@ -106,7 +106,7 @@ export class FindInfringementResponse {
 export class FindInfringementByIdResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   ticketDate: Date;
 }
@@ -133,7 +133,7 @@ export class GetTicketResponse {
   id: string;
   ticketNumber: number;
   ticketDate: Date;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   dueDate: Date;
   comments: string;
