@@ -274,58 +274,58 @@ export class CronJobsService {
   //     }
   // }
 
-  @Cron('* * * * *') // Every minute
-  async runVisitorBookingExpiryJob() {
-    if (this._visitorBookingExpiryRunning) {
-      this.logger.log('Visitor booking expiry job already running');
-      return;
-    }
+  // @Cron('* * * * *') // Every minute
+  // async runVisitorBookingExpiryJob() {
+  //   if (this._visitorBookingExpiryRunning) {
+  //     this.logger.log('Visitor booking expiry job already running');
+  //     return;
+  //   }
 
-    this.logger.log('Running visitor booking expiry job');
-    this._visitorBookingExpiryRunning = true;
+  //   this.logger.log('Running visitor booking expiry job');
+  //   this._visitorBookingExpiryRunning = true;
 
-    try {
-      // Find active visitor bookings that have expired
-      const now = new Date();
-      const expiredBookings = await this.datasource
-        .getRepository(VisitorBooking)
-        .find({
-          where: {
-            status: BookingStatus.ACTIVE,
-            endDate: LessThan(now),
-          },
-          relations: {
-            tenancy: true,
-            subCarPark: true,
-          },
-        });
+  //   try {
+  //     // Find active visitor bookings that have expired
+  //     const now = new Date();
+  //     const expiredBookings = await this.datasource
+  //       .getRepository(VisitorBooking)
+  //       .find({
+  //         where: {
+  //           status: BookingStatus.ACTIVE,
+  //           endDate: LessThan(now),
+  //         },
+  //         relations: {
+  //           tenancy: true,
+  //           subCarPark: true,
+  //         },
+  //       });
 
-      this.logger.log(`Found ${expiredBookings.length} expired visitor bookings to update`);
+  //     this.logger.log(`Found ${expiredBookings.length} expired visitor bookings to update`);
 
-      for (const booking of expiredBookings) {
-        try {
-          // Update booking status to expired
-          await this.datasource
-            .getRepository(VisitorBooking)
-            .update(booking.id, { status: BookingStatus.PENDING });
+  //     for (const booking of expiredBookings) {
+  //       try {
+  //         // Update booking status to expired
+  //         await this.datasource
+  //           .getRepository(VisitorBooking)
+  //           .update(booking.id, { status: BookingStatus.PENDING });
 
 
-          this.logger.log(`Updated visitor booking ${booking.id} to expired status`);
-        } catch (error) {
-          this.logger.error(`Failed to update visitor booking ${booking.id}:`, error);
-        }
-      }
+  //         this.logger.log(`Updated visitor booking ${booking.id} to expired status`);
+  //       } catch (error) {
+  //         this.logger.error(`Failed to update visitor booking ${booking.id}:`, error);
+  //       }
+  //     }
 
-      this.logger.log('Visitor booking expiry job completed');
-    } catch (error) {
-      this.logger.error('Visitor booking expiry job failed:', error);
-      throw new CustomException(
-        'VISITOR_BOOKING_EXPIRY_JOB_FAILED',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: error.message }
-      );
-    } finally {
-      this._visitorBookingExpiryRunning = false;
-    }
-  }
+  //     this.logger.log('Visitor booking expiry job completed');
+  //   } catch (error) {
+  //     this.logger.error('Visitor booking expiry job failed:', error);
+  //     throw new CustomException(
+  //       'VISITOR_BOOKING_EXPIRY_JOB_FAILED',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //       { error: error.message }
+  //     );
+  //   } finally {
+  //     this._visitorBookingExpiryRunning = false;
+  //   }
+  // }
 }

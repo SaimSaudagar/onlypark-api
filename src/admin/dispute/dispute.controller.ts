@@ -47,9 +47,7 @@ export class DisputeController {
     @Patch('update/:id')
     @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
     update(@Param('id') id: string, @Body() request: UpdateDisputeRequest) {
-        // Set the id from the URL parameter
-        request.id = id;
-        return this.disputeService.update(request);
+        return this.disputeService.update(id, request);
     }
 
     @Patch('/update-status')
