@@ -4,7 +4,7 @@ import { IsString, IsNotEmpty, IsNumber, IsObject, IsEmail } from "class-validat
 export class CreateDisputeResponse {
     id: string;
     infringementId: string;
-    registrationNo: string;
+    registrationNumber: string;
     status: DisputeStatus;
     firstName: string;
     lastName: string;
@@ -24,7 +24,7 @@ export class CreateDisputeResponse {
 export class CreateDisputeRequest {
     @IsString()
     @IsNotEmpty()
-    registrationNo: string;
+    registrationNumber: string;
 
     @IsNumber()
     @IsNotEmpty()

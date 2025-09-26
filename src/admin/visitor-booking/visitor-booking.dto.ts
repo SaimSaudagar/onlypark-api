@@ -15,7 +15,7 @@ export class CreateVisitorBookingRequest {
 
     @IsNotEmpty()
     @IsString()
-    registrationNo: string;
+    registrationNumber: string;
 
     @IsNotEmpty()
     @IsEmail()

@@ -1,13 +1,13 @@
-import { IsNumber, IsNotEmpty } from 'class-validator';
-import { InfringementStatus } from '../common/enums';
-
-
-
+import { IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
 export class GetInfringementPaymentRequest {
   @IsNumber()
   @IsNotEmpty()
   ticketNumber: number;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationNumber: string;
 }
 
 export class GetInfringementPaymentResponse {

@@ -60,16 +60,16 @@ export class InfringementService {
   async scan(
     request: ScanInfringementRequest
   ): Promise<ScanInfringementResponse> {
-    const { registrationNo } = request;
+    const { registrationNumber } = request;
 
     const infringement = await this.infringementRepository.save({
-      registrationNo,
+      registrationNumber,
     });
 
     const response = new ScanInfringementResponse();
     response.id = infringement.id;
     response.ticketNumber = infringement.ticketNumber;
-    response.registrationNo = infringement.registrationNo;
+    response.registrationNumber = infringement.registrationNumber;
 
     return response;
   }
@@ -123,7 +123,7 @@ export class InfringementService {
     const response = new CreateInfringementResponse();
     response.id = updated.id;
     response.ticketNumber = updated.ticketNumber;
-    response.registrationNo = updated.registrationNo;
+    response.registrationNumber = updated.registrationNumber;
 
     return response;
   }
@@ -170,7 +170,7 @@ export class InfringementService {
     const response = new CreateInfringementResponse();
     response.id = updatedInfringement.id;
     response.ticketNumber = updatedInfringement.ticketNumber;
-    response.registrationNo = updatedInfringement.registrationNo;
+    response.registrationNumber = updatedInfringement.registrationNumber;
 
     return response;
   }
@@ -186,7 +186,7 @@ export class InfringementService {
     const orderOptions: FindOptionsOrder<Infringement> = {};
 
     if (search) {
-      whereOptions.registrationNo = ILike(`%${search}%`);
+      whereOptions.registrationNumber = ILike(`%${search}%`);
     }
 
     if (status) {
@@ -208,7 +208,7 @@ export class InfringementService {
     const response = infringements.map((infringement) => ({
       id: infringement.id,
       ticketNumber: infringement.ticketNumber,
-      registrationNo: infringement.registrationNo,
+      registrationNumber: infringement.registrationNumber,
       status: infringement.status,
       ticketDate: infringement.ticketDate,
     }));
@@ -239,7 +239,7 @@ export class InfringementService {
     const response = new FindInfringementByIdResponse();
     response.id = infringement.id;
     response.ticketNumber = infringement.ticketNumber;
-    response.registrationNo = infringement.registrationNo;
+    response.registrationNumber = infringement.registrationNumber;
     response.status = infringement.status;
     response.ticketDate = infringement.ticketDate;
 
@@ -286,7 +286,7 @@ export class InfringementService {
     const infringement = await this.infringementRepository.findOne({
       where: {
         ticketNumber: request.ticketNumber,
-        registrationNo: request.registrationNo,
+        registrationNumber: request.registrationNumber,
       },
     });
 
@@ -459,7 +459,7 @@ export class InfringementService {
     response.id = infringement.id;
     response.ticketNumber = infringement.ticketNumber;
     response.ticketDate = infringement.ticketDate;
-    response.registrationNo = infringement.registrationNo;
+    response.registrationNumber = infringement.registrationNumber;
     response.status = infringement.status;
     response.dueDate = infringement.dueDate;
     response.comments = infringement.comments;
@@ -511,7 +511,7 @@ export class InfringementService {
           ? new Date(ticketData.ticketDate).toLocaleTimeString()
           : "N/A",
         carParkName: ticketData.carParkName || "N/A",
-        registrationNo: ticketData.registrationNo || "N/A",
+        registrationNumber: ticketData.registrationNumber || "N/A",
         carMakeName: ticketData.carMakeName || "N/A",
         reasonName: ticketData.reasonName || "N/A",
         penaltyName: ticketData.penaltyName || "N/A",

@@ -7,14 +7,14 @@ import { HttpStatus } from "@nestjs/common";
 import { ConfigKeys } from "../../configs";
 
 export interface StripeCheckoutMetadata {
-  registrationNo: string;
+  registrationNumber: string;
   ticketNumber: string;
   carMake: string;
 }
 
 export interface StripeCheckoutRequest {
   stripePriceId: string;
-  registrationNo: string;
+  registrationNumber: string;
   ticketNumber: string;
   carMake: string;
   successUrl: string;
@@ -53,7 +53,7 @@ export class StripeService {
       const price = await this.stripe.prices.retrieve(request.stripePriceId);
 
       const metadata: Record<string, string> = {
-        reg_no: request.registrationNo,
+        reg_no: request.registrationNumber,
         ticket_number: request.ticketNumber,
         car_make: request.carMake,
       };
@@ -70,7 +70,7 @@ export class StripeService {
         customer_creation: "always",
         allow_promotion_codes: true,
         phone_number_collection: { enabled: true },
-        success_url: `${request.successUrl}?session_id={CHECKOUT_SESSION_ID}&reg_no=${request.registrationNo}&ticket_number=${request.ticketNumber}`,
+        success_url: `${request.successUrl}?session_id={CHECKOUT_SESSION_ID}&reg_no=${request.registrationNumber}&ticket_number=${request.ticketNumber}`,
         cancel_url: request.cancelUrl,
         metadata,
       };
@@ -78,12 +78,12 @@ export class StripeService {
       if (price.type === "one_time") {
         sessionData.payment_intent_data = {
           metadata,
-          description: `Infringement Payment - Ticket #${request.ticketNumber} for vehicle ${request.registrationNo}`,
+          description: `Infringement Payment - Ticket #${request.ticketNumber} for vehicle ${request.registrationNumber}`,
         };
       } else {
         sessionData.subscription_data = {
           metadata,
-          description: `Infringement Payment - Ticket #${request.ticketNumber} for vehicle ${request.registrationNo}`,
+          description: `Infringement Payment - Ticket #${request.ticketNumber} for vehicle ${request.registrationNumber}`,
         };
       }
 
@@ -178,7 +178,7 @@ export class StripeService {
     }
 
     return {
-      registrationNo: reg_no,
+      registrationNumber: reg_no,
       ticketNumber: ticket_number,
       carMake: car_make || "",
     };
@@ -197,7 +197,7 @@ export class StripeService {
     }
 
     return {
-      registrationNo: reg_no,
+      registrationNumber: reg_no,
       ticketNumber: ticket_number,
       carMake: car_make || "",
     };
@@ -216,7 +216,7 @@ export class StripeService {
     }
 
     return {
-      registrationNo: reg_no,
+      registrationNumber: reg_no,
       ticketNumber: ticket_number,
       carMake: car_make || "",
     };

@@ -21,7 +21,7 @@ export class DisputeService {
 
     async create(request: CreateDisputeRequest): Promise<CreateDisputeResponse> {
         const {
-            registrationNo,
+            registrationNumber,
             ticketNumber,
             firstName,
             lastName,
@@ -38,7 +38,7 @@ export class DisputeService {
         } = request;
 
         // Get infringement details before starting transaction
-        const infringementId = await this.infringementService.getInfringementId({ registrationNo, ticketNumber });
+        const infringementId = await this.infringementService.getInfringementId({ registrationNumber, ticketNumber });
         const infringement = await this.infringementService.findById(infringementId);
         if (infringement.status === InfringementStatus.PAID) {
             throw new CustomException(
@@ -69,7 +69,7 @@ export class DisputeService {
                 email,
                 carMakeId,
                 model,
-                registrationNo,
+                registrationNumber,
                 appeal,
                 photos,
                 ticketNumber,
@@ -101,7 +101,7 @@ export class DisputeService {
             const response = new CreateDisputeResponse();
             response.id = dispute.id;
             response.infringementId = dispute.infringementId;
-            response.registrationNo = dispute.registrationNo;
+            response.registrationNumber = dispute.registrationNumber;
             response.status = dispute.status;
             response.firstName = dispute.firstName;
             response.lastName = dispute.lastName;

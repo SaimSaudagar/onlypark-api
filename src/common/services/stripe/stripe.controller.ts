@@ -93,9 +93,9 @@ export class StripeController {
       // Create checkout session
       const checkoutResponse = await this.stripeService.createCheckoutSession({
         stripePriceId,
-        registrationNo: request.reg_no,
+        registrationNumber: request.reg_no,
         ticketNumber: request.ticket_number,
-        carMake: request.car_make || infringement.carMake?.carMakeName || "",
+        carMake: infringement.carMake?.carMakeName || "",
         successUrl: `${frontendUrl}/payment/success`,
         cancelUrl: `${frontendUrl}/payment/cancel`,
       });
@@ -305,13 +305,13 @@ export class StripeController {
       // Check if already processed to prevent duplicate updates
       const existingInfringement =
         await this.infringementService.findInfringementForPayment(
-          metadata.registrationNo,
+          metadata.registrationNumber,
           parseInt(metadata.ticketNumber)
         );
 
       if (!existingInfringement) {
         this.logger.error("Infringement not found for payment update", {
-          registrationNo: metadata.registrationNo,
+          registrationNumber: metadata.registrationNumber,
           ticketNumber: metadata.ticketNumber,
         });
         return;
@@ -319,7 +319,7 @@ export class StripeController {
 
       if (existingInfringement.status === InfringementStatus.PAID) {
         this.logger.log("Infringement already marked as paid", {
-          registrationNo: metadata.registrationNo,
+          registrationNumber: metadata.registrationNumber,
           ticketNumber: metadata.ticketNumber,
         });
         return;
@@ -327,19 +327,19 @@ export class StripeController {
 
       // Update infringement status to paid
       await this.infringementService.updatePaymentStatus(
-        metadata.registrationNo,
+        metadata.registrationNumber,
         parseInt(metadata.ticketNumber),
         InfringementStatus.PAID
       );
 
       this.logger.log("Successfully updated infringement status to paid", {
-        registrationNo: metadata.registrationNo,
+        registrationNumber: metadata.registrationNumber,
         ticketNumber: metadata.ticketNumber,
         stripeId,
       });
     } catch (error) {
       this.logger.error("Error updating infringement status", {
-        registrationNo: metadata.registrationNo,
+        registrationNumber: metadata.registrationNumber,
         ticketNumber: metadata.ticketNumber,
         stripeId,
         error: error.message,

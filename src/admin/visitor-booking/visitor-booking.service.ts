@@ -29,7 +29,7 @@ export class VisitorBookingService {
         const {
             referenceNumber,
             subCarParkId,
-            registrationNo,
+            registrationNumber,
             email,
             timeTo,
             timeFrom,
@@ -81,7 +81,7 @@ export class VisitorBookingService {
 
         const existingBooking = await this.visitorBookingRepository
             .createQueryBuilder('visitorBooking')
-            .where('visitorBooking.vehicleReg = :vehicleReg', { vehicleReg: registrationNo })
+            .where('visitorBooking.vehicleReg = :vehicleReg', { vehicleReg: registrationNumber })
             .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
             .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
             .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
@@ -113,7 +113,7 @@ export class VisitorBookingService {
         // Create booking
         const visitorBooking = await this.visitorBookingRepository.save({
             email,
-            vehicleReg: registrationNo,
+            vehicleReg: registrationNumber,
             tenancyId,
             subCarParkCode: subCarPark.subCarParkCode,
             subCarParkId: subCarPark.id,

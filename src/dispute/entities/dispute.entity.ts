@@ -56,7 +56,7 @@ export class Dispute extends BaseEntity {
     model: string;
 
     @Column({ type: 'varchar', nullable: false })
-    registrationNo: string;
+    registrationNumber: string;
 
     @Column({ type: 'text', nullable: false })
     appeal: string;

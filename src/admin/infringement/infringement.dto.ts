@@ -6,13 +6,13 @@ import { ApiGetBaseRequest } from '../../common';
 export class ScanInfringementRequest {
   @IsNotEmpty()
   @IsString()
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class ScanInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class CreateInfringementRequest {
@@ -48,7 +48,7 @@ export class CreateInfringementRequest {
 export class CreateInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class UpdateInfringementRequest extends PartialType(CreateInfringementRequest) { }
@@ -82,7 +82,7 @@ export class GetTicketNumberRequest {
 
   @IsNotEmpty()
   @IsString()
-  registrationNo: string;
+  registrationNumber: string;
 }
 
 export class FindInfringementRequest extends ApiGetBaseRequest {
@@ -98,7 +98,7 @@ export class FindInfringementRequest extends ApiGetBaseRequest {
 export class FindInfringementResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   ticketDate: Date;
 }
@@ -106,7 +106,7 @@ export class FindInfringementResponse {
 export class FindInfringementByIdResponse {
   id: string;
   ticketNumber: number;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   ticketDate: Date;
 }
@@ -133,7 +133,7 @@ export class GetTicketResponse {
   id: string;
   ticketNumber: number;
   ticketDate: Date;
-  registrationNo: string;
+  registrationNumber: string;
   status: InfringementStatus;
   dueDate: Date;
   comments: string;
