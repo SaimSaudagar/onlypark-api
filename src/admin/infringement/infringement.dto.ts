@@ -109,6 +109,12 @@ export class FindInfringementByIdResponse {
   registrationNumber: string;
   status: InfringementStatus;
   ticketDate: Date;
+  infringementCarParkId: string;
+  reasonId: string;
+  penaltyId: string;
+  carMakeId: string;
+  photos: object;
+  comments: string;
 }
 
 export class GetPenaltyResponse {

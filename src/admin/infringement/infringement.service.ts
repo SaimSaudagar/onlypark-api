@@ -242,6 +242,12 @@ export class InfringementService {
     response.registrationNumber = infringement.registrationNumber;
     response.status = infringement.status;
     response.ticketDate = infringement.ticketDate;
+    response.infringementCarParkId = infringement.infringementCarParkId;
+    response.reasonId = infringement.reasonId;
+    response.penaltyId = infringement.penaltyId;
+    response.carMakeId = infringement.carMakeId;
+    response.photos = infringement.photos;
+    response.comments = infringement.comments;
 
     return response;
   }
