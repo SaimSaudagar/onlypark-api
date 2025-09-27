@@ -154,7 +154,7 @@ export class DisputeService {
             lastName: dispute.lastName,
             companyName: dispute.companyName,
             carMakeName: dispute.carMake.carMakeName,
-            carParkName: dispute.infringement.infringementCarPark.carParkName,
+            carParkName: dispute.infringement?.infringementCarPark?.carParkName,
             address: dispute.address,
             state: dispute.state,
             zipCode: dispute.zipCode,
