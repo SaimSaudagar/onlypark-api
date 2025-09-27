@@ -148,8 +148,6 @@ export class DisputeService {
             );
         }
 
-        console.log('dispute', dispute);
-
         let response: FindOneDisputeResponse = {
             id: dispute.id,
             firstName: dispute.firstName,
