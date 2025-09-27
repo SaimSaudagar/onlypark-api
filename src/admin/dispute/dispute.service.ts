@@ -165,6 +165,8 @@ export class DisputeService {
             email: dispute.email,
             appeal: dispute.appeal,
             photos: dispute.photos,
+            responsePhotos: dispute.responsePhotos as string[],
+            responseReason: dispute.responseReason,
             model: dispute.model,
             status: dispute.status,
             date: dispute.createdAt.toISOString(),

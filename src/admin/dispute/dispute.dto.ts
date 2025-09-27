@@ -139,4 +139,6 @@ export class FindOneDisputeResponse {
     carParkName: string;
     date: string;
     status: DisputeStatus;
+    responseReason?: string;
+    responsePhotos?: string[];
 }
