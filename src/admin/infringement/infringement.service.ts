@@ -246,7 +246,7 @@ export class InfringementService {
     response.reasonId = infringement.reasonId;
     response.penaltyId = infringement.penaltyId;
     response.carMakeId = infringement.carMakeId;
-    response.photos = infringement.photos;
+    response.photos = infringement.photos as string[];
     response.comments = infringement.comments;
 
     return response;

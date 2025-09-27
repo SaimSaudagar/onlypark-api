@@ -113,7 +113,7 @@ export class FindInfringementByIdResponse {
   reasonId: string;
   penaltyId: string;
   carMakeId: string;
-  photos: object;
+  photos: string[];
   comments: string;
 }
 

@@ -35,7 +35,7 @@ export class Infringement extends BaseEntity {
   registrationNumber: string;
 
   @Column({ type: 'json', nullable: true })
-  photos: object;
+  photos: string[];
 
   @Column({
     type: 'enum',
