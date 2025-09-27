@@ -52,11 +52,15 @@ export class StripeService {
       // Retrieve the price to determine if it's one-time or subscription
       const price = await this.stripe.prices.retrieve(request.stripePriceId);
 
+      console.log('price', price);
+
       const metadata: Record<string, string> = {
         reg_no: request.registrationNumber,
         ticket_number: request.ticketNumber,
         car_make: request.carMake,
       };
+
+      console.log('metadata', metadata);
 
       const sessionData: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ["card"],
