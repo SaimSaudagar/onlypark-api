@@ -38,7 +38,7 @@ export class DisputeService {
         } = request;
 
         // Get infringement details before starting transaction
-        const infringementId = await this.infringementService.getInfringementId({ registrationNumber, ticketNumber });
+        const infringementId = await this.infringementService.getInfringementId({ registrationNumber, ticketNumber, status: InfringementStatus.NOT_PAID });
         const infringement = await this.infringementService.findById(infringementId);
         if (infringement.status === InfringementStatus.PAID) {
             throw new CustomException(

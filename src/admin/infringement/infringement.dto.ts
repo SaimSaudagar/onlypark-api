@@ -83,6 +83,10 @@ export class GetTicketNumberRequest {
   @IsNotEmpty()
   @IsString()
   registrationNumber: string;
+
+  @IsOptional()
+  @IsUUID()
+  status?: InfringementStatus;
 }
 
 export class FindInfringementRequest extends ApiGetBaseRequest {
