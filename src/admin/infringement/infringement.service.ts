@@ -78,7 +78,6 @@ export class InfringementService {
     request: CreateInfringementRequest
   ): Promise<CreateInfringementResponse> {
     const {
-      id,
       infringementCarParkId,
       carMakeId,
       reasonId,
@@ -86,17 +85,6 @@ export class InfringementService {
       photos,
       comments,
     } = request;
-
-    // make sure the infringement exists
-    const infringement = await this.infringementRepository.findOne({
-      where: { id },
-    });
-    if (!infringement) {
-      throw new CustomException(
-        ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST
-      );
-    }
 
     // calculate due date = 14 days from now at end of day
     const dueDate = new Date();
@@ -106,19 +94,18 @@ export class InfringementService {
     // set today's date for ticket
     const ticketDate = new Date();
 
-    // update fields
-    infringement.infringementCarParkId = infringementCarParkId;
-    infringement.carMakeId = carMakeId;
-    infringement.reasonId = reasonId;
-    infringement.penaltyId = penaltyId;
-    infringement.photos = photos;
-    infringement.status = InfringementStatus.NOT_PAID;
-    infringement.dueDate = dueDate;
-    infringement.ticketDate = ticketDate;
-    infringement.comments = comments;
-
     // save updated record
-    const updated = await this.infringementRepository.save(infringement);
+    const updated = await this.infringementRepository.save({
+      infringementCarParkId,
+      carMakeId,
+      reasonId,
+      penaltyId,
+      photos,
+      comments,
+      dueDate,
+      ticketDate,
+      status: InfringementStatus.NOT_PAID,
+    });
 
     const response = new CreateInfringementResponse();
     response.id = updated.id;
