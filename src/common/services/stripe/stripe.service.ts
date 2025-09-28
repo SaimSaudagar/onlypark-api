@@ -48,7 +48,9 @@ export class StripeService {
   ): Promise<StripeCheckoutResponse> {
     try {
       this.logger.log("Creating Stripe checkout session", { request });
-
+      console.log('cehclllllll', this.configService.get<string>(
+        ConfigKeys.STRIPE_SECRET_KEY
+      ));
       // Retrieve the price to determine if it's one-time or subscription
       const price = await this.stripe.prices.retrieve(request.stripePriceId);
 
