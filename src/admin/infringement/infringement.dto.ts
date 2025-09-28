@@ -17,6 +17,10 @@ export class ScanInfringementResponse {
 export class CreateInfringementRequest {
   @IsNotEmpty()
   @IsUUID()
+  id: string;
+
+  @IsNotEmpty()
+  @IsUUID()
   infringementCarParkId: string;
 
   @IsNotEmpty()
