@@ -42,5 +42,5 @@ jobs:
             npm run seed:run
 
             echo "Restarting app with PM2 and reloading env..."
-            pm2 reload onlypark-api --update-env || pm2 start dist/main.js --name onlypark-api
+            pm2 reload onlypark-api --update-env || pm2 start dist/src/main.js --name onlypark-api
           EOF
