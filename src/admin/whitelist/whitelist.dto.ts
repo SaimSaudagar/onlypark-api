@@ -73,7 +73,7 @@ export class FindWhitelistRequest extends ApiGetBaseRequest {
     search?: string;
 
     @IsOptional()
-    @IsIn([WhitelistType.HOUR, WhitelistType.DATE, WhitelistType.PERMANENT])
+    @IsIn([WhitelistType.SELF_SERVE, WhitelistType.HOUR, WhitelistType.DATE, WhitelistType.PERMANENT])
     type?: WhitelistType;
 }
 
