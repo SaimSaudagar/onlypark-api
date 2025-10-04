@@ -20,7 +20,7 @@ export class WhitelistService {
     ) { }
 
     async findAll(request: FindWhitelistRequest): Promise<ApiGetBaseResponse<FindWhitelistResponse>> {
-        const { search, sortField, sortOrder, pageNo, pageSize } = request;
+        const { search, sortField, sortOrder, pageNo, pageSize, type } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
@@ -34,6 +34,10 @@ export class WhitelistService {
 
         if(sortField){
             orderOptions[sortField] = sortOrder;
+        }
+
+        if (type) {
+            whereOptions.whitelistType = type;
         }
 
         const [whitelists, totalItems] = await this.whitelistRepository.findAndCount({
