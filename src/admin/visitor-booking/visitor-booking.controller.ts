@@ -9,6 +9,7 @@ import {
     HttpStatus,
     HttpCode,
     UseGuards,
+    Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
@@ -30,7 +31,7 @@ export class VisitorBookingController {
     constructor(private readonly visitorBookingService: VisitorBookingService) { }
 
     @Get()
-    findAll(request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
+    findAll(@Query() request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
         return this.visitorBookingService.findAll(request);
     }
 

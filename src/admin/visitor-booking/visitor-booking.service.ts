@@ -134,7 +134,7 @@ export class VisitorBookingService {
     }
 
     async findAll(request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
-        const { search, sortField, sortOrder, pageNo, pageSize } = request;
+        const { search, sortField, sortOrder, pageNo, pageSize, status } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
@@ -145,6 +145,10 @@ export class VisitorBookingService {
             whereOptions.registrationNumber = ILike(`%${search}%`);
             whereOptions.email = ILike(`%${search}%`);
         }   
+
+        if (status) {
+            whereOptions.status = status;
+        }
 
         if (sortField) {
             orderOptions[sortField] = sortOrder;
