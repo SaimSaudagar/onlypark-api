@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
 import {
     CreateVisitorBookingRequest,
     VisitorBookingResponse,
-    VisitorBookingListResponse,
     VisitorBookingCreateResponse,
     VisitorBookingDeleteResponse,
+    FindVisitorBookingResponse,
+    FindVisitorBookingRequest,
 } from './visitor-booking.dto';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
@@ -81,7 +82,7 @@ export class VisitorBookingService {
 
         const existingBooking = await this.visitorBookingRepository
             .createQueryBuilder('visitorBooking')
-            .where('visitorBooking.vehicleReg = :vehicleReg', { vehicleReg: registrationNumber })
+            .where('visitorBooking.registrationNumber = :registrationNumber', { registrationNumber: registrationNumber })
             .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
             .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
             .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
@@ -113,7 +114,7 @@ export class VisitorBookingService {
         // Create booking
         const visitorBooking = await this.visitorBookingRepository.save({
             email,
-            vehicleReg: registrationNumber,
+            registrationNumber: registrationNumber,
             tenancyId,
             subCarParkCode: subCarPark.subCarParkCode,
             subCarParkId: subCarPark.id,
@@ -132,9 +133,28 @@ export class VisitorBookingService {
         };
     }
 
-    async findAll(options?: FindManyOptions<VisitorBooking>): Promise<VisitorBookingListResponse[]> {
+    async findAll(request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
+        const { search, sortField, sortOrder, pageNo, pageSize } = request;
+        const skip = (pageNo - 1) * pageSize;
+        const take = pageSize;
+
+        const whereOptions: FindOptionsWhere<VisitorBooking> = {};
+        const orderOptions: FindOptionsOrder<VisitorBooking> = {};
+
+        if (search) {
+            whereOptions.registrationNumber = ILike(`%${search}%`);
+            whereOptions.email = ILike(`%${search}%`);
+        }   
+
+        if (sortField) {
+            orderOptions[sortField] = sortOrder;
+        }
+
         const visitorBookings = await this.visitorBookingRepository.find({
-            ...options,
+            ...whereOptions,
+            order: orderOptions,
+            skip,
+            take,
             relations: {
                 tenancy: true,
                 subCarPark: true,
@@ -222,9 +242,9 @@ export class VisitorBookingService {
         };
     }
 
-    private isValidVehicleRegistration(vehicleReg: string): boolean {
+    private isValidregistrationNumberistration(registrationNumber: string): boolean {
         // Basic validation - can be enhanced based on requirements
         const regex = /^[A-Z0-9]{1,10}$/i;
-        return regex.test(vehicleReg) && vehicleReg.length >= 3;
+        return regex.test(registrationNumber) && registrationNumber.length >= 3;
     }
 }

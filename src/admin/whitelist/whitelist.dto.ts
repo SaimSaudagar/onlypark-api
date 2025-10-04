@@ -1,18 +1,18 @@
-import { IsNotEmpty, IsString, IsOptional, IsUUID } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsOptional, IsUUID, IsEnum, IsDateString, IsNumber, IsEmail } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
+import { ApiGetBaseRequest, WhitelistStatus, WhitelistType } from 'src/common';
 
-export class CreateWhitelistDto {
+export class CreateWhitelistRequest {
     @IsNotEmpty()
     @IsString()
-    vehicalRegistration: string;
+    registrationNumber: string;
 
     @IsOptional()
     @IsString()
     comments?: string;
 
     @IsNotEmpty()
-    @IsString()
+    @IsEmail()
     email: string;
 
     @IsOptional()
@@ -20,15 +20,40 @@ export class CreateWhitelistDto {
     subCarParkId?: string;
 
     @IsOptional()
+    @IsEnum(WhitelistType)
+    type: WhitelistType;
+
+    @IsOptional()
+    @IsNumber()
+    duration?: number;
+
+    @IsOptional()
+    @IsDateString()
+    startDate?: string;
+
+    @IsOptional()
+    @IsDateString()
+    endDate?: string;
+
+    @IsOptional()
     @IsUUID()
     tenancyId?: string;
 }
 
-export class UpdateWhitelistDto extends PartialType(CreateWhitelistDto) { }
-
-export class WhitelistResponseDto {
+export class CreateWhitelistResponse {
     id: string;
-    vehicalRegistration: string;
+    registrationNumber: string;
+    comments?: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export class UpdateWhitelistDto extends PartialType(CreateWhitelistRequest) { }
+
+export class WhitelistResponse {
+    id: string;
+    registrationNumber: string;
     comments?: string;
     email: string;
     createdAt: Date;
@@ -42,4 +67,26 @@ export class WhitelistResponseDto {
         id: string;
         name: string;
     };
+}
+
+export class FindWhitelistRequest extends ApiGetBaseRequest {
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsEnum(WhitelistType)
+    type?: WhitelistType;
+}
+
+export class FindWhitelistResponse {
+    id: string;
+    registrationNumber: string;
+    email: string;
+    startDate: Date;
+    endDate: Date;
+    type: WhitelistType;
+    carParkName: string;
+    tenancyName: string;
+    status: WhitelistStatus;
 }

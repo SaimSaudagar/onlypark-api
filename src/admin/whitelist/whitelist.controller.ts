@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { WhitelistService } from './whitelist.service';
-import { CreateWhitelistDto, UpdateWhitelistDto } from './whitelist.dto';
+import { CreateWhitelistRequest, CreateWhitelistResponse, FindWhitelistRequest, FindWhitelistResponse, UpdateWhitelistDto } from './whitelist.dto';
 import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 import { AllowedRoles } from '../../auth/guards/roles.guard';
 import { UserType } from '../../common/enums';
@@ -26,21 +26,28 @@ export class WhitelistController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
-    findAll(@Query() query: any) {
-        return this.whitelistService.findAll(query);
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+    findAll(@Query() request: FindWhitelistRequest): Promise<FindWhitelistResponse[]> {
+        return this.whitelistService.findAll(request);
+    }
+
+    @Post()
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+    create(@Body() request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
+        return this.whitelistService.create(request);
     }
 
     @Get(':id')
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
     findOne(@Param('id') id: string) {
         return this.whitelistService.findOne({ where: { id } });
     }
 
     @Patch(':id')
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
     update(@Param('id') id: string, @Body() updateDto: UpdateWhitelistDto) {
         return this.whitelistService.update(id, updateDto);
     }
@@ -48,7 +55,7 @@ export class WhitelistController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.ADMIN)
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
     remove(@Param('id') id: string) {
         return this.whitelistService.remove(id);
     }

@@ -17,9 +17,10 @@ import {
     CreateVisitorBookingRequest,
     UpdateVisitorBookingRequest,
     VisitorBookingResponse,
-    VisitorBookingListResponse,
     VisitorBookingCreateResponse,
     VisitorBookingDeleteResponse,
+    FindVisitorBookingRequest,
+    FindVisitorBookingResponse,
 } from './visitor-booking.dto';
 
 @ApiTags('Admin => Visitor Booking')
@@ -29,8 +30,8 @@ export class VisitorBookingController {
     constructor(private readonly visitorBookingService: VisitorBookingService) { }
 
     @Get()
-    findAll(): Promise<VisitorBookingListResponse[]> {
-        return this.visitorBookingService.findAll();
+    findAll(request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
+        return this.visitorBookingService.findAll(request);
     }
 
     @Get(':id')
@@ -38,18 +39,18 @@ export class VisitorBookingController {
         return this.visitorBookingService.findOne({ where: { id } });
     }
 
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    create(@Body() request: CreateVisitorBookingRequest): Promise<VisitorBookingCreateResponse> {
-        return this.visitorBookingService.create(request);
-    }
+    // @Post()
+    // @HttpCode(HttpStatus.CREATED)
+    // create(@Body() request: CreateVisitorBookingRequest): Promise<VisitorBookingCreateResponse> {
+    //     return this.visitorBookingService.create(request);
+    // }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateDto: UpdateVisitorBookingRequest)
+    // @Patch(':id')
+    // update(@Param('id') id: string, @Body() updateDto: UpdateVisitorBookingRequest)
     // :Promise<VisitorBookingUpdateResponse> 
-    {
-        // return this.visitorBookingService.update(id, updateDto);
-    }
+    // {
+    //     return this.visitorBookingService.update(id, updateDto);
+    // }
 
     @Delete(':id')
     @HttpCode(HttpStatus.OK)

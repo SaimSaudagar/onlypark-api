@@ -34,6 +34,11 @@ export enum BookingStatus {
   CHECKOUT = 'Checkout',
 }
 
+export enum WhitelistStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+}
+
 // Parking Spot Enums
 export enum ParkingSpotType {
   PARENT = 'Parent',

@@ -18,6 +18,18 @@ export class ErrorCode {
     message: 'Invalid event date',
   };
 
+  public static readonly INVALID_DATE_RANGE = {
+    key: 'INVALID_EVENT_DATE_RANGE',
+    code: 'INVALID_EVENT_DATE_RANGE',
+    message: 'Event start date must be before end date',
+  };
+
+  public static readonly INVALID_DURATION = {
+    key: 'INVALID_DURATION',
+    code: 'INVALID_DURATION',
+    message: 'Invalid duration',
+  };
+
   public static readonly INVALID_FREE_HOURS = {
     key: 'INVALID_FREE_HOURS',
     code: 'INVALID_FREE_HOURS',
