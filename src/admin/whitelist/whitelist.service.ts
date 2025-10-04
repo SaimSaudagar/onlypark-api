@@ -5,7 +5,7 @@ import { Whitelist } from '../../whitelist/entities/whitelist.entity';
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { CreateWhitelistRequest, CreateWhitelistResponse, FindWhitelistRequest, FindWhitelistResponse } from './whitelist.dto';
+import { CreateWhitelistRequest, CreateWhitelistResponse, FindWhitelistRequest, FindWhitelistResponse, UpdateWhitelistRequest, UpdateWhitelistResponse } from './whitelist.dto';
 import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
 import { TenancyService } from '../../tenancy/tenancy.service';
 import { ApiGetBaseResponse, WhitelistStatus, WhitelistType } from '../../common';
@@ -264,7 +264,7 @@ export class WhitelistService {
         };
     }
 
-    async update(id: string, updateDto: any) {
+    async update(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
         const entity = await this.whitelistRepository.findOne({ where: { id } });
         if (!entity) {
             throw new CustomException(
@@ -273,8 +273,191 @@ export class WhitelistService {
             );
         }
 
-        Object.assign(entity, updateDto);
-        return await this.whitelistRepository.save(entity);
+        const { type } = request;
+
+        // Route to appropriate booking type handler
+        switch (type) {
+            case WhitelistType.HOUR:
+                return await this.updateHourlyBooking(id, request);
+            case WhitelistType.DATE:
+                return await this.updateDateBooking(id, request);
+            case WhitelistType.PERMANENT:
+                return await this.updatePermanentBooking(id, request);
+            default:
+                throw new CustomException(
+                    ErrorCode.CLIENT_ERROR.key,
+                    HttpStatus.BAD_REQUEST,
+                );
+        }
+    }
+
+    private async updateHourlyBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
+        const { registrationNumber, email, subCarParkId, tenancyId, duration } = request;
+
+        // Validate required fields for hourly booking
+        if (duration !== undefined && duration <= 0) {
+            throw new CustomException(
+                ErrorCode.INVALID_DURATION.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Validate subCarPark if provided
+        if (subCarParkId) {
+            const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
+            if (!subCarPark) {
+                throw new CustomException(
+                    ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Validate tenancy if provided
+        if (tenancyId) {
+            const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
+            if (!tenancy) {
+                throw new CustomException(
+                    ErrorCode.TENANCY_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Get existing entity
+        const entity = await this.whitelistRepository.findOne({ where: { id } });
+        
+        // Calculate new dates if duration is provided
+        let startDateObj = entity.startDate;
+        let endDateObj = entity.endDate;
+        
+        if (duration !== undefined) {
+            startDateObj = new Date(); // Current date
+            endDateObj = new Date(startDateObj.getTime() + (duration * 60 * 60 * 1000)); // duration in hours
+        }
+
+        // Update entity
+        Object.assign(entity, {
+            ...request,
+            startDate: startDateObj,
+            endDate: endDateObj,
+        });
+
+        const updatedEntity = await this.whitelistRepository.save(entity);
+
+        return {
+            id: updatedEntity.id,
+            registrationNumber: updatedEntity.registrationNumber,
+            email: updatedEntity.email,
+        };
+    }
+
+    private async updateDateBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
+        const { registrationNumber, email, subCarParkId, tenancyId, endDate } = request;
+
+        // Validate subCarPark if provided
+        if (subCarParkId) {
+            const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
+            if (!subCarPark) {
+                throw new CustomException(
+                    ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Validate tenancy if provided
+        if (tenancyId) {
+            const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
+            if (!tenancy) {
+                throw new CustomException(
+                    ErrorCode.TENANCY_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Get existing entity
+        const entity = await this.whitelistRepository.findOne({ where: { id } });
+        
+        // Calculate new dates if endDate is provided
+        let startDateObj = entity.startDate;
+        let endDateObj = entity.endDate;
+        
+        if (endDate) {
+            startDateObj = new Date(); // Current date
+            endDateObj = new Date(endDate);
+
+            if (startDateObj >= endDateObj) {
+                throw new CustomException(
+                    ErrorCode.INVALID_DATE_RANGE.key,
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+
+        // Update entity
+        Object.assign(entity, {
+            ...request,
+            startDate: startDateObj,
+            endDate: endDateObj,
+        });
+
+        const updatedEntity = await this.whitelistRepository.save(entity);
+
+        return {
+            id: updatedEntity.id,
+            registrationNumber: updatedEntity.registrationNumber,
+            email: updatedEntity.email,
+        };
+    }
+
+    private async updatePermanentBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
+        const { registrationNumber, email, subCarParkId, tenancyId } = request;
+
+        // Validate subCarPark if provided
+        if (subCarParkId) {
+            const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
+            if (!subCarPark) {
+                throw new CustomException(
+                    ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Validate tenancy if provided
+        if (tenancyId) {
+            const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
+            if (!tenancy) {
+                throw new CustomException(
+                    ErrorCode.TENANCY_NOT_FOUND.key,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+        }
+
+        // Get existing entity
+        const entity = await this.whitelistRepository.findOne({ where: { id } });
+        
+        // Calculate new dates for permanent booking
+        const startDateObj = new Date(); // Current date
+        const endDateObj = new Date(startDateObj.getTime() + (365 * 24 * 60 * 60 * 1000)); // 1 year from now
+
+        // Update entity
+        Object.assign(entity, {
+            ...request,
+            startDate: startDateObj,
+            endDate: endDateObj,
+        });
+
+        const updatedEntity = await this.whitelistRepository.save(entity);
+
+        return {
+            id: updatedEntity.id,
+            registrationNumber: updatedEntity.registrationNumber,
+            email: updatedEntity.email,
+        };
     }
 
     async remove(id: string) {

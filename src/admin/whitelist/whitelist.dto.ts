@@ -47,7 +47,14 @@ export class CreateWhitelistResponse {
     email: string;
 }
 
-export class UpdateWhitelistDto extends PartialType(CreateWhitelistRequest) { }
+export class UpdateWhitelistRequest extends CreateWhitelistRequest { }
+
+export class UpdateWhitelistResponse {
+    id: string;
+    registrationNumber: string;
+    comments?: string;
+    email: string;
+}
 
 export class WhitelistResponse {
     id: string;

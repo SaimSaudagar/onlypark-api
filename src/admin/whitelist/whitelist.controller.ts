@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { WhitelistService } from './whitelist.service';
-import { CreateWhitelistRequest, CreateWhitelistResponse, FindWhitelistRequest, FindWhitelistResponse, UpdateWhitelistDto } from './whitelist.dto';
+import { CreateWhitelistRequest, CreateWhitelistResponse, FindWhitelistRequest, FindWhitelistResponse, UpdateWhitelistRequest } from './whitelist.dto';
 import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 import { AllowedRoles } from '../../auth/guards/roles.guard';
 import { UserType } from '../../common/enums';
@@ -49,8 +49,8 @@ export class WhitelistController {
     @Patch(':id')
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
     @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
-    update(@Param('id') id: string, @Body() updateDto: UpdateWhitelistDto) {
-        return this.whitelistService.update(id, updateDto);
+    update(@Param('id') id: string, @Body() request: UpdateWhitelistRequest) {
+        return this.whitelistService.update(id, request);
     }
 
     @Delete(':id')
