@@ -292,7 +292,7 @@ export class WhitelistService {
     }
 
     private async updateHourlyBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, duration } = request;
+        const { subCarParkId, tenancyId, duration } = request;
 
         // Validate required fields for hourly booking
         if (duration !== undefined && duration <= 0) {
@@ -353,7 +353,7 @@ export class WhitelistService {
     }
 
     private async updateDateBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, endDate } = request;
+        const {subCarParkId, tenancyId, endDate } = request;
 
         // Validate subCarPark if provided
         if (subCarParkId) {
@@ -413,7 +413,7 @@ export class WhitelistService {
     }
 
     private async updatePermanentBooking(id: string, request: UpdateWhitelistRequest): Promise<UpdateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId } = request;
+        const { subCarParkId, tenancyId } = request;
 
         // Validate subCarPark if provided
         if (subCarParkId) {
