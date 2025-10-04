@@ -16,6 +16,7 @@ import { HttpStatus } from '@nestjs/common';
 import { BookingStatus } from '../../common/enums';
 import { TenancyService } from '../../tenancy/tenancy.service';
 import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
+import { ApiGetBaseResponse } from '../../common';
 
 @Injectable()
 export class VisitorBookingService {
@@ -133,7 +134,7 @@ export class VisitorBookingService {
         };
     }
 
-    async findAll(request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
+    async findAll(request: FindVisitorBookingRequest): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
         const { search, sortField, sortOrder, pageNo, pageSize, status } = request;
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
@@ -154,7 +155,7 @@ export class VisitorBookingService {
             orderOptions[sortField] = sortOrder;
         }
 
-        const visitorBookings = await this.visitorBookingRepository.find({
+        const [visitorBookings, totalItems] = await this.visitorBookingRepository.findAndCount({
             ...whereOptions,
             order: orderOptions,
             skip,
@@ -165,7 +166,7 @@ export class VisitorBookingService {
             },
         });
 
-        return visitorBookings.map(visitorBooking => ({
+        const response = visitorBookings.map(visitorBooking => ({
             id: visitorBooking.id,
             email: visitorBooking.email,
             registrationNumber: visitorBooking.registrationNumber,
@@ -175,6 +176,16 @@ export class VisitorBookingService {
             tenancyName: visitorBooking.tenancy?.tenantName,
             subCarParkName: visitorBooking.subCarPark?.carParkName,
         }));
+
+        return {
+            rows: response,
+            pagination: {
+                size: pageSize,
+                page: pageNo,
+                totalPages: Math.ceil(totalItems / pageSize),
+                totalItems: totalItems,
+            },
+        };
     }
 
     async findOne(options?: FindOneOptions<VisitorBooking>): Promise<VisitorBookingResponse | null> {

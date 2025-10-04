@@ -23,6 +23,7 @@ import {
     FindVisitorBookingRequest,
     FindVisitorBookingResponse,
 } from './visitor-booking.dto';
+import { ApiGetBaseResponse } from '../../common';
 
 @ApiTags('Admin => Visitor Booking')
 @Controller({ path: 'admin/visitor-booking', version: '1' })
@@ -31,7 +32,7 @@ export class VisitorBookingController {
     constructor(private readonly visitorBookingService: VisitorBookingService) { }
 
     @Get()
-    findAll(@Query() request: FindVisitorBookingRequest): Promise<FindVisitorBookingResponse[]> {
+    findAll(@Query() request: FindVisitorBookingRequest): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
         return this.visitorBookingService.findAll(request);
     }
 
