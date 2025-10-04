@@ -12,6 +12,24 @@ export class ErrorCode {
     message: 'Internal Server Error',
   };
 
+  public static readonly DURATION_REQUIRED = {
+    key: 'DURATION_REQUIRED',
+    code: 'DURATION_REQUIRED',
+    message: 'Duration is required',
+  };
+
+  public static readonly START_DATE_REQUIRED = {
+    key: 'START_DATE_REQUIRED',
+    code: 'START_DATE_REQUIRED',
+    message: 'Start date is required',
+  };
+
+  public static readonly END_DATE_REQUIRED = {
+    key: 'END_DATE_REQUIRED',
+    code: 'END_DATE_REQUIRED',
+    message: 'End date is required',
+  };
+
   public static readonly INVALID_EVENT_DATE = {
     key: 'INVALID_EVENT_DATE',
     code: 'INVALID_EVENT_DATE',

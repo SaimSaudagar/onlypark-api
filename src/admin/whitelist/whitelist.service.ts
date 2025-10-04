@@ -101,12 +101,19 @@ export class WhitelistService {
     }
 
     private async createHourlyBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, duration, startDate } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, duration } = request;
 
         // Validate required fields for hourly booking
-        if (!duration || !startDate) {
+        if (!duration) {
             throw new CustomException(
                 ErrorCode.CLIENT_ERROR.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        if (duration <= 0) {
+            throw new CustomException(
+                ErrorCode.INVALID_DURATION.key,
                 HttpStatus.BAD_REQUEST,
             );
         }
@@ -130,15 +137,8 @@ export class WhitelistService {
         }
 
         // Calculate start and end dates for hourly booking
-        const startDateObj = new Date(startDate);
+        const startDateObj = new Date(); // Current date
         const endDateObj = new Date(startDateObj.getTime() + (duration * 60 * 60 * 1000)); // duration in hours
-
-        if (duration <= 0) {
-            throw new CustomException(
-                ErrorCode.INVALID_DURATION.key,
-                HttpStatus.BAD_REQUEST,
-            );
-        }
 
         const whitelist = await this.whitelistRepository.save({
             registrationNumber,
@@ -160,10 +160,10 @@ export class WhitelistService {
     }
 
     private async createDateBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, startDate, endDate } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, endDate } = request;
 
         // Validate required fields for date booking
-        if (!startDate || !endDate) {
+        if (!endDate) {
             throw new CustomException(
                 ErrorCode.CLIENT_ERROR.key,
                 HttpStatus.BAD_REQUEST,
@@ -188,8 +188,8 @@ export class WhitelistService {
             );
         }
 
-        // Validate date range
-        const startDateObj = new Date(startDate);
+        // Calculate start and end dates for date booking
+        const startDateObj = new Date(); // Current date
         const endDateObj = new Date(endDate);
 
         if (startDateObj >= endDateObj) {
@@ -238,8 +238,9 @@ export class WhitelistService {
             );
         }
 
-        const startDateObj = new Date();
-        const endDateObj = new Date(startDateObj.getTime() + 5 * 365 * 24 * 60 * 60 * 1000); // 5 years
+        // Calculate start and end dates for permanent booking
+        const startDateObj = new Date(); // Current date
+        const endDateObj = new Date(startDateObj.getTime() + (365 * 24 * 60 * 60 * 1000)); // 1 year from now
 
         const whitelist = await this.whitelistRepository.save({
             registrationNumber,
