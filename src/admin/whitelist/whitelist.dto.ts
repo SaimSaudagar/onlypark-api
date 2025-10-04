@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional, IsUUID, IsEnum, IsDateString, IsNumber, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsUUID, IsEnum, IsDateString, IsNumber, IsEmail, IsIn } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiGetBaseRequest, WhitelistStatus, WhitelistType } from 'src/common';
 
@@ -15,12 +15,12 @@ export class CreateWhitelistRequest {
     @IsEmail()
     email: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsUUID()
-    subCarParkId?: string;
+    subCarParkId: string;
 
-    @IsOptional()
-    @IsEnum(WhitelistType)
+    @IsNotEmpty()
+    @IsIn([WhitelistType.HOUR, WhitelistType.DATE, WhitelistType.PERMANENT])
     type: WhitelistType;
 
     @IsOptional()
@@ -35,9 +35,9 @@ export class CreateWhitelistRequest {
     @IsDateString()
     endDate?: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsUUID()
-    tenancyId?: string;
+    tenancyId: string;
 }
 
 export class CreateWhitelistResponse {
@@ -45,8 +45,6 @@ export class CreateWhitelistResponse {
     registrationNumber: string;
     comments?: string;
     email: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 export class UpdateWhitelistDto extends PartialType(CreateWhitelistRequest) { }
@@ -75,7 +73,7 @@ export class FindWhitelistRequest extends ApiGetBaseRequest {
     search?: string;
 
     @IsOptional()
-    @IsEnum(WhitelistType)
+    @IsIn([WhitelistType.HOUR, WhitelistType.DATE, WhitelistType.PERMANENT])
     type?: WhitelistType;
 }
 

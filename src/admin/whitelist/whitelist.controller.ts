@@ -18,6 +18,7 @@ import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
 import { AllowedRoles } from '../../auth/guards/roles.guard';
 import { UserType } from '../../common/enums';
 import { RoleGuard } from '../../auth/guards/roles.guard';
+import { ApiGetBaseResponse } from '../../common';
 
 @ApiTags('Admin => Whitelist')
 @Controller({ path: 'admin/whitelist', version: '1' })
@@ -27,7 +28,7 @@ export class WhitelistController {
     @Get()
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
     @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
-    findAll(@Query() request: FindWhitelistRequest): Promise<FindWhitelistResponse[]> {
+    findAll(@Query() request: FindWhitelistRequest): Promise<ApiGetBaseResponse<FindWhitelistResponse>> {
         return this.whitelistService.findAll(request);
     }
 
