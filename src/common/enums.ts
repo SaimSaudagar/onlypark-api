@@ -28,7 +28,7 @@ export enum PatrolOfficerStatus {
 }
 
 // Booking System Enums
-export enum BookingStatus {
+export enum VisitorBookingStatus {
   ACTIVE = 'Active',
   PENDING = 'Pending',
   CHECKOUT = 'Checkout',

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsUUID, IsEmail, IsOptional, IsDateString, IsEnum } from "class-validator";
-import { ApiGetBaseRequest, BookingStatus } from "../../common";
+import { ApiGetBaseRequest, VisitorBookingStatus } from "../../common";
 
 export class CreateVisitorBookingRequest {
     @IsOptional()
@@ -104,8 +104,8 @@ export class FindVisitorBookingRequest extends ApiGetBaseRequest {
     search?: string;
 
     @IsOptional()
-    @IsEnum(BookingStatus)
-    status?: BookingStatus; 
+    @IsEnum(VisitorBookingStatus)
+    status?: VisitorBookingStatus; 
 }
 
 export class FindVisitorBookingResponse {

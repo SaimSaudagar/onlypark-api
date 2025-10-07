@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate, IsEnum, IsEmail } from 'class-validator';
-import { ApiGetBaseRequest, BookingStatus } from '../../common';
+import { ApiGetBaseRequest, VisitorBookingStatus } from '../../common';
 
 export class CreateVisitorRequest {
     @IsUUID()
@@ -27,8 +27,8 @@ export class CreateVisitorRequest {
     endDate: Date;
 
     @IsOptional()
-    @IsEnum(BookingStatus)
-    status?: BookingStatus;
+    @IsEnum(VisitorBookingStatus)
+    status?: VisitorBookingStatus;
 }
 
 export class CreateVisitorResponse {
@@ -37,7 +37,7 @@ export class CreateVisitorResponse {
     email: string;
     startDate: Date;
     endDate: Date;
-    status: BookingStatus;
+    status: VisitorBookingStatus;
     token: string;
 }
 
@@ -59,8 +59,8 @@ export class FindVisitorRequest extends ApiGetBaseRequest {
     dateTo?: Date;
 
     @IsOptional()
-    @IsEnum(BookingStatus)
-    status?: BookingStatus;
+    @IsEnum(VisitorBookingStatus)
+    status?: VisitorBookingStatus;
 }
 
 export class FindVisitorResponse {
@@ -69,7 +69,7 @@ export class FindVisitorResponse {
     email: string;
     startDate: Date;
     endDate: Date;
-    status: BookingStatus;
+    status: VisitorBookingStatus;
     token: string;
     createdAt: Date;
     subCarPark: {

@@ -13,7 +13,7 @@ import {
 import { CustomException } from '../../common/exceptions/custom.exception';
 import { ErrorCode } from '../../common/exceptions/error-code';
 import { HttpStatus } from '@nestjs/common';
-import { BookingStatus } from '../../common/enums';
+import { VisitorBookingStatus } from '../../common/enums';
 import { TenancyService } from '../../tenancy/tenancy.service';
 import { SubCarParkService } from '../sub-car-park/sub-car-park.service';
 import { ApiGetBaseResponse } from '../../common';
@@ -84,7 +84,7 @@ export class VisitorBookingService {
         const existingBooking = await this.visitorBookingRepository
             .createQueryBuilder('visitorBooking')
             .where('visitorBooking.registrationNumber = :registrationNumber', { registrationNumber: registrationNumber })
-            .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
+            .andWhere('visitorBooking.status = :status', { status: VisitorBookingStatus.ACTIVE })
             .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
             .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
             .getOne();
@@ -100,7 +100,7 @@ export class VisitorBookingService {
         const activeBookingsCount = await this.visitorBookingRepository
             .createQueryBuilder('visitorBooking')
             .where('visitorBooking.subCarParkId = :subCarParkId', { subCarParkId: subCarPark.id })
-            .andWhere('visitorBooking.status = :status', { status: BookingStatus.ACTIVE })
+            .andWhere('visitorBooking.status = :status', { status: VisitorBookingStatus.ACTIVE })
             .andWhere('visitorBooking.startTime <= :endTime', { endTime: timeTo })
             .andWhere('visitorBooking.endTime >= :startTime', { startTime: timeFrom })
             .getCount();
@@ -121,7 +121,7 @@ export class VisitorBookingService {
             subCarParkId: subCarPark.id,
             startTime: timeFrom,
             endTime: timeTo,
-            status: BookingStatus.ACTIVE,
+            status: VisitorBookingStatus.ACTIVE,
         });
 
         return {
@@ -237,7 +237,7 @@ export class VisitorBookingService {
             );
         }
 
-        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+        if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
             throw new CustomException(
                 ErrorCode.BOOKING_ALREADY_COMPLETED.key,
                 HttpStatus.BAD_REQUEST,
@@ -269,14 +269,14 @@ export class VisitorBookingService {
             );
         }
 
-        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+        if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
             throw new CustomException(
                 ErrorCode.BOOKING_ALREADY_COMPLETED.key,
                 HttpStatus.BAD_REQUEST,
             );
         }
 
-        visitorBooking.status = BookingStatus.CHECKOUT;
+        visitorBooking.status = VisitorBookingStatus.CHECKOUT;
         await this.visitorBookingRepository.save(visitorBooking);
     }
 

@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { BookingStatus, CustomException, ErrorCode, TemplateKeys } from '../common';
+import { VisitorBookingStatus, CustomException, ErrorCode, TemplateKeys } from '../common';
 import { VisitorBooking } from './entities/visitor-booking.entity';
 import { SubCarPark } from '../sub-car-park/entities/sub-car-park.entity';
 import { Tenancy } from '../tenancy/entities/tenancy.entity';
@@ -61,7 +61,7 @@ export class VisitorBookingService {
 
         const totalBookings = await this.visitorBookingRepository.count({
             where: {
-                status: BookingStatus.ACTIVE,
+                status: VisitorBookingStatus.ACTIVE,
                 subCarParkId,
             }
         });
@@ -77,7 +77,7 @@ export class VisitorBookingService {
         const existingBookings = await this.visitorBookingRepository.count({
             where: {
                 registrationNumber,
-                status: BookingStatus.ACTIVE,
+                status: VisitorBookingStatus.ACTIVE,
                 subCarParkId,
             }
         });
@@ -94,8 +94,8 @@ export class VisitorBookingService {
 
         // Determine initial booking status based on tenant email check requirement
         const initialStatus = (subCarPark.tenantEmailCheck && tenancyId) 
-            ? BookingStatus.UNAUTHENTICATED 
-            : BookingStatus.ACTIVE;
+            ? VisitorBookingStatus.UNAUTHENTICATED 
+            : VisitorBookingStatus.ACTIVE;
 
         // Start database transaction
         const queryRunner = this.dataSource.createQueryRunner();
@@ -124,7 +124,7 @@ export class VisitorBookingService {
             const savedBooking = insertResult.raw[0];
 
             // Send appropriate email based on status
-            if (initialStatus === BookingStatus.UNAUTHENTICATED && tenancy) {
+            if (initialStatus === VisitorBookingStatus.UNAUTHENTICATED && tenancy) {
                 // Send tenant verification email
                 await this.sendTenantVerificationEmail(savedBooking, subCarPark, tenancy);
             } else {
@@ -212,7 +212,7 @@ export class VisitorBookingService {
             );
         }
 
-        if (booking.status !== BookingStatus.UNAUTHENTICATED) {
+        if (booking.status !== VisitorBookingStatus.UNAUTHENTICATED) {
             throw new CustomException(
                 ErrorCode.CLIENT_ERROR.key,
                 HttpStatus.BAD_REQUEST,
@@ -237,7 +237,7 @@ export class VisitorBookingService {
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(VisitorBooking)
-                .set({ status: BookingStatus.ACTIVE })
+                .set({ status: VisitorBookingStatus.ACTIVE })
                 .where({ id: booking.id })
                 .execute();
 
@@ -255,7 +255,7 @@ export class VisitorBookingService {
                 tenancyId: booking.tenancyId,
                 startTime: booking.startDate.toISOString(),
                 endTime: booking.endDate.toISOString(),
-                status: BookingStatus.ACTIVE,
+                status: VisitorBookingStatus.ACTIVE,
                 token: booking.token,
             };
         } catch (error) {
@@ -311,7 +311,7 @@ export class VisitorBookingService {
                 carParkCode: subCarPark.subCarParkCode,
                 startDate: booking.startDate.toISOString(),
                 endDate: booking.endDate.toISOString(),
-                status: BookingStatus.ACTIVE,
+                status: VisitorBookingStatus.ACTIVE,
                 tenancyName: tenancyName || '',
                 bookingUrl: bookingUrl,
             },

@@ -1,7 +1,7 @@
 import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, LessThan, LessThanOrEqual } from 'typeorm';
-import { InfringementStatus, BookingStatus } from '../../common/enums';
+import { InfringementStatus, VisitorBookingStatus } from '../../common/enums';
 import { Infringement } from '../../infringement/entities/infringement.entity';
 import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
 import { OutstandingRegistration } from '../../outstanding-registration/entities/outstanding-registration.entity';
@@ -94,7 +94,7 @@ export class CronJobsService {
   //             .getRepository(VisitorBooking)
   //             .find({
   //                 where: {
-  //                     status: BookingStatus.ACTIVE,
+  //                     status: VisitorBookingStatus.ACTIVE,
   //                     endDate: LessThan(now),
   //                 },
   //                 relations: ['tenancy', 'subCarPark'],
@@ -107,7 +107,7 @@ export class CronJobsService {
   //                 // Update booking status to expired
   //                 await this.datasource
   //                     .getRepository(VisitorBooking)
-  //                     .update(booking.id, { status: BookingStatus.EXPIRED });
+  //                     .update(booking.id, { status: VisitorBookingStatus.EXPIRED });
 
   //                 // Send expiry notification
   //                 const emailRequest: SendEmailRequest = {
@@ -291,7 +291,7 @@ export class CronJobsService {
   //       .getRepository(VisitorBooking)
   //       .find({
   //         where: {
-  //           status: BookingStatus.ACTIVE,
+  //           status: VisitorBookingStatus.ACTIVE,
   //           endDate: LessThan(now),
   //         },
   //         relations: {
@@ -307,7 +307,7 @@ export class CronJobsService {
   //         // Update booking status to expired
   //         await this.datasource
   //           .getRepository(VisitorBooking)
-  //           .update(booking.id, { status: BookingStatus.PENDING });
+  //           .update(booking.id, { status: VisitorBookingStatus.PENDING });
 
 
   //         this.logger.log(`Updated visitor booking ${booking.id} to expired status`);

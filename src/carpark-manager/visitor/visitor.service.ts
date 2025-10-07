@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestContextService } from '../../common/services/request-context/request-context.service';
 import { DataSource } from 'typeorm';
 import { CarparkManager } from '../entities/carpark-manager.entity';
-import { BookingStatus } from '../../common/enums';
+import { VisitorBookingStatus } from '../../common/enums';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -55,7 +55,7 @@ export class VisitorService extends BaseService {
             tenancyId,
             startDate,
             endDate,
-            status: status || BookingStatus.ACTIVE,
+            status: status || VisitorBookingStatus.ACTIVE,
             token,
         });
 
@@ -275,14 +275,14 @@ export class VisitorService extends BaseService {
             );
         }
 
-        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+        if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
             throw new CustomException(
                 ErrorCode.BOOKING_ALREADY_COMPLETED.key,
                 HttpStatus.BAD_REQUEST,
             );
         }
 
-        visitorBooking.status = BookingStatus.CHECKOUT;
+        visitorBooking.status = VisitorBookingStatus.CHECKOUT;
         await this.visitorBookingRepository.save(visitorBooking);
     }
 }

@@ -8,7 +8,7 @@ import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
 import { Auditable } from '../../common/decorators';
 import { Tenancy } from '../../tenancy/entities/tenancy.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
-import { BookingStatus } from '../../common/enums';
+import { VisitorBookingStatus } from '../../common/enums';
 
 @Entity('visitor_bookings')
 @Auditable()
@@ -38,8 +38,8 @@ export class VisitorBooking extends BaseEntity {
     })
     endDate: Date;
 
-    @Column({ type: 'varchar', default: BookingStatus.ACTIVE })
-    status: BookingStatus;
+    @Column({ type: 'varchar', default: VisitorBookingStatus.ACTIVE })
+    status: VisitorBookingStatus;
 
     @Column({ type: 'varchar', nullable: false })
     subCarParkId: string;
