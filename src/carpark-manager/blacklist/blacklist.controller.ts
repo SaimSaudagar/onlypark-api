@@ -31,13 +31,6 @@ export class BlacklistController {
         return this.blacklistService.findAll(request);
     }
 
-    @Get('assigned-sub-car-parks')
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.CARPARK_MANAGER)
-    getAssignedSubCarParks() {
-        return this.blacklistService.getAssignedSubCarParks();
-    }
-
     @Get(':id')
     @UseGuards(JwtAuthenticationGuard, RoleGuard)
     @AllowedRoles(UserType.CARPARK_MANAGER)
