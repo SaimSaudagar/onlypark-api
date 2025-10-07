@@ -41,8 +41,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import * as puppeteer from "puppeteer";
-import { InfringementCarPark } from "src/infringement/entities/infringement-car-park.entity";
-import { InfringementReason } from "src/infringement/entities/infringement-reason.entity";
+import { InfringementCarPark } from "../../infringement/entities/infringement-car-park.entity";
+import { InfringementReason } from "../../infringement/entities/infringement-reason.entity";
 
 @Injectable()
 export class InfringementService {

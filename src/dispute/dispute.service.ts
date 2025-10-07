@@ -5,9 +5,8 @@ import { Dispute } from "./entities/dispute.entity";
 import { CreateDisputeRequest, CreateDisputeResponse } from "./dispute.dto";
 import { InfringementService } from "../admin/infringement/infringement.service";
 import { InfringementStatus } from "../common/enums";
-import { CustomException, ErrorCode } from "src/common";
+import { CustomException, ErrorCode } from "../common";
 import { EmailNotificationService } from "../common/services/email/email-notification.service";
-import { TemplateKeys } from "../common/constants/template-keys";
 
 @Injectable()
 export class DisputeService {
