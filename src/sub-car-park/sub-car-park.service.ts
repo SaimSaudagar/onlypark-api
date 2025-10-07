@@ -27,6 +27,7 @@ export class SubCarParkService {
                     id: true,
                     tenantName: true,
                 },
+                tenantEmailCheck: true,
             },
         });
 
