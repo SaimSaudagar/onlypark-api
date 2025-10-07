@@ -42,6 +42,9 @@ export class WhitelistService {
             );
         }
 
+        console.log(whereOptions);
+        console.log(orderOptions);
+
         const [whitelists, totalItems] = await this.whitelistRepository.findAndCount({
             where: whereOptions,
             order: orderOptions,
