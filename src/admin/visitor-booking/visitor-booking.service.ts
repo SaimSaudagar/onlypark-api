@@ -257,6 +257,29 @@ export class VisitorBookingService {
         };
     }
 
+    async checkout(id: string): Promise<void> {
+        const visitorBooking = await this.visitorBookingRepository.findOne({
+            where: { id },
+        });
+
+        if (!visitorBooking) {
+            throw new CustomException(
+                ErrorCode.BOOKING_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+            throw new CustomException(
+                ErrorCode.BOOKING_ALREADY_COMPLETED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        visitorBooking.status = BookingStatus.CHECKOUT;
+        await this.visitorBookingRepository.save(visitorBooking);
+    }
+
     private isValidregistrationNumberistration(registrationNumber: string): boolean {
         // Basic validation - can be enhanced based on requirements
         const regex = /^[A-Z0-9]{1,10}$/i;

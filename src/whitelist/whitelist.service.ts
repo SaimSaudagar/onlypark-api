@@ -7,7 +7,7 @@ import { ErrorCode } from '../common/exceptions/error-code';
 import { CustomException } from '../common/exceptions/custom.exception';
 import { SubCarPark } from '../sub-car-park/entities/sub-car-park.entity';
 import { Tenancy } from '../tenancy/entities/tenancy.entity';
-import { WhitelistType } from '../common/enums';
+import { WhitelistStatus, WhitelistType } from '../common/enums';
 import { EmailNotificationService } from '../common/services/email/email-notification.service';
 import { TemplateKeys } from '../common/constants/template-keys';
 import * as crypto from 'crypto';
@@ -67,6 +67,7 @@ export class WhitelistService {
             startDate,
             endDate,
             token, // Add token to the entity
+            status: WhitelistStatus.ACTIVE,
         });
 
         const savedEntity = await this.whitelistRepository.save(entity);

@@ -58,6 +58,14 @@ export class VisitorBookingController {
     //     return this.visitorBookingService.update(id, updateDto);
     // }
 
+    @Patch('checkout/:id')
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    checkout(@Param('id') id: string): Promise<void> {
+        return this.visitorBookingService.checkout(id);
+    }
+
     @Delete(':id')
     @HttpCode(HttpStatus.OK)
     @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
