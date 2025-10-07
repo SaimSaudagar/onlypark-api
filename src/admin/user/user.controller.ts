@@ -10,8 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AllowedRoles } from '../../auth/guards/roles.guard';
-import { PermissionsGuard } from '../../common/guards/permission.guard';
+import { AllowedRoles, RoleGuard } from '../../auth/guards/roles.guard';
 import { UserType } from '../../common/enums';
 import { UserService } from './user.service';
 import {
@@ -31,35 +30,35 @@ export class UserController {
 
   @Get()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   findAll(@Query() request: FindUsersRequest): Promise<FindUsersResponse> {
     return this.userService.findAll(request);
   }
 
   @Get(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   findById(@Param('id') id: string) {
     return this.userService.findById(id);
   }
 
   @Post()
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async create(@Body() request: CreateUserRequest): Promise<CreateUserResponse> {
     return this.userService.create(request);
   }
 
   @Patch(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   update(@Param('id') id: string, @Body() request: UpdateUserRequest): Promise<UpdateUserResponse> {
     return this.userService.update(id, request);
   }
 
   @Delete(':id')
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  @UseGuards(JwtAuthenticationGuard, PermissionsGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
