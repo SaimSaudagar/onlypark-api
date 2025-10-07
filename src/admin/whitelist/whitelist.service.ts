@@ -24,12 +24,14 @@ export class WhitelistService {
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<Whitelist> = {};
+        const whereOptions: FindOptionsWhere<Whitelist>[] = [];
         const orderOptions: FindOptionsOrder<Whitelist> = {};
 
         if (search) {
-            whereOptions.registrationNumber = ILike(`%${search}%`);
-            whereOptions.email = ILike(`%${search}%`);
+            whereOptions.push(
+                { email: ILike(`%${search}%`) },
+                { registrationNumber: ILike(`%${search}%`) },
+            );
         }
 
         if(sortField){
@@ -37,7 +39,7 @@ export class WhitelistService {
         }
 
         if (type) {
-            whereOptions.whitelistType = type;
+            whereOptions.push({ whitelistType: type });
         }
 
         const [whitelists, totalItems] = await this.whitelistRepository.findAndCount({
