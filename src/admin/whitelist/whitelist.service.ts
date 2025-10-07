@@ -27,19 +27,19 @@ export class WhitelistService {
         const whereOptions: FindOptionsWhere<Whitelist>[] = [];
         const orderOptions: FindOptionsOrder<Whitelist> = {};
 
-        if (search) {
-            whereOptions.push(
-                { email: ILike(`%${search}%`) },
-                { registrationNumber: ILike(`%${search}%`) },
-            );
-        }
-
         if(sortField){
             orderOptions[sortField] = sortOrder;
         }
 
         if (type) {
             whereOptions.push({ whitelistType: type });
+        }
+
+        if (search) {
+            whereOptions.push(
+                { email: ILike(`%${search}%`) },
+                { registrationNumber: ILike(`%${search}%`) },
+            );
         }
 
         const [whitelists, totalItems] = await this.whitelistRepository.findAndCount({
@@ -155,7 +155,7 @@ export class WhitelistService {
     }
 
     private async createHourlyBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, duration } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, duration, comments } = request;
 
         // Validate required fields for hourly booking
         if (!duration) {
@@ -182,6 +182,7 @@ export class WhitelistService {
             subCarParkId,
             tenancyId,
             whitelistType: WhitelistType.HOUR,
+            comments,
             duration,
             startDate: startDateObj,
             endDate: endDateObj,
@@ -196,7 +197,7 @@ export class WhitelistService {
     }
 
     private async createDateBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, startDate, endDate } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, startDate, endDate, comments } = request;
 
         // Validate required fields for date booking
         if (!endDate) {
@@ -223,6 +224,7 @@ export class WhitelistService {
             subCarParkId,
             tenancyId,
             whitelistType: WhitelistType.DATE,
+            comments,
             startDate: startDateObj,
             endDate: endDateObj,
             status: WhitelistStatus.ACTIVE
@@ -236,7 +238,7 @@ export class WhitelistService {
     }
 
     private async createPermanentBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, comments } = request;
 
         // Calculate start and end dates for permanent booking
         const startDateObj = new Date(); // Current date
@@ -247,6 +249,7 @@ export class WhitelistService {
             email,
             subCarParkId,
             tenancyId,
+            comments,
             whitelistType: WhitelistType.PERMANENT,
             startDate: startDateObj,
             endDate: endDateObj,
