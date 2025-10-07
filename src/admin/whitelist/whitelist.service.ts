@@ -240,7 +240,7 @@ export class WhitelistService {
 
         // Calculate start and end dates for permanent booking
         const startDateObj = new Date(); // Current date
-        const endDateObj = new Date(startDateObj.getTime() + (365 * 24 * 60 * 60 * 1000)); // 1 year from now
+        const endDateObj = new Date(startDateObj.getTime() + (5 * 365 * 24 * 60 * 60 * 1000)); // 5 years from now
 
         const whitelist = await this.whitelistRepository.save({
             registrationNumber,
