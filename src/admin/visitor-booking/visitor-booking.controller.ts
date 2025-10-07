@@ -23,7 +23,7 @@ import {
     FindVisitorBookingRequest,
     FindVisitorBookingResponse,
 } from './visitor-booking.dto';
-import { ApiGetBaseResponse } from '../../common';
+import { ApiGetBaseResponse, UserType, RoleGuard, AllowedRoles } from '../../common';
 
 @ApiTags('Admin => Visitor Booking')
 @Controller({ path: 'admin/visitor-booking', version: '1' })
@@ -32,11 +32,15 @@ export class VisitorBookingController {
     constructor(private readonly visitorBookingService: VisitorBookingService) { }
 
     @Get()
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
     findAll(@Query() request: FindVisitorBookingRequest): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
         return this.visitorBookingService.findAll(request);
     }
 
     @Get(':id')
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
     findOne(@Param('id') id: string): Promise<VisitorBookingResponse | null> {
         return this.visitorBookingService.findOne({ where: { id } });
     }
@@ -56,6 +60,8 @@ export class VisitorBookingController {
 
     @Delete(':id')
     @HttpCode(HttpStatus.OK)
+    @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
     remove(@Param('id') id: string): Promise<VisitorBookingDeleteResponse> {
         return this.visitorBookingService.remove(id);
     }
