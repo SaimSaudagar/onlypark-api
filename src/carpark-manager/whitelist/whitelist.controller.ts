@@ -53,6 +53,14 @@ export class WhitelistController {
         return this.whitelistService.update(id, request);
     }
 
+    @Patch('checkout/:id')
+    @AllowedRoles(UserType.CARPARK_MANAGER)
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    checkout(@Param('id') id: string): Promise<void> {
+        return this.whitelistService.checkout(id);
+    }
+
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)

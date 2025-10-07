@@ -472,4 +472,24 @@ export class WhitelistService {
         await this.whitelistRepository.remove(entity);
         return { message: 'Whitelist entry removed successfully' };
     }
+
+    async checkout(id: string): Promise<void> {
+        const entity = await this.whitelistRepository.findOne({ where: { id } });
+        if (!entity) {
+            throw new CustomException(
+                ErrorCode.WHITELIST_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        if (entity.status === WhitelistStatus.ACTIVE) {
+            throw new CustomException(
+                ErrorCode.BOOKING_ALREADY_COMPLETED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        entity.status = WhitelistStatus.CHECKOUT;
+        await this.whitelistRepository.save(entity);    
+    }
 }

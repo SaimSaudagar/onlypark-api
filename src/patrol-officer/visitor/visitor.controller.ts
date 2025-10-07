@@ -60,6 +60,14 @@ export class VisitorController {
         return this.visitorService.update(id, request);
     }
 
+    @Patch('checkout/:id')
+    @AllowedRoles(UserType.PATROL_OFFICER)
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    checkout(@Param('id') id: string): Promise<void> {
+        return this.visitorService.checkout(id);
+    }
+
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthenticationGuard, RoleGuard)

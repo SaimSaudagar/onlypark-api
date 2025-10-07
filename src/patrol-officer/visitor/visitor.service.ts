@@ -253,4 +253,36 @@ export class VisitorService extends BaseService {
             subCarParkName: assignment.subCarPark.carParkName,
         })) || [];
     }
+
+    async checkout(id: string): Promise<void> {
+        const visitorBooking = await this.visitorBookingRepository.findOne({
+            where: { id },
+        });
+
+        if (!visitorBooking) {
+            throw new CustomException(
+                ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Check if the user has access to this visitor booking
+        const assignedSubCarParkIds = await this.getAssignedSubCarParks();
+        if (!assignedSubCarParkIds.some(subCarPark => subCarPark.subCarParkId === visitorBooking.subCarParkId)) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+                HttpStatus.FORBIDDEN,
+            );
+        }
+
+        if (visitorBooking.status === BookingStatus.CHECKOUT) {
+            throw new CustomException(
+                ErrorCode.BOOKING_ALREADY_COMPLETED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        visitorBooking.status = BookingStatus.CHECKOUT;
+        await this.visitorBookingRepository.save(visitorBooking);
+    }
 }

@@ -60,4 +60,12 @@ export class WhitelistController {
     remove(@Param('id') id: string) {
         return this.whitelistService.remove(id);
     }
+
+    @Patch('checkout/:id')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthenticationGuard, RoleGuard)
+    @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+    checkout(@Param('id') id: string): Promise<void> {
+        return this.whitelistService.checkout(id);
+    }
 }

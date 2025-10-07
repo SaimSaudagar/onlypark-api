@@ -37,7 +37,7 @@ export enum BookingStatus {
 
 export enum WhitelistStatus {
   ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
+  CHECKOUT = 'Checkout',
 }
 
 // Parking Spot Enums
@@ -54,7 +54,6 @@ export enum ParkingSpotStatus {
 export enum BlacklistStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  SUSPENDED = 'Suspended',
 }
 
 export enum CarParkType {
