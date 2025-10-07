@@ -196,7 +196,7 @@ export class WhitelistService {
     }
 
     private async createDateBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { registrationNumber, email, subCarParkId, tenancyId, endDate } = request;
+        const { registrationNumber, email, subCarParkId, tenancyId, startDate, endDate } = request;
 
         // Validate required fields for date booking
         if (!endDate) {
@@ -207,7 +207,7 @@ export class WhitelistService {
         }
 
         // Calculate start and end dates for date booking
-        const startDateObj = new Date(); // Current date
+        const startDateObj = new Date(startDate);
         const endDateObj = new Date(endDate);
 
         if (startDateObj >= endDateObj) {
