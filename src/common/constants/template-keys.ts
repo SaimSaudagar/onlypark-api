@@ -15,6 +15,7 @@ export class TemplateKeys {
 
     // Visitor Booking Templates
     public static readonly VISITOR_BOOKING_CONFIRMATION = 'VISITOR_BOOKING_CONFIRMATION';
+    public static readonly TENANT_EMAIL_VERIFICATION = 'TENANT_EMAIL_VERIFICATION';
 
     // Dispute Templates
     public static readonly DISPUTE_RECEIVED = 'DISPUTE_RECEIVED';

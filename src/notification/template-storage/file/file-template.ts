@@ -34,6 +34,16 @@ export class FileTemplate {
         layout: TemplateKeys.ADMIN_LAYOUT,
     };
 
+    public static readonly TENANT_EMAIL_VERIFICATION = {
+        key: TemplateKeys.TENANT_EMAIL_VERIFICATION,
+        fileName: 'tenant-email-verification.html',
+        fileType: FileType.HTML,
+        title: 'Tenant Email Verification Required - OnlyPark',
+        body: '',
+        type: TemplateType.EMAIL,
+        layout: TemplateKeys.ADMIN_LAYOUT,
+    };
+
     public static readonly WHITELIST_CONFIRMATION = {
         key: TemplateKeys.WHITELIST_CONFIRMATION,
         fileName: 'whitelist-confirmation.html',

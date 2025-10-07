@@ -437,6 +437,12 @@ export class ErrorCode {
     message: 'Booking has expired',
   };
 
+  public static readonly INVALID_BOOKING_STATUS = {
+    key: 'INVALID_BOOKING_STATUS',
+    code: 'INVALID_BOOKING_STATUS',
+    message: 'Invalid booking status for this operation',
+  };
+
   public static readonly BOOKING_ALREADY_EXISTS = {
     key: 'BOOKING_ALREADY_EXISTS',
     code: 'BOOKING_ALREADY_EXISTS',

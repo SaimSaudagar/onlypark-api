@@ -34,4 +34,9 @@ export class VisitorBookingController {
     async getBookingByToken(@Param('token') token: string): Promise<GetBookingByTokenResponse> {
         return await this.visitorBookingService.getBookingByToken(token);
     }
+
+    @Post('verify-tenant/:token')
+    async verifyTenantEmail(@Param('token') token: string): Promise<CreateVisitorBookingResponse> {
+        return await this.visitorBookingService.verifyTenantEmail(token);
+    }
 }

@@ -32,6 +32,7 @@ export enum BookingStatus {
   ACTIVE = 'Active',
   PENDING = 'Pending',
   CHECKOUT = 'Checkout',
+  UNAUTHENTICATED = 'Unauthenticated',
 }
 
 export enum WhitelistStatus {

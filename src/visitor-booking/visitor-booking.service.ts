@@ -45,8 +45,9 @@ export class VisitorBookingService {
         }
 
         // Validate tenancy exists if provided
+        let tenancy = null;
         if (tenancyId) {
-            const tenancy = await this.tenancyRepository.findOne({
+            tenancy = await this.tenancyRepository.findOne({
                 where: { id: tenancyId, subCarParkId: subCarParkId }
             });
 
@@ -91,6 +92,11 @@ export class VisitorBookingService {
         const endTime = new Date(new Date().getTime() + subCarPark.freeHours * 60 * 60 * 1000);
         const token = crypto.randomBytes(32).toString('hex');
 
+        // Determine initial booking status based on tenant email check requirement
+        const initialStatus = (subCarPark.tenantEmailCheck && tenancyId) 
+            ? BookingStatus.UNAUTHENTICATED 
+            : BookingStatus.ACTIVE;
+
         // Start database transaction
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
@@ -109,7 +115,7 @@ export class VisitorBookingService {
                     tenancyId,
                     startDate: new Date().toISOString(),
                     endDate: endTime.toISOString(),
-                    status: BookingStatus.ACTIVE,
+                    status: initialStatus,
                     token,
                 })
                 .returning(['id', 'email', 'registrationNumber', 'subCarParkId', 'tenancyId', 'startDate', 'endDate', 'status', 'token'])
@@ -117,8 +123,14 @@ export class VisitorBookingService {
 
             const savedBooking = insertResult.raw[0];
 
-            // Send booking confirmation email
-            await this.sendBookingConfirmationEmail(savedBooking, subCarPark);
+            // Send appropriate email based on status
+            if (initialStatus === BookingStatus.UNAUTHENTICATED && tenancy) {
+                // Send tenant verification email
+                await this.sendTenantVerificationEmail(savedBooking, subCarPark, tenancy);
+            } else {
+                // Send regular booking confirmation email
+                await this.sendBookingConfirmationEmail(savedBooking, subCarPark);
+            }
 
             // Commit transaction
             await queryRunner.commitTransaction();
@@ -184,6 +196,100 @@ export class VisitorBookingService {
         };
     }
 
+    async verifyTenantEmail(token: string): Promise<CreateVisitorBookingResponse> {
+        const booking = await this.visitorBookingRepository.findOne({
+            where: { token },
+            relations: {
+                subCarPark: true,
+                tenancy: true,
+            },
+        });
+
+        if (!booking) {
+            throw new CustomException(
+                ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        if (booking.status !== BookingStatus.UNAUTHENTICATED) {
+            throw new CustomException(
+                ErrorCode.CLIENT_ERROR.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Check if booking has expired
+        if (new Date() > booking.endDate) {
+            throw new CustomException(
+                ErrorCode.BOOKING_EXPIRED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        // Start database transaction
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            // Update booking status to ACTIVE
+            await queryRunner.manager
+                .createQueryBuilder()
+                .update(VisitorBooking)
+                .set({ status: BookingStatus.ACTIVE })
+                .where({ id: booking.id })
+                .execute();
+
+            // Send booking confirmation email to visitor
+            await this.sendBookingConfirmationEmail(booking, booking.subCarPark);
+
+            // Commit transaction
+            await queryRunner.commitTransaction();
+
+            return {
+                id: booking.id,
+                email: booking.email,
+                registrationNumber: booking.registrationNumber,
+                subCarParkId: booking.subCarParkId,
+                tenancyId: booking.tenancyId,
+                startTime: booking.startDate.toISOString(),
+                endTime: booking.endDate.toISOString(),
+                status: BookingStatus.ACTIVE,
+                token: booking.token,
+            };
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw new CustomException(
+                ErrorCode.EMAIL_SEND_FAILED.key,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                { error: error.message }
+            );
+        } finally {
+            await queryRunner.release();
+        }
+    }
+
+    private async sendTenantVerificationEmail(booking: VisitorBooking, subCarPark: SubCarPark, tenancy: Tenancy): Promise<void> {
+        const verificationUrl = `${this.configService.get('APP_URL')}/visitor-bookings/verify-tenant/${booking.token}`;
+
+        await this.emailNotificationService.sendUsingTemplate({
+            to: [tenancy.tenantEmail],
+            templateKey: TemplateKeys.TENANT_EMAIL_VERIFICATION,
+            data: {
+                tenantName: tenancy.tenantName,
+                email: booking.email,
+                registrationNumber: booking.registrationNumber,
+                carParkName: subCarPark.carParkName,
+                carParkCode: subCarPark.subCarParkCode,
+                startDate: booking.startDate.toISOString(),
+                endDate: booking.endDate.toISOString(),
+                status: booking.status,
+                verificationUrl: verificationUrl,
+            },
+        });
+    }
+
     private async sendBookingConfirmationEmail(booking: VisitorBooking, subCarPark: SubCarPark): Promise<void> {
         const bookingUrl = `${this.configService.get('APP_URL')}/visitor-booking/${booking.token}`;
 
@@ -205,7 +311,7 @@ export class VisitorBookingService {
                 carParkCode: subCarPark.subCarParkCode,
                 startDate: booking.startDate.toISOString(),
                 endDate: booking.endDate.toISOString(),
-                status: booking.status,
+                status: BookingStatus.ACTIVE,
                 tenancyName: tenancyName || '',
                 bookingUrl: bookingUrl,
             },
