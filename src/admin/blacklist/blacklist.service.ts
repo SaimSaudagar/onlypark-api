@@ -56,16 +56,18 @@ export class BlacklistService {
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<Blacklist> = {};
+        const whereOptions: FindOptionsWhere<Blacklist>[] = [];
         const orderOptions: FindOptionsOrder<Blacklist> = {};
 
         if (dateFrom && dateTo) {
-            whereOptions.createdAt = Between(dateFrom, dateTo);
+            whereOptions.push({ createdAt: Between(dateFrom, dateTo) });
         }
 
         if (search) {
-            whereOptions.regNo = ILike(`%${search}%`);
-            whereOptions.email = ILike(`%${search}%`);
+            whereOptions.push(
+                { regNo: ILike(`%${search}%`) },
+                { email: ILike(`%${search}%`) },
+            );
         }
 
         if (sortField) {

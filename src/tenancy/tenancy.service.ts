@@ -69,10 +69,10 @@ export class TenancyService {
     let whereOptions: FindOptionsWhere<Tenancy>[] = [];
     const orderOptions: FindOptionsOrder<Tenancy> = {};
     if (search) {
-      whereOptions = [
+      whereOptions.push(
         { tenantName: ILike(`%${search}%`) },
         { tenantEmail: ILike(`%${search}%`) }
-      ];
+      );
     }
 
     if (sortField) {

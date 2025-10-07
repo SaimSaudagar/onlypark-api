@@ -64,23 +64,25 @@ export class BlacklistService extends BaseService {
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<Blacklist> = {};
+        const whereOptions: FindOptionsWhere<Blacklist>[] = [];
         const orderOptions: FindOptionsOrder<Blacklist> = {};
 
         // Filter by assigned sub car parks
         const assignedSubCarParks = await this.getAssignedSubCarParks();
         if (assignedSubCarParks.length > 0) {
             const subCarParkIds = assignedSubCarParks.map(subCarPark => subCarPark.subCarParkId);
-            whereOptions.subCarParkId = In(subCarParkIds);
+            whereOptions.push({ subCarParkId: In(subCarParkIds) });
         }
 
         if (dateFrom && dateTo) {
-            whereOptions.createdAt = Between(dateFrom, dateTo);
+            whereOptions.push({ createdAt: Between(dateFrom, dateTo) });
         }
 
         if (search) {
-            whereOptions.regNo = ILike(`%${search}%`);
-            whereOptions.email = ILike(`%${search}%`);
+            whereOptions.push(
+                { regNo: ILike(`%${search}%`) },
+                { email: ILike(`%${search}%`) },
+            );
         }
 
         if (sortField) {

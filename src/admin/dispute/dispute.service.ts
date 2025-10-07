@@ -85,12 +85,14 @@ export class DisputeService {
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<Dispute> = {};
+        const whereOptions: FindOptionsWhere<Dispute>[] = [];
         const orderOptions: FindOptionsOrder<Dispute> = {};
 
         if (search) {
-            whereOptions.registrationNumber = ILike(`%${search}%`);
-            whereOptions.email = ILike(`%${search}%`);
+            whereOptions.push(
+                { registrationNumber: ILike(`%${search}%`) },
+                { email: ILike(`%${search}%`) },
+            );
         }
 
         if (sortField) {

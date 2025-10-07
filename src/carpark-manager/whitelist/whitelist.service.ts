@@ -69,27 +69,29 @@ export class WhitelistService extends BaseService {
         const skip = (pageNo - 1) * pageSize;
         const take = pageSize;
 
-        const whereOptions: FindOptionsWhere<Whitelist> = {};
+        const whereOptions: FindOptionsWhere<Whitelist>[] = [];
         const orderOptions: FindOptionsOrder<Whitelist> = {};
 
         // Filter by assigned sub car parks
         const assignedSubCarParks = await this.getAssignedSubCarParks();
         if (assignedSubCarParks.length > 0) {
             const subCarParkIds = assignedSubCarParks.map(subCarPark => subCarPark.subCarParkId);
-            whereOptions.subCarParkId = In(subCarParkIds);
+            whereOptions.push({ subCarParkId: In(subCarParkIds) });
         }
 
         if (dateFrom && dateTo) {
-            whereOptions.startDate = Between(dateFrom, dateTo);
+            whereOptions.push({ startDate: Between(dateFrom, dateTo) });
         }
 
         if (search) {
-            whereOptions.registrationNumber = ILike(`%${search}%`);
-            whereOptions.email = ILike(`%${search}%`);
+            whereOptions.push(
+                { registrationNumber: ILike(`%${search}%`) },
+                { email: ILike(`%${search}%`) },
+            );
         }
 
         if (type) {
-            whereOptions.whitelistType = type;
+            whereOptions.push({ whitelistType: type });
         }
 
         if (sortField) {

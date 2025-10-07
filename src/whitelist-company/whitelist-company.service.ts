@@ -46,7 +46,7 @@ export class WhitelistCompanyService {
 
 
 
-        let whereOptions: FindOptionsWhere<WhitelistCompany>[] = [];
+        const whereOptions: FindOptionsWhere<WhitelistCompany>[] = [];
         const orderOptions: FindOptionsOrder<WhitelistCompany> = {};
 
         if (companyName) {
@@ -58,10 +58,10 @@ export class WhitelistCompanyService {
         }
 
         if (search) {
-            whereOptions = [
+            whereOptions.push(
                 { companyName: ILike(`%${search}%`) },
                 { domainName: ILike(`%${search}%`) }
-            ];
+            );
         }
 
         if (sortField) {
