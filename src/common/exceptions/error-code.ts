@@ -340,6 +340,12 @@ export class ErrorCode {
     message: 'Carpark manager blacklist sub car park not found',
   };
 
+  public static readonly PATROL_OFFICER_NOT_FOUND = {
+    key: 'PATROL_OFFICER_NOT_FOUND',
+    code: 'PATROL_OFFICER_NOT_FOUND',
+    message: 'Patrol officer not found',
+  };
+
   public static readonly BLACKLIST_ENTRY_NOT_FOUND = {
     key: 'BLACKLIST_ENTRY_NOT_FOUND',
     code: 'BLACKLIST_ENTRY_NOT_FOUND',
@@ -367,6 +373,12 @@ export class ErrorCode {
   public static readonly WHITELIST_NOT_FOUND = {
     key: 'WHITELIST_NOT_FOUND',
     code: 'WHITELIST_NOT_FOUND',
+    message: 'Whitelist entry not found',
+  };
+
+  public static readonly WHITELIST_ENTRY_NOT_FOUND = {
+    key: 'WHITELIST_ENTRY_NOT_FOUND',
+    code: 'WHITELIST_ENTRY_NOT_FOUND',
     message: 'Whitelist entry not found',
   };
 
