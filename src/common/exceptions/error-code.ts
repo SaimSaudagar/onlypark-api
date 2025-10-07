@@ -96,6 +96,12 @@ export class ErrorCode {
     message: 'Company name and domain name are required',
   };
 
+  public static readonly DOMAIN_NAME_NOT_ALLOWED = {
+    key: 'DOMAIN_NAME_NOT_ALLOWED',
+    code: 'DOMAIN_NAME_NOT_ALLOWED',
+    message: 'Domain name not allowed',
+  };
+
   public static readonly INVALID_TENANCY_DATA = {
     key: 'INVALID_TENANCY_DATA',
     code: 'INVALID_TENANCY_DATA',

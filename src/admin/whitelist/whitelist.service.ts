@@ -86,8 +86,56 @@ export class WhitelistService {
     }
 
     async create(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
-        const { type } = request;
+        const { type, subCarParkId, tenancyId, email } = request;
 
+        // Validate subCarPark
+        const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
+        if (!subCarPark) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        // Validate tenancy
+        const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
+        if (!tenancy) {
+            throw new CustomException(
+                ErrorCode.TENANCY_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        const companyEmails = await this.subCarParkService.findOne(
+            { 
+                where: {
+                    id: subCarParkId 
+                }, 
+                relations: { 
+                    whitelistCompanies: true 
+                }, 
+                select: { 
+                    whitelistCompanies: { 
+                        domainName: true 
+                    } 
+                } 
+            }
+        );
+
+        if (!companyEmails) {
+            throw new CustomException(
+                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        const domainNames = companyEmails.whitelistCompanies.map(company => company.domainName);
+        if (domainNames.includes(email)) {
+            throw new CustomException(
+                ErrorCode.DOMAIN_NAME_NOT_ALLOWED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
         // Route to appropriate booking type handler
         switch (type) {
             case WhitelistType.HOUR:
@@ -119,24 +167,6 @@ export class WhitelistService {
             throw new CustomException(
                 ErrorCode.INVALID_DURATION.key,
                 HttpStatus.BAD_REQUEST,
-            );
-        }
-
-        // Validate subCarPark
-        const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
-        if (!subCarPark) {
-            throw new CustomException(
-                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
-        // Validate tenancy
-        const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
-        if (!tenancy) {
-            throw new CustomException(
-                ErrorCode.TENANCY_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
             );
         }
 
@@ -174,24 +204,6 @@ export class WhitelistService {
             );
         }
 
-        // Validate subCarPark
-        const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
-        if (!subCarPark) {
-            throw new CustomException(
-                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
-        // Validate tenancy
-        const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
-        if (!tenancy) {
-            throw new CustomException(
-                ErrorCode.TENANCY_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
         // Calculate start and end dates for date booking
         const startDateObj = new Date(); // Current date
         const endDateObj = new Date(endDate);
@@ -223,24 +235,6 @@ export class WhitelistService {
 
     private async createPermanentBooking(request: CreateWhitelistRequest): Promise<CreateWhitelistResponse> {
         const { registrationNumber, email, subCarParkId, tenancyId } = request;
-
-        // Validate subCarPark
-        const subCarPark = await this.subCarParkService.findOne({ where: { id: subCarParkId } });
-        if (!subCarPark) {
-            throw new CustomException(
-                ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
-        // Validate tenancy
-        const tenancy = await this.tenancyService.findOne({ where: { id: tenancyId } });
-        if (!tenancy) {
-            throw new CustomException(
-                ErrorCode.TENANCY_NOT_FOUND.key,
-                HttpStatus.NOT_FOUND,
-            );
-        }
 
         // Calculate start and end dates for permanent booking
         const startDateObj = new Date(); // Current date

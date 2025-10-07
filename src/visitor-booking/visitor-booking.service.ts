@@ -73,6 +73,29 @@ export class VisitorBookingService {
             );
         }
 
+        const companyEmails = await this.subCarParkRepository.findOne({
+            where: {
+                id: subCarParkId,
+            },
+            relations: {
+                whitelistCompanies: true,
+            },
+            select: {
+                whitelistCompanies: {
+                    domainName: true,
+                },
+            },
+        });
+
+        const domainNames = companyEmails.whitelistCompanies.map(company => company.domainName);
+
+        if (domainNames.includes(email)) {
+            throw new CustomException(
+                ErrorCode.DOMAIN_NAME_NOT_ALLOWED.key,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
         // Check for existing active booking with same vehicle registration and overlapping time
         const existingBookings = await this.visitorBookingRepository.count({
             where: {
