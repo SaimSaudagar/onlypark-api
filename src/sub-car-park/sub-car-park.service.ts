@@ -40,6 +40,7 @@ export class SubCarParkService {
         return {
             id: subCarPark.id,
             carParkName: subCarPark.carParkName,
+            tenantEmailCheck: subCarPark.tenantEmailCheck,
             tenancies: subCarPark.tenancies?.map(tenancy => ({
                 id: tenancy.id,
                 tenantName: tenancy.tenantName,
