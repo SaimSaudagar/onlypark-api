@@ -129,8 +129,6 @@ export class WhitelistService extends BaseService {
       }
     }
 
-    console.log(whereOptions);
-
     if (dateFrom && dateTo) {
       whereOptions.push({ startDate: Between(dateFrom, dateTo) });
     }
@@ -149,6 +147,8 @@ export class WhitelistService extends BaseService {
     if (sortField) {
       orderOptions[sortField] = sortOrder;
     }
+
+    console.log(JSON.stringify(whereOptions));
 
     const query: FindManyOptions<Whitelist> = {
       where: whereOptions,
