@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString, IsEnum } from "class-validator";
 import { ApiGetBaseRequest } from "../../common/types";
-import { ParkingSpotStatus } from "../../common/enums";
+import { CarParkType, ParkingSpotStatus } from "../../common/enums";
 
 export class FindMasterCarParkRequest extends ApiGetBaseRequest {
   @ApiProperty({ required: false })
@@ -11,8 +11,8 @@ export class FindMasterCarParkRequest extends ApiGetBaseRequest {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
-  carParkType?: string;
+  @IsEnum(CarParkType)
+  carParkType?: CarParkType;
 
   @ApiProperty({ required: false, enum: ParkingSpotStatus })
   @IsOptional()
