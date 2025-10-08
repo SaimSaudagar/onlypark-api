@@ -10,7 +10,7 @@ import {
   ILike,
   In,
 } from "typeorm";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import {
   CreateVisitorRequest,
   CreateVisitorResponse,
@@ -40,13 +40,13 @@ export class VisitorService extends BaseService {
     private readonly carparkManagerRepository: Repository<CarparkManager>,
     requestContextService: RequestContextService,
     configService: ConfigService,
-    datasource: DataSource,
+    datasource: DataSource
   ) {
     super(
       requestContextService,
       configService,
       datasource,
-      VisitorService.name,
+      VisitorService.name
     );
   }
 
@@ -65,12 +65,12 @@ export class VisitorService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -100,7 +100,7 @@ export class VisitorService extends BaseService {
   }
 
   async findAll(
-    request: FindVisitorRequest,
+    request: FindVisitorRequest
   ): Promise<ApiGetBaseResponse<FindVisitorResponse>> {
     const {
       search,
@@ -122,7 +122,7 @@ export class VisitorService extends BaseService {
     const assignedSubCarParks = await this.getAssignedSubCarParks();
     if (assignedSubCarParks.length > 0) {
       const subCarParkIds = assignedSubCarParks.map(
-        (subCarPark) => subCarPark.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId
       );
       whereOptions.push({ subCarParkId: In(subCarParkIds) });
     }
@@ -134,7 +134,7 @@ export class VisitorService extends BaseService {
     if (search) {
       whereOptions.push(
         { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
+        { email: ILike(`%${search}%`) }
       );
     }
 
@@ -192,13 +192,13 @@ export class VisitorService extends BaseService {
   }
 
   async findOne(
-    options: FindOneOptions<VisitorBooking>,
+    options: FindOneOptions<VisitorBooking>
   ): Promise<VisitorBooking> {
     const entity = await this.visitorBookingRepository.findOne(options);
     if (!entity) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -206,12 +206,12 @@ export class VisitorService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -220,7 +220,7 @@ export class VisitorService extends BaseService {
 
   async update(
     id: string,
-    request: UpdateVisitorRequest,
+    request: UpdateVisitorRequest
   ): Promise<UpdateVisitorResponse> {
     const entity = await this.visitorBookingRepository.findOne({
       where: { id },
@@ -228,7 +228,7 @@ export class VisitorService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -236,12 +236,12 @@ export class VisitorService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -268,7 +268,7 @@ export class VisitorService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -276,12 +276,12 @@ export class VisitorService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -294,7 +294,7 @@ export class VisitorService extends BaseService {
     if (!userId) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -310,7 +310,7 @@ export class VisitorService extends BaseService {
     if (!carparkManager) {
       throw new CustomException(
         ErrorCode.CARPARK_MANAGER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -330,7 +330,7 @@ export class VisitorService extends BaseService {
     if (!visitorBooking) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -338,19 +338,19 @@ export class VisitorService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === visitorBooking.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === visitorBooking.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
     if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

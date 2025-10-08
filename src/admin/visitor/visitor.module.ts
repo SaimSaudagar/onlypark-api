@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { VisitorBookingController } from "./visitor-booking.controller";
-import { VisitorBookingService } from "./visitor-booking.service";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBookingController } from "./visitor.controller";
+import { VisitorBookingService } from "./visitor.service";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import { TenancyModule } from "../../tenancy/tenancy.module";
 import { SubCarParkModule } from "../sub-car-park/sub-car-park.module";
 

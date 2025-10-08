@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { VisitorController } from "./visitor.controller";
 import { VisitorService } from "./visitor.service";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import { CarparkManager } from "../entities/carpark-manager.entity";
 import { CarparkManagerVisitorSubCarPark } from "../entities/carpark-manager-visitor-sub-car-park.entity";
 import { CarparkManagerWhitelistSubCarPark } from "../entities/carpark-manager-whitelist-sub-car-park.entity";

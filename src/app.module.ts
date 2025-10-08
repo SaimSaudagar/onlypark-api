@@ -32,7 +32,7 @@ import { DisputeModule } from "./dispute/dispute.module";
 import { PatrolOfficerModule } from "./patrol-officer/patrol-officer.module";
 import { ProfileModule as PatrolOfficerProfileModule } from "./patrol-officer/profile/profile.module";
 import { OutstandingRegistrationModule } from "./outstanding-registration/outstanding-registration.module";
-import { VisitorBookingModule } from "./visitor-booking/visitor-booking.module";
+import { VisitorBookingModule } from "./visitor/visitor.module";
 import { AuditLogModule } from "./common/services/audit-log/audit-log.module";
 import { RequestContextModule } from "./common/services/request-context/request-context.module";
 import { AuditSubscriber } from "./common/services/audit-log/audit-log.subscriber";
@@ -89,7 +89,7 @@ import { UserModule } from "./user/user.module";
         redis: {
           host: configService.get<string>(ConfigKeys.REDIS_HOST) || "localhost",
           port: parseInt(
-            configService.get<string>(ConfigKeys.REDIS_PORT) || "6379",
+            configService.get<string>(ConfigKeys.REDIS_PORT) || "6379"
           ),
           password:
             configService.get<string>(ConfigKeys.REDIS_PASSWORD) || undefined,

@@ -8,7 +8,7 @@ import {
   ILike,
   Repository,
 } from "typeorm";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import {
   CreateVisitorBookingRequest,
   VisitorBookingResponse,
@@ -16,7 +16,7 @@ import {
   VisitorBookingDeleteResponse,
   FindVisitorBookingResponse,
   FindVisitorBookingRequest,
-} from "./visitor-booking.dto";
+} from "./visitor.dto";
 import { CustomException } from "../../common/exceptions/custom.exception";
 import { ErrorCode } from "../../common/exceptions/error-code";
 import { HttpStatus } from "@nestjs/common";
@@ -31,11 +31,11 @@ export class VisitorBookingService {
     @InjectRepository(VisitorBooking)
     private visitorBookingRepository: Repository<VisitorBooking>,
     private tenancyService: TenancyService,
-    private subCarParkService: SubCarParkService,
+    private subCarParkService: SubCarParkService
   ) {}
 
   async create(
-    request: CreateVisitorBookingRequest,
+    request: CreateVisitorBookingRequest
   ): Promise<VisitorBookingCreateResponse> {
     const {
       referenceNumber,
@@ -54,7 +54,7 @@ export class VisitorBookingService {
     if (startDate >= endDate) {
       throw new CustomException(
         ErrorCode.INVALID_BOOKING_DATES.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -63,7 +63,7 @@ export class VisitorBookingService {
     if (durationHours > 24) {
       throw new CustomException(
         ErrorCode.BOOKING_DURATION_EXCEEDED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -75,7 +75,7 @@ export class VisitorBookingService {
       if (!tenancy) {
         throw new CustomException(
           ErrorCode.TENANT_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -87,7 +87,7 @@ export class VisitorBookingService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -106,7 +106,7 @@ export class VisitorBookingService {
     if (existingBooking) {
       throw new CustomException(
         ErrorCode.BOOKING_TIME_CONFLICT.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -126,7 +126,7 @@ export class VisitorBookingService {
     if (activeBookingsCount >= subCarPark.carSpace) {
       throw new CustomException(
         ErrorCode.BOOKING_CAPACITY_EXCEEDED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -153,7 +153,7 @@ export class VisitorBookingService {
   }
 
   async findAll(
-    request: FindVisitorBookingRequest,
+    request: FindVisitorBookingRequest
   ): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
     const { search, sortField, sortOrder, pageNo, pageSize, status } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -165,7 +165,7 @@ export class VisitorBookingService {
     if (search) {
       whereOptions.push(
         { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
+        { email: ILike(`%${search}%`) }
       );
     }
 
@@ -212,7 +212,7 @@ export class VisitorBookingService {
   }
 
   async findOne(
-    options?: FindOneOptions<VisitorBooking>,
+    options?: FindOneOptions<VisitorBooking>
   ): Promise<VisitorBookingResponse | null> {
     const visitorBooking = await this.visitorBookingRepository.findOne({
       ...options,
@@ -262,14 +262,14 @@ export class VisitorBookingService {
     if (!visitorBooking) {
       throw new CustomException(
         ErrorCode.BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -294,14 +294,14 @@ export class VisitorBookingService {
     if (!visitorBooking) {
       throw new CustomException(
         ErrorCode.BOOKING_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -310,7 +310,7 @@ export class VisitorBookingService {
   }
 
   private isValidregistrationNumberistration(
-    registrationNumber: string,
+    registrationNumber: string
   ): boolean {
     // Basic validation - can be enhanced based on requirements
     const regex = /^[A-Z0-9]{1,10}$/i;

@@ -5,7 +5,7 @@ import { Tenancy } from "../../tenancy/entities/tenancy.entity";
 import { BaseEntity } from "../../common/entities/base.entity";
 import { VisitorBookingStatus } from "../../common/enums";
 
-@Entity("visitor_bookings")
+@Entity("visitors")
 @Auditable()
 export class VisitorBooking extends BaseEntity {
   @Column({ type: "varchar", nullable: false })

@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
 import { ParkingSpotStatus } from "../../common/enums";
 import { Auditable } from "../../common/decorators";
 import { MasterCarPark } from "../../master-car-park/entities/master-car-park.entity";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import { Tenancy } from "../../tenancy/entities/tenancy.entity";
 import { Whitelist } from "../../whitelist/entities/whitelist.entity";
 import { WhitelistCompany } from "../../whitelist-company/entities/whitelist-company.entity";
@@ -77,7 +77,7 @@ export class SubCarPark extends BaseEntity {
 
   @OneToMany(
     () => VisitorBooking,
-    (visitorBooking) => visitorBooking.subCarPark,
+    (visitorBooking) => visitorBooking.subCarPark
   )
   visitorBookings: VisitorBooking[];
 
@@ -89,7 +89,7 @@ export class SubCarPark extends BaseEntity {
 
   @OneToMany(
     () => WhitelistCompany,
-    (whitelistCompany) => whitelistCompany.subCarPark,
+    (whitelistCompany) => whitelistCompany.subCarPark
   )
   whitelistCompanies: WhitelistCompany[];
 
@@ -99,42 +99,42 @@ export class SubCarPark extends BaseEntity {
   @OneToMany(
     () => PatrolOfficerVisitorSubCarPark,
     (patrolOfficerVisitorSubCarPark) =>
-      patrolOfficerVisitorSubCarPark.subCarPark,
+      patrolOfficerVisitorSubCarPark.subCarPark
   )
   patrolOfficerVisitorSubCarParks: PatrolOfficerVisitorSubCarPark[];
 
   @OneToMany(
     () => PatrolOfficerWhitelistSubCarPark,
     (patrolOfficerWhitelistSubCarPark) =>
-      patrolOfficerWhitelistSubCarPark.subCarPark,
+      patrolOfficerWhitelistSubCarPark.subCarPark
   )
   patrolOfficerWhitelistSubCarParks: PatrolOfficerWhitelistSubCarPark[];
 
   @OneToMany(
     () => PatrolOfficerBlacklistSubCarPark,
     (patrolOfficerBlacklistSubCarPark) =>
-      patrolOfficerBlacklistSubCarPark.subCarPark,
+      patrolOfficerBlacklistSubCarPark.subCarPark
   )
   patrolOfficerBlacklistSubCarParks: PatrolOfficerBlacklistSubCarPark[];
 
   @OneToMany(
     () => CarparkManagerVisitorSubCarPark,
     (carparkManagerVisitorSubCarPark) =>
-      carparkManagerVisitorSubCarPark.subCarPark,
+      carparkManagerVisitorSubCarPark.subCarPark
   )
   carparkManagerVisitorSubCarParks: CarparkManagerVisitorSubCarPark[];
 
   @OneToMany(
     () => CarparkManagerWhitelistSubCarPark,
     (carparkManagerWhitelistSubCarPark) =>
-      carparkManagerWhitelistSubCarPark.subCarPark,
+      carparkManagerWhitelistSubCarPark.subCarPark
   )
   carparkManagerWhitelistSubCarParks: CarparkManagerWhitelistSubCarPark[];
 
   @OneToMany(
     () => CarparkManagerBlacklistSubCarPark,
     (carparkManagerBlacklistSubCarPark) =>
-      carparkManagerBlacklistSubCarPark.subCarPark,
+      carparkManagerBlacklistSubCarPark.subCarPark
   )
   carparkManagerBlacklistSubCarParks: CarparkManagerBlacklistSubCarPark[];
 }

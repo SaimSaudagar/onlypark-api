@@ -8,12 +8,12 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { VisitorBookingService } from "./visitor-booking.service";
+import { VisitorBookingService } from "./visitor.service";
 import {
   CreateVisitorBookingRequest,
   CreateVisitorBookingResponse,
   GetBookingByTokenResponse,
-} from "./visitor-booking.dto";
+} from "./visitor.dto";
 import { OptionalJwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @ApiTags("Visitor Bookings")
@@ -24,7 +24,7 @@ export class VisitorBookingController {
   @Post()
   @UseGuards(OptionalJwtAuthGuard)
   async create(
-    @Body() createVisitorBookingDto: CreateVisitorBookingRequest,
+    @Body() createVisitorBookingDto: CreateVisitorBookingRequest
   ): Promise<CreateVisitorBookingResponse> {
     return await this.visitorBookingService.create(createVisitorBookingDto);
   }
@@ -32,14 +32,14 @@ export class VisitorBookingController {
   @Get(":token")
   @UseGuards(OptionalJwtAuthGuard)
   async getBookingByToken(
-    @Param("token") token: string,
+    @Param("token") token: string
   ): Promise<GetBookingByTokenResponse> {
     return await this.visitorBookingService.getBookingByToken(token);
   }
 
   @Post("verify-tenant/:token")
   async verifyTenantEmail(
-    @Param("token") token: string,
+    @Param("token") token: string
   ): Promise<CreateVisitorBookingResponse> {
     return await this.visitorBookingService.verifyTenantEmail(token);
   }

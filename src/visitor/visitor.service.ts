@@ -7,7 +7,7 @@ import {
   ErrorCode,
   TemplateKeys,
 } from "../common";
-import { VisitorBooking } from "./entities/visitor-booking.entity";
+import { VisitorBooking } from "./entities/visitor.entity";
 import { SubCarPark } from "../sub-car-park/entities/sub-car-park.entity";
 import { Tenancy } from "../tenancy/entities/tenancy.entity";
 import { EmailNotificationService } from "../common/services/email/email-notification.service";
@@ -17,7 +17,7 @@ import {
   CreateVisitorBookingRequest,
   CreateVisitorBookingResponse,
   GetBookingByTokenResponse,
-} from "./visitor-booking.dto";
+} from "./visitor.dto";
 
 @Injectable()
 export class VisitorBookingService {
@@ -30,11 +30,11 @@ export class VisitorBookingService {
     private tenancyRepository: Repository<Tenancy>,
     private emailNotificationService: EmailNotificationService,
     private configService: ConfigService,
-    private dataSource: DataSource,
+    private dataSource: DataSource
   ) {}
 
   async create(
-    createVisitorBookingDto: CreateVisitorBookingRequest,
+    createVisitorBookingDto: CreateVisitorBookingRequest
   ): Promise<CreateVisitorBookingResponse> {
     const { email, registrationNumber, subCarParkId, tenancyId } =
       createVisitorBookingDto;
@@ -48,7 +48,7 @@ export class VisitorBookingService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -62,7 +62,7 @@ export class VisitorBookingService {
       if (!tenancy) {
         throw new CustomException(
           ErrorCode.TENANCY_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -77,7 +77,7 @@ export class VisitorBookingService {
     if (totalBookings >= subCarPark.carSpace) {
       throw new CustomException(
         ErrorCode.BOOKING_CAPACITY_EXCEEDED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -96,13 +96,13 @@ export class VisitorBookingService {
     });
 
     const domainNames = companyEmails.whitelistCompanies.map(
-      (company) => company.domainName,
+      (company) => company.domainName
     );
 
     if (domainNames.includes(email)) {
       throw new CustomException(
         ErrorCode.DOMAIN_NAME_NOT_ALLOWED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -118,12 +118,12 @@ export class VisitorBookingService {
     if (existingBookings >= subCarPark.noOfPermitsPerRegNo) {
       throw new CustomException(
         ErrorCode.PERMITS_PER_REGISTRATION_EXCEEDED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     const endTime = new Date(
-      new Date().getTime() + subCarPark.freeHours * 60 * 60 * 1000,
+      new Date().getTime() + subCarPark.freeHours * 60 * 60 * 1000
     );
     const token = crypto.randomBytes(32).toString("hex");
 
@@ -175,7 +175,7 @@ export class VisitorBookingService {
         await this.sendTenantVerificationEmail(
           savedBooking,
           subCarPark,
-          tenancy,
+          tenancy
         );
       } else {
         // Send regular booking confirmation email
@@ -201,7 +201,7 @@ export class VisitorBookingService {
       throw new CustomException(
         ErrorCode.EMAIL_SEND_FAILED.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { email, error: error.message },
+        { email, error: error.message }
       );
     } finally {
       // Release query runner
@@ -221,7 +221,7 @@ export class VisitorBookingService {
     if (!booking) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -247,7 +247,7 @@ export class VisitorBookingService {
   }
 
   async verifyTenantEmail(
-    token: string,
+    token: string
   ): Promise<CreateVisitorBookingResponse> {
     const booking = await this.visitorBookingRepository.findOne({
       where: { token },
@@ -260,14 +260,14 @@ export class VisitorBookingService {
     if (!booking) {
       throw new CustomException(
         ErrorCode.VISITOR_BOOKING_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
     if (booking.status !== VisitorBookingStatus.UNAUTHENTICATED) {
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -275,7 +275,7 @@ export class VisitorBookingService {
     if (new Date() > booking.endDate) {
       throw new CustomException(
         ErrorCode.BOOKING_EXPIRED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -315,7 +315,7 @@ export class VisitorBookingService {
       throw new CustomException(
         ErrorCode.EMAIL_SEND_FAILED.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: error.message },
+        { error: error.message }
       );
     } finally {
       await queryRunner.release();
@@ -325,7 +325,7 @@ export class VisitorBookingService {
   private async sendTenantVerificationEmail(
     booking: VisitorBooking,
     subCarPark: SubCarPark,
-    tenancy: Tenancy,
+    tenancy: Tenancy
   ): Promise<void> {
     const verificationUrl = `${this.configService.get("APP_URL")}/visitor-bookings/verify-tenant/${booking.token}`;
 
@@ -348,7 +348,7 @@ export class VisitorBookingService {
 
   private async sendBookingConfirmationEmail(
     booking: VisitorBooking,
-    subCarPark: SubCarPark,
+    subCarPark: SubCarPark
   ): Promise<void> {
     const bookingUrl = `${this.configService.get("APP_URL")}/visitor-booking/${booking.token}`;
 

@@ -13,7 +13,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
-import { VisitorBookingService } from "./visitor-booking.service";
+import { VisitorBookingService } from "./visitor.service";
 import {
   CreateVisitorBookingRequest,
   UpdateVisitorBookingRequest,
@@ -22,7 +22,7 @@ import {
   VisitorBookingDeleteResponse,
   FindVisitorBookingRequest,
   FindVisitorBookingResponse,
-} from "./visitor-booking.dto";
+} from "./visitor.dto";
 import {
   ApiGetBaseResponse,
   UserType,
@@ -40,7 +40,7 @@ export class VisitorBookingController {
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   findAll(
-    @Query() request: FindVisitorBookingRequest,
+    @Query() request: FindVisitorBookingRequest
   ): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
     return this.visitorBookingService.findAll(request);
   }

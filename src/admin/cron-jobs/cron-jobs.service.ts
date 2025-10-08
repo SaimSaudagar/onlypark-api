@@ -3,7 +3,7 @@ import { Cron } from "@nestjs/schedule";
 import { DataSource, LessThan, LessThanOrEqual } from "typeorm";
 import { InfringementStatus, VisitorBookingStatus } from "../../common/enums";
 import { Infringement } from "../../infringement/entities/infringement.entity";
-import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import { OutstandingRegistration } from "../../outstanding-registration/entities/outstanding-registration.entity";
 import { EmailNotificationService } from "../../common/services/email/email-notification.service";
 import { SendEmailRequest } from "../../common/services/email/email-notification.dto";
@@ -19,7 +19,7 @@ export class CronJobsService {
 
   constructor(
     protected readonly datasource: DataSource,
-    private readonly emailNotificationService: EmailNotificationService,
+    private readonly emailNotificationService: EmailNotificationService
   ) {}
 
   // @Cron('0 9 * * *') // Every day at 9 AM
