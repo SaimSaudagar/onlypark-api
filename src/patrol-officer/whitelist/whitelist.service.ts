@@ -108,6 +108,7 @@ export class WhitelistService extends BaseService {
       sortOrder,
       pageNo,
       pageSize,
+      subCarParkId,
     } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
@@ -122,6 +123,10 @@ export class WhitelistService extends BaseService {
         (subCarPark) => subCarPark.subCarParkId,
       );
       whereOptions.push({ subCarParkId: In(subCarParkIds) });
+    }
+
+    if (subCarParkId) {
+      whereOptions.push({ subCarParkId });
     }
 
     if (dateFrom && dateTo) {

@@ -80,6 +80,10 @@ export class FindWhitelistRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsIn([WhitelistType.HOUR, WhitelistType.DATE, WhitelistType.PERMANENT])
   type?: WhitelistType;
+
+  @IsOptional()
+  @IsUUID(4)
+  subCarParkId?: string;
 }
 
 export class FindWhitelistResponse {
