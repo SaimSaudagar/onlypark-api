@@ -129,6 +129,8 @@ export class WhitelistService extends BaseService {
       }
     }
 
+    console.log(whereOptions);
+
     if (dateFrom && dateTo) {
       whereOptions.push({ startDate: Between(dateFrom, dateTo) });
     }
