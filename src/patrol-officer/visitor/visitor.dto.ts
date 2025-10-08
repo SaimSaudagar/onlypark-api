@@ -69,6 +69,10 @@ export class FindVisitorRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsEnum(VisitorBookingStatus)
   status?: VisitorBookingStatus;
+
+  @IsOptional()
+  @IsUUID(4)
+  subCarParkId?: string;
 }
 
 export class FindVisitorResponse {
