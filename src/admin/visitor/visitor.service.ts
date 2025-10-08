@@ -152,7 +152,7 @@ export class VisitorBookingService {
   async findAll(
     request: FindVisitorBookingRequest
   ): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
-    const { search, sortField, sortOrder, pageNo, pageSize, status } = request;
+    const { search, sortField, sortOrder, pageNo, pageSize, status, subCarParkId } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -161,6 +161,10 @@ export class VisitorBookingService {
 
     if (status) {
       whereOptions.status = status;
+    }
+
+    if (subCarParkId) {
+      whereOptions.subCarParkId = subCarParkId;
     }
 
     if (sortField) {

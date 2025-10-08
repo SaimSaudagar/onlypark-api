@@ -73,7 +73,7 @@ export class BlacklistService {
   async findAll(
     request: FindBlacklistRequest
   ): Promise<ApiGetBaseResponse<FindBlacklistResponse>> {
-    const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize } =
+    const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize, subCarParkId } =
       request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
@@ -87,6 +87,10 @@ export class BlacklistService {
 
     if (sortField) {
       orderOptions[sortField] = sortOrder;
+    }
+
+    if (subCarParkId) {
+      whereOptions.subCarParkId = subCarParkId;
     }
 
     const query: FindManyOptions<Blacklist> = {

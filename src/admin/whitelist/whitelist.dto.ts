@@ -99,6 +99,10 @@ export class FindWhitelistRequest extends ApiGetBaseRequest {
     WhitelistType.PERMANENT,
   ])
   type?: WhitelistType;
+
+  @IsOptional()
+  @IsUUID(4)
+  subCarParkId?: string;
 }
 
 export class FindWhitelistResponse {
