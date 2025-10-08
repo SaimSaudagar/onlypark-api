@@ -54,9 +54,6 @@ export class WhitelistService {
       whereOptions.whitelistType = type;
     }
 
-    console.log(whereOptions);
-    console.log(orderOptions);
-
     const [whitelists, totalItems] =
       await this.whitelistRepository.findAndCount({
         where: search

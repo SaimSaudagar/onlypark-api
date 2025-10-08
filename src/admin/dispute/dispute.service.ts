@@ -304,8 +304,6 @@ export class DisputeService {
         status: InfringementStatus.WAIVED,
       });
 
-      console.log("dispute.email", dispute);
-
       // Send email notification
       try {
         await this.emailNotificationService.sendUsingTemplate({

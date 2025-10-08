@@ -165,12 +165,10 @@ export class WhitelistService extends BaseService {
       take,
     };
 
-    console.log(JSON.stringify(query));
 
     const [whitelist, totalItems] =
       await this.whitelistRepository.findAndCount(query);
 
-    console.log(JSON.stringify(whitelist));
     let response: FindWhitelistResponse[] = [];
     response = whitelist.map((whitelist) => ({
       id: whitelist.id,

@@ -360,10 +360,8 @@ export class UserService {
         const admin = await queryRunner.manager.findOne(Admin, {
           where: { userId },
         });
-        console.log("dsadasdasdadas");
         if (admin) {
           await queryRunner.manager.remove(Admin, admin);
-          console.log("dsadasdasdadas");
         }
         break;
       case UserType.CARPARK_MANAGER:
