@@ -48,4 +48,16 @@ export class SubCarParkController {
       "whitelist",
     );
   }
+
+  @Get("blacklist")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  async findBlacklistSubCarParks(
+    @Query() request: FindSubCarParkRequest,
+  ): Promise<ApiGetBaseResponse<FindSubCarParkResponse>> {
+    return await this.subCarParkService.findByAssignmentType(
+      request,
+      "blacklist",
+    );
+  }
 }

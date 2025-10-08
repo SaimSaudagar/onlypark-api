@@ -35,12 +35,12 @@ export class BlacklistController {
     return this.blacklistService.findAll(request);
   }
 
-  @Get("assigned-sub-car-parks")
-  @UseGuards(JwtAuthenticationGuard, RoleGuard)
-  @AllowedRoles(UserType.PATROL_OFFICER)
-  getAssignedSubCarParks() {
-    return this.blacklistService.getAssignedSubCarParks();
-  }
+  // @Get("assigned-sub-car-parks")
+  // @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  // @AllowedRoles(UserType.PATROL_OFFICER)
+  // getAssignedSubCarParks() {
+  //   return this.blacklistService.getAssignedSubCarParks();
+  // }
 
   @Get(":id")
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
