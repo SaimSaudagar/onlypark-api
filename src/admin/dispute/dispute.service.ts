@@ -34,7 +34,7 @@ export class DisputeService {
     private disputeRepository: Repository<Dispute>,
     private infringementService: InfringementService,
     private emailNotificationService: EmailNotificationService,
-    private dataSource: DataSource,
+    private dataSource: DataSource
   ) {}
 
   //not needed here discuss with saim
@@ -88,28 +88,26 @@ export class DisputeService {
   }
 
   async findAll(
-    request: FindDisputeRequest,
+    request: FindDisputeRequest
   ): Promise<ApiGetBaseResponse<FindDisputeResponse>> {
     const { search, sortField, sortOrder, pageNo, pageSize } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Dispute>[] = [];
+    const whereOptions: FindOptionsWhere<Dispute> = {};
     const orderOptions: FindOptionsOrder<Dispute> = {};
-
-    if (search) {
-      whereOptions.push(
-        { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
-      );
-    }
 
     if (sortField) {
       orderOptions[sortField] = sortOrder;
     }
 
     const query: FindManyOptions<Dispute> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       relations: {
         infringement: true,
@@ -156,7 +154,7 @@ export class DisputeService {
     if (!dispute) {
       throw new CustomException(
         ErrorCode.DISPUTE_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -189,7 +187,7 @@ export class DisputeService {
     if (!dispute) {
       throw new CustomException(
         ErrorCode.DISPUTE_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -198,7 +196,7 @@ export class DisputeService {
 
   async update(
     id: string,
-    request: UpdateDisputeRequest,
+    request: UpdateDisputeRequest
   ): Promise<UpdateDisputeResponse> {
     const { status, responseReason, responsePhotos } = request;
 
@@ -206,7 +204,7 @@ export class DisputeService {
     if (!dispute) {
       throw new CustomException(
         ErrorCode.DISPUTE_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -236,7 +234,7 @@ export class DisputeService {
   }
 
   async updateStatus(
-    request: UpdateDisputeStatusRequest,
+    request: UpdateDisputeStatusRequest
   ): Promise<UpdateDisputeResponse> {
     const { id, status, responseReason } = request;
 
@@ -244,7 +242,7 @@ export class DisputeService {
     if (!dispute) {
       throw new CustomException(
         ErrorCode.DISPUTE_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -261,7 +259,7 @@ export class DisputeService {
   private async handleStatusUpdate(
     dispute: Dispute,
     status: DisputeStatus,
-    responseReason: string,
+    responseReason: string
   ): Promise<void> {
     switch (status) {
       case DisputeStatus.APPROVED:
@@ -280,14 +278,14 @@ export class DisputeService {
         // For any other status, throw an error
         throw new CustomException(
           ErrorCode.DISPUTE_STATUS_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
     }
   }
 
   private async handleApprovedStatus(
     dispute: Dispute,
-    responseReason: string,
+    responseReason: string
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -323,7 +321,7 @@ export class DisputeService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: dispute.email, error: emailError.message },
+          { email: dispute.email, error: emailError.message }
         );
       }
 
@@ -341,7 +339,7 @@ export class DisputeService {
 
   private async handleRejectedStatus(
     dispute: Dispute,
-    responseReason: string,
+    responseReason: string
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -371,7 +369,7 @@ export class DisputeService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: dispute.email, error: emailError.message },
+          { email: dispute.email, error: emailError.message }
         );
       }
 
@@ -389,7 +387,7 @@ export class DisputeService {
 
   private async handlePendingStatus(
     dispute: Dispute,
-    responseReason: string,
+    responseReason: string
   ): Promise<void> {
     // Update dispute status to pending
     await this.disputeRepository.update(dispute.id, {
@@ -400,7 +398,7 @@ export class DisputeService {
 
   private async handleApprovedWithAdminFeesStatus(
     dispute: Dispute,
-    responseReason: string,
+    responseReason: string
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -429,7 +427,7 @@ export class DisputeService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: dispute.email, error: emailError.message },
+          { email: dispute.email, error: emailError.message }
         );
       }
 

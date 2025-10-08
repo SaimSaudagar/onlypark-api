@@ -254,22 +254,20 @@ export class UserService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<User>[] = [];
+    const whereOptions: FindOptionsWhere<User> = {};
     const orderOptions: FindOptionsOrder<User> = {};
-
-    if (search) {
-      whereOptions.push(
-        { email: ILike(`%${search}%`) },
-        { name: ILike(`%${search}%`) }
-      );
-    }
 
     if (sortField) {
       orderOptions[sortField] = sortOrder;
     }
 
     const options: FindManyOptions<User> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, email: ILike(`%${search}%`) },
+            { ...whereOptions, name: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       skip,
       take,

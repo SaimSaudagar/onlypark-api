@@ -29,11 +29,11 @@ export class BlacklistService {
   constructor(
     @InjectRepository(Blacklist)
     private readonly blacklistRepository: Repository<Blacklist>,
-    private readonly subCarParkService: SubCarParkService,
+    private readonly subCarParkService: SubCarParkService
   ) {}
 
   async create(
-    request: CreateBlacklistRequest,
+    request: CreateBlacklistRequest
   ): Promise<CreateBlacklistResponse> {
     const { regNo, email, comments, subCarParkId } = request;
 
@@ -41,7 +41,7 @@ export class BlacklistService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -51,7 +51,7 @@ export class BlacklistService {
     if (existingBlacklist) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -71,25 +71,18 @@ export class BlacklistService {
   }
 
   async findAll(
-    request: FindBlacklistRequest,
+    request: FindBlacklistRequest
   ): Promise<ApiGetBaseResponse<FindBlacklistResponse>> {
     const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize } =
       request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Blacklist>[] = [];
+    const whereOptions: FindOptionsWhere<Blacklist> = {};
     const orderOptions: FindOptionsOrder<Blacklist> = {};
 
     if (dateFrom && dateTo) {
-      whereOptions.push({ createdAt: Between(dateFrom, dateTo) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { regNo: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
-      );
+      whereOptions.createdAt = Between(dateFrom, dateTo);
     }
 
     if (sortField) {
@@ -97,7 +90,12 @@ export class BlacklistService {
     }
 
     const query: FindManyOptions<Blacklist> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, regNo: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       relations: {
         subCarPark: true,
@@ -137,7 +135,7 @@ export class BlacklistService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
     return entity;
@@ -145,23 +143,23 @@ export class BlacklistService {
 
   async update(
     id: string,
-    request: UpdateBlacklistRequest,
+    request: UpdateBlacklistRequest
   ): Promise<UpdateBlacklistResponse> {
     const entity = await this.blacklistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     const subCarPark = await this.subCarParkService.exists(
-      request.subCarParkId,
+      request.subCarParkId
     );
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -180,7 +178,7 @@ export class BlacklistService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
     await this.blacklistRepository.softRemove(entity);

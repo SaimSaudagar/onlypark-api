@@ -22,11 +22,11 @@ import { ApiGetBaseResponse, CustomException, ErrorCode } from "../common";
 export class WhitelistCompanyService {
   constructor(
     @InjectRepository(WhitelistCompany)
-    private whitelistCompanyRepository: Repository<WhitelistCompany>,
+    private whitelistCompanyRepository: Repository<WhitelistCompany>
   ) {}
 
   async create(
-    createDto: CreateWhitelistCompanyDto,
+    createDto: CreateWhitelistCompanyDto
   ): Promise<WhitelistCompany> {
     try {
       const existingCompany = await this.whitelistCompanyRepository.findOne({
@@ -39,7 +39,7 @@ export class WhitelistCompanyService {
       if (existingCompany) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
@@ -52,13 +52,13 @@ export class WhitelistCompanyService {
       }
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
   }
 
   async findAll(
-    request: FindWhitelistCompanyRequest,
+    request: FindWhitelistCompanyRequest
   ): Promise<ApiGetBaseResponse<FindWhitelistCompanyResponse>> {
     const {
       companyName,
@@ -72,22 +72,15 @@ export class WhitelistCompanyService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<WhitelistCompany>[] = [];
+    const whereOptions: FindOptionsWhere<WhitelistCompany> = {};
     const orderOptions: FindOptionsOrder<WhitelistCompany> = {};
 
     if (companyName) {
-      whereOptions.push({ companyName: ILike(`%${companyName}%`) });
+      whereOptions.companyName = ILike(`%${companyName}%`);
     }
 
     if (domainName) {
-      whereOptions.push({ domainName: ILike(`%${domainName}%`) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { companyName: ILike(`%${search}%`) },
-        { domainName: ILike(`%${search}%`) },
-      );
+      whereOptions.domainName = ILike(`%${domainName}%`);
     }
 
     if (sortField) {
@@ -102,7 +95,12 @@ export class WhitelistCompanyService {
         skip,
         take,
         order: orderOptions,
-        where: whereOptions,
+        where: search
+          ? [
+              { ...whereOptions, companyName: ILike(`%${search}%`) },
+              { ...whereOptions, domainName: ILike(`%${search}%`) },
+            ]
+          : whereOptions,
       });
 
     const response = whitelistCompanies.map((whitelistCompany) => ({
@@ -124,7 +122,7 @@ export class WhitelistCompanyService {
   }
 
   async findOne(
-    options?: FindOneOptions<WhitelistCompany>,
+    options?: FindOneOptions<WhitelistCompany>
   ): Promise<WhitelistCompany> {
     try {
       const company = await this.whitelistCompanyRepository.findOne({
@@ -137,7 +135,7 @@ export class WhitelistCompanyService {
       if (!company) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
 
@@ -148,14 +146,14 @@ export class WhitelistCompanyService {
       }
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
 
   async update(
     id: string,
-    updateDto: UpdateWhitelistCompanyDto,
+    updateDto: UpdateWhitelistCompanyDto
   ): Promise<WhitelistCompany> {
     try {
       const entity = await this.whitelistCompanyRepository.findOne({
@@ -166,7 +164,7 @@ export class WhitelistCompanyService {
       if (!entity) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
 
@@ -182,7 +180,7 @@ export class WhitelistCompanyService {
         if (existingCompany && existingCompany.id !== id) {
           throw new CustomException(
             ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
       }
@@ -197,7 +195,7 @@ export class WhitelistCompanyService {
       }
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -211,7 +209,7 @@ export class WhitelistCompanyService {
       if (!entity) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
 
@@ -222,7 +220,7 @@ export class WhitelistCompanyService {
       }
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -236,7 +234,7 @@ export class WhitelistCompanyService {
     } catch (error) {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -251,7 +249,7 @@ export class WhitelistCompanyService {
       if (!entity) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
 
@@ -264,14 +262,14 @@ export class WhitelistCompanyService {
       }
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
 
   async checkDomainNameExists(
     domainName: string,
-    subCarParkId: string,
+    subCarParkId: string
   ): Promise<boolean> {
     const existingCompany = await this.whitelistCompanyRepository.findOne({
       where: {
@@ -285,20 +283,20 @@ export class WhitelistCompanyService {
 
   async createBulk(
     request: CreateWhitelistCompanyDto[],
-    queryRunner: QueryRunner,
+    queryRunner: QueryRunner
   ): Promise<CreateWhitelistCompanyResponse[]> {
     const createdWhitelistCompanies: CreateWhitelistCompanyResponse[] = [];
 
     for (const company of request) {
       const emailExists = await this.checkDomainNameExists(
         company.domainName,
-        company.subCarParkId,
+        company.subCarParkId
       );
 
       if (emailExists) {
         throw new CustomException(
           ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 

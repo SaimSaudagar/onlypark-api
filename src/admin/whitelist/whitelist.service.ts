@@ -43,7 +43,7 @@ export class WhitelistService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Whitelist>[] = [];
+    const whereOptions: FindOptionsWhere<Whitelist> = {};
     const orderOptions: FindOptionsOrder<Whitelist> = {};
 
     if (sortField) {
@@ -51,14 +51,7 @@ export class WhitelistService {
     }
 
     if (type) {
-      whereOptions.push({ whitelistType: type });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { email: ILike(`%${search}%`) },
-        { registrationNumber: ILike(`%${search}%`) }
-      );
+      whereOptions.whitelistType = type;
     }
 
     console.log(whereOptions);
@@ -66,7 +59,12 @@ export class WhitelistService {
 
     const [whitelists, totalItems] =
       await this.whitelistRepository.findAndCount({
-        where: whereOptions,
+        where: search
+          ? [
+              { ...whereOptions, email: ILike(`%${search}%`) },
+              { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            ]
+          : whereOptions,
         order: orderOptions,
         skip,
         take,

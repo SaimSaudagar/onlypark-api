@@ -156,18 +156,11 @@ export class VisitorBookingService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<VisitorBooking>[] = [];
+    const whereOptions: FindOptionsWhere<VisitorBooking> = {};
     const orderOptions: FindOptionsOrder<VisitorBooking> = {};
 
-    if (search) {
-      whereOptions.push(
-        { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) }
-      );
-    }
-
     if (status) {
-      whereOptions.push({ status });
+      whereOptions.status = status;
     }
 
     if (sortField) {
@@ -176,7 +169,12 @@ export class VisitorBookingService {
 
     const [visitorBookings, totalItems] =
       await this.visitorBookingRepository.findAndCount({
-        where: whereOptions,
+        where: search
+          ? [
+              { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+              { ...whereOptions, email: ILike(`%${search}%`) },
+            ]
+          : whereOptions,
         order: orderOptions,
         skip,
         take,

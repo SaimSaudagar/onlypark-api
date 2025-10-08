@@ -88,14 +88,8 @@ export class TenancyService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
     console.log(request);
-    const whereOptions: FindOptionsWhere<Tenancy>[] = [];
+    const whereOptions: FindOptionsWhere<Tenancy> = {};
     const orderOptions: FindOptionsOrder<Tenancy> = {};
-    if (search) {
-      whereOptions.push(
-        { tenantName: ILike(`%${search}%`) },
-        { tenantEmail: ILike(`%${search}%`) }
-      );
-    }
 
     if (sortField) {
       orderOptions[sortField] = sortOrder;
@@ -104,7 +98,12 @@ export class TenancyService {
     const options: FindManyOptions<Tenancy> = {
       skip,
       take,
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, tenantName: ILike(`%${search}%`) },
+            { ...whereOptions, tenantEmail: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
     };
 

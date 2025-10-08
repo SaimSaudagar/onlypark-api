@@ -83,12 +83,20 @@ export class BlacklistService extends BaseService {
   async findAll(
     request: FindBlacklistRequest
   ): Promise<ApiGetBaseResponse<FindBlacklistResponse>> {
-    const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize, subCarParkId } =
-      request;
+    const {
+      search,
+      dateFrom,
+      dateTo,
+      sortField,
+      sortOrder,
+      pageNo,
+      pageSize,
+      subCarParkId,
+    } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Blacklist>[] = [];
+    const whereOptions: FindOptionsWhere<Blacklist> = {};
     const orderOptions: FindOptionsOrder<Blacklist> = {};
 
     // Filter by assigned sub car parks
@@ -97,22 +105,21 @@ export class BlacklistService extends BaseService {
       const subCarParkIds = assignedSubCarParks.map(
         (subCarPark) => subCarPark.subCarParkId
       );
-      whereOptions.push({ subCarParkId: In(subCarParkIds) });
-    }
-
-    if (subCarParkId) {
-      whereOptions.push({ subCarParkId: subCarParkId });
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
     }
 
     if (dateFrom && dateTo) {
-      whereOptions.push({ createdAt: Between(dateFrom, dateTo) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { regNo: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) }
-      );
+      whereOptions.createdAt = Between(dateFrom, dateTo);
     }
 
     if (sortField) {
@@ -121,7 +128,12 @@ export class BlacklistService extends BaseService {
 
     const [blacklist, totalItems] = await this.blacklistRepository.findAndCount(
       {
-        where: whereOptions,
+        where: search
+          ? [
+              { ...whereOptions, regNo: ILike(`%${search}%`) },
+              { ...whereOptions, email: ILike(`%${search}%`) },
+            ]
+          : whereOptions,
         order: orderOptions,
         relations: {
           subCarPark: true,

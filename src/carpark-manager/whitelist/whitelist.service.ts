@@ -123,6 +123,12 @@ export class WhitelistService extends BaseService {
         (subCarPark) => subCarPark.subCarParkId
       );
       if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
         whereOptions.subCarParkId = subCarParkId;
       } else {
         whereOptions.subCarParkId = In(subCarParkIds);

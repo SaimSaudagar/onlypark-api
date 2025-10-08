@@ -38,18 +38,18 @@ export class BlacklistService extends BaseService {
     private readonly carparkManagerRepository: Repository<CarparkManager>,
     requestContextService: RequestContextService,
     configService: ConfigService,
-    datasource: DataSource,
+    datasource: DataSource
   ) {
     super(
       requestContextService,
       configService,
       datasource,
-      BlacklistService.name,
+      BlacklistService.name
     );
   }
 
   async create(
-    request: CreateBlacklistRequest,
+    request: CreateBlacklistRequest
   ): Promise<CreateBlacklistResponse> {
     const { regNo, email, comments, subCarParkId } = request;
 
@@ -57,12 +57,12 @@ export class BlacklistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -82,38 +82,45 @@ export class BlacklistService extends BaseService {
   }
 
   async findAll(
-    request: FindBlacklistRequest,
+    request: FindBlacklistRequest
   ): Promise<ApiGetBaseResponse<FindBlacklistResponse>> {
-    const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize, subCarParkId } =
-      request;
+    const {
+      search,
+      dateFrom,
+      dateTo,
+      sortField,
+      sortOrder,
+      pageNo,
+      pageSize,
+      subCarParkId,
+    } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Blacklist>[] = [];
+    const whereOptions: FindOptionsWhere<Blacklist> = {};
     const orderOptions: FindOptionsOrder<Blacklist> = {};
 
     // Filter by assigned sub car parks
     const assignedSubCarParks = await this.getAssignedSubCarParks();
     if (assignedSubCarParks.length > 0) {
       const subCarParkIds = assignedSubCarParks.map(
-        (subCarPark) => subCarPark.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId
       );
-      whereOptions.push({ subCarParkId: In(subCarParkIds) });
-    }
-
-    if (subCarParkId) {
-      whereOptions.push({ subCarParkId: subCarParkId });
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
     }
 
     if (dateFrom && dateTo) {
-      whereOptions.push({ createdAt: Between(dateFrom, dateTo) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { regNo: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
-      );
+      whereOptions.createdAt = Between(dateFrom, dateTo);
     }
 
     if (sortField) {
@@ -121,7 +128,12 @@ export class BlacklistService extends BaseService {
     }
 
     const query: FindManyOptions<Blacklist> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, regNo: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       relations: {
         subCarPark: true,
@@ -161,7 +173,7 @@ export class BlacklistService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -169,12 +181,12 @@ export class BlacklistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -183,13 +195,13 @@ export class BlacklistService extends BaseService {
 
   async update(
     id: string,
-    request: UpdateBlacklistRequest,
+    request: UpdateBlacklistRequest
   ): Promise<UpdateBlacklistResponse> {
     const entity = await this.blacklistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -197,12 +209,12 @@ export class BlacklistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -224,7 +236,7 @@ export class BlacklistService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.BLACKLIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -232,12 +244,12 @@ export class BlacklistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -250,7 +262,7 @@ export class BlacklistService extends BaseService {
     if (!userId) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -266,7 +278,7 @@ export class BlacklistService extends BaseService {
     if (!carparkManager) {
       throw new CustomException(
         ErrorCode.CARPARK_MANAGER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 

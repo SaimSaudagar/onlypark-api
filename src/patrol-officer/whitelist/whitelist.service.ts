@@ -112,7 +112,7 @@ export class WhitelistService extends BaseService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<Whitelist>[] = [];
+    const whereOptions: FindOptionsWhere<Whitelist> = {};
     const orderOptions: FindOptionsOrder<Whitelist> = {};
 
     // Filter by assigned sub car parks
@@ -122,25 +122,24 @@ export class WhitelistService extends BaseService {
         (subCarPark) => subCarPark.subCarParkId
       );
       if (subCarParkId) {
-        whereOptions.push({ subCarParkId: subCarParkId });
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
       } else {
-        whereOptions.push({ subCarParkId: In(subCarParkIds) });
+        whereOptions.subCarParkId = In(subCarParkIds);
       }
     }
 
     if (dateFrom && dateTo) {
-      whereOptions.push({ startDate: Between(dateFrom, dateTo) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) }
-      );
+      whereOptions.startDate = Between(dateFrom, dateTo);
     }
 
     if (type) {
-      whereOptions.push({ whitelistType: type });
+      whereOptions.whitelistType = type;
     }
 
     if (sortField) {
@@ -148,7 +147,12 @@ export class WhitelistService extends BaseService {
     }
 
     const query: FindManyOptions<Whitelist> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       relations: {
         subCarPark: true,

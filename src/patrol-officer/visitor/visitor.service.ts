@@ -116,7 +116,7 @@ export class VisitorService extends BaseService {
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
-    const whereOptions: FindOptionsWhere<VisitorBooking>[] = [];
+    const whereOptions: FindOptionsWhere<VisitorBooking> = {};
     const orderOptions: FindOptionsOrder<VisitorBooking> = {};
 
     // Filter by assigned sub car parks
@@ -125,26 +125,25 @@ export class VisitorService extends BaseService {
       const subCarParkIds = assignedSubCarParks.map(
         (subCarPark) => subCarPark.subCarParkId
       );
-      whereOptions.push({ subCarParkId: In(subCarParkIds) });
-    }
-
-    if (subCarParkId) {
-      whereOptions.push({ subCarParkId });
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
     }
 
     if (dateFrom && dateTo) {
-      whereOptions.push({ startDate: Between(dateFrom, dateTo) });
-    }
-
-    if (search) {
-      whereOptions.push(
-        { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) }
-      );
+      whereOptions.startDate = Between(dateFrom, dateTo);
     }
 
     if (status) {
-      whereOptions.push({ status });
+      whereOptions.status = status;
     }
 
     if (sortField) {
@@ -152,7 +151,12 @@ export class VisitorService extends BaseService {
     }
 
     const query: FindManyOptions<VisitorBooking> = {
-      where: whereOptions,
+      where: search
+        ? [
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
       order: orderOptions,
       relations: {
         subCarPark: true,
