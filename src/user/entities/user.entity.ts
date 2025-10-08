@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  OneToMany,
-  OneToOne,
-  BeforeInsert,
-  BeforeUpdate,
-} from "typeorm";
+import { Entity, Column, OneToMany, BeforeInsert, BeforeUpdate } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { UserStatus, UserType } from "../../common/enums";
 import { Auditable } from "../../common/decorators";

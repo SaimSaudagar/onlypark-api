@@ -3,7 +3,6 @@ import {
   IsString,
   IsEnum,
   IsOptional,
-  IsNumber,
   IsIn,
 } from "class-validator";
 import { CarParkType, ParkingSpotStatus } from "../../common/enums";

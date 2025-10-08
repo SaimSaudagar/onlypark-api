@@ -1,6 +1,5 @@
 import { Entity, Column, OneToOne, JoinColumn, OneToMany } from "typeorm";
 import { User } from "../../user/entities/user.entity";
-import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import { PatrolOfficerVisitorSubCarPark } from "./patrol-officer-visitor-sub-car-park.entity";
 import { PatrolOfficerWhitelistSubCarPark } from "./patrol-officer-whitelist-sub-car-park.entity";
 import { PatrolOfficerBlacklistSubCarPark } from "./patrol-officer-blacklist-sub-car-park.entity";
@@ -29,21 +28,21 @@ export class PatrolOfficer extends BaseEntity {
   @OneToMany(
     () => PatrolOfficerVisitorSubCarPark,
     (patrolOfficerVisitorSubCarPark) =>
-      patrolOfficerVisitorSubCarPark.patrolOfficer,
+      patrolOfficerVisitorSubCarPark.patrolOfficer
   )
   patrolOfficerVisitorSubCarParks: PatrolOfficerVisitorSubCarPark[];
 
   @OneToMany(
     () => PatrolOfficerWhitelistSubCarPark,
     (patrolOfficerWhitelistSubCarPark) =>
-      patrolOfficerWhitelistSubCarPark.patrolOfficer,
+      patrolOfficerWhitelistSubCarPark.patrolOfficer
   )
   patrolOfficerWhitelistSubCarParks: PatrolOfficerWhitelistSubCarPark[];
 
   @OneToMany(
     () => PatrolOfficerBlacklistSubCarPark,
     (patrolOfficerBlacklistSubCarPark) =>
-      patrolOfficerBlacklistSubCarPark.patrolOfficer,
+      patrolOfficerBlacklistSubCarPark.patrolOfficer
   )
   patrolOfficerBlacklistSubCarParks: PatrolOfficerBlacklistSubCarPark[];
 }

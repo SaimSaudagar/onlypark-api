@@ -1,8 +1,6 @@
 import { Module } from "@nestjs/common";
-import { StorageType } from "./template-storage.enum";
 import { FileStorageModule } from "./file/file-storage.module";
 import { FileStorageService } from "./file/file-storage.service";
-import { ITemplateStorage } from "./template-storage.interface";
 import { DependencyInjectionKeys } from "../../common/configs";
 
 @Module({
@@ -16,7 +14,7 @@ import { DependencyInjectionKeys } from "../../common/configs";
   exports: [FileStorageModule, DependencyInjectionKeys.TEMPLATE_STORAGE],
 })
 export class TemplateStorageModule {
-  static register(options: { type: StorageType }) {
+  static register() {
     return {
       module: TemplateStorageModule,
       imports: [FileStorageModule],

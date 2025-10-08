@@ -2,7 +2,6 @@ import { Injectable, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FindManyOptions,
-  FindOneOptions,
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
@@ -29,10 +28,8 @@ import {
   FindByIdResponse,
   FindUsersRequest,
   FindUsersResponse,
-  GetProfileResponse,
   UpdateNotificationTokenRequest,
   UpdateUserRequest,
-  UpdateUserProfileRequest,
   UpdateUserResponse,
 } from "./user.dto";
 import { EmailNotificationService } from "../../common/services/email/email-notification.service";
@@ -61,7 +58,7 @@ export class UserService {
     @InjectRepository(CarparkManager)
     private carparkManagerRepository: Repository<CarparkManager>,
     @InjectRepository(PatrolOfficer)
-    private patrolOfficerRepository: Repository<PatrolOfficer>,
+    private patrolOfficerRepository: Repository<PatrolOfficer>
   ) {}
 
   async create(request: CreateUserRequest): Promise<CreateUserResponse> {
@@ -70,7 +67,7 @@ export class UserService {
     if (type === UserType.SUPER_ADMIN) {
       throw new CustomException(
         ErrorCode.INVALID_USER_TYPE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -81,7 +78,7 @@ export class UserService {
     if (userInDb) {
       throw new CustomException(
         ErrorCode.EMAIL_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -124,7 +121,7 @@ export class UserService {
           await this.createCarparkManager(
             queryRunner,
             savedUser,
-            carparkManagerRequest,
+            carparkManagerRequest
           );
           break;
         case UserType.PATROL_OFFICER:
@@ -138,13 +135,13 @@ export class UserService {
           await this.createPatrolOfficer(
             queryRunner,
             savedUser,
-            patrolOfficerRequest,
+            patrolOfficerRequest
           );
           break;
         default:
           throw new CustomException(
             ErrorCode.INVALID_USER_TYPE.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
       }
 
@@ -166,7 +163,7 @@ export class UserService {
       } catch (emailError) {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
 
@@ -206,7 +203,7 @@ export class UserService {
   private async createCarparkManager(
     queryRunner: any,
     savedUser: User,
-    request: CreateCarparkManagerRequest,
+    request: CreateCarparkManagerRequest
   ): Promise<void> {
     const carparkManager = await queryRunner.manager.save(CarparkManager, {
       userId: savedUser.id,
@@ -225,7 +222,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.CARPARK_MANAGER_VISITOR_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(CarparkManagerVisitorSubCarPark, {
@@ -246,7 +243,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.CARPARK_MANAGER_WHITELIST_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(CarparkManagerWhitelistSubCarPark, {
@@ -267,7 +264,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.CARPARK_MANAGER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(CarparkManagerBlacklistSubCarPark, {
@@ -281,7 +278,7 @@ export class UserService {
   private async createPatrolOfficer(
     queryRunner: any,
     savedUser: User,
-    request: CreatePatrolOfficerRequest,
+    request: CreatePatrolOfficerRequest
   ): Promise<void> {
     const patrolOfficer = await queryRunner.manager.save(PatrolOfficer, {
       officerName: savedUser.name,
@@ -300,7 +297,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.PATROL_OFFICER_VISITOR_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(PatrolOfficerVisitorSubCarPark, {
@@ -321,7 +318,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.PATROL_OFFICER_WHITELIST_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(PatrolOfficerWhitelistSubCarPark, {
@@ -342,7 +339,7 @@ export class UserService {
         if (!subCarPark) {
           throw new CustomException(
             ErrorCode.PATROL_OFFICER_BLACKLIST_SUB_CAR_PARK_NOT_FOUND.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
         await queryRunner.manager.save(PatrolOfficerBlacklistSubCarPark, {
@@ -356,7 +353,7 @@ export class UserService {
   private async removeExistingUserTypeRecords(
     queryRunner: any,
     userId: string,
-    currentType: UserType,
+    currentType: UserType
   ): Promise<void> {
     switch (currentType) {
       case UserType.ADMIN:
@@ -372,7 +369,7 @@ export class UserService {
       case UserType.CARPARK_MANAGER:
         const carparkManager = await queryRunner.manager.findOne(
           CarparkManager,
-          { where: { userId } },
+          { where: { userId } }
         );
         if (carparkManager) {
           const carparkManagerVisitorSubCarParks =
@@ -389,15 +386,15 @@ export class UserService {
             });
           await queryRunner.manager.remove(
             CarparkManagerVisitorSubCarPark,
-            carparkManagerVisitorSubCarParks,
+            carparkManagerVisitorSubCarParks
           );
           await queryRunner.manager.remove(
             CarparkManagerWhitelistSubCarPark,
-            carparkManagerWhitelistSubCarParks,
+            carparkManagerWhitelistSubCarParks
           );
           await queryRunner.manager.remove(
             CarparkManagerBlacklistSubCarPark,
-            carparkManagerBlacklistSubCarParks,
+            carparkManagerBlacklistSubCarParks
           );
           await queryRunner.manager.remove(CarparkManager, carparkManager);
         }
@@ -421,15 +418,15 @@ export class UserService {
             });
           await queryRunner.manager.remove(
             PatrolOfficerVisitorSubCarPark,
-            patrolOfficerVisitorSubCarParks,
+            patrolOfficerVisitorSubCarParks
           );
           await queryRunner.manager.remove(
             PatrolOfficerWhitelistSubCarPark,
-            patrolOfficerWhitelistSubCarParks,
+            patrolOfficerWhitelistSubCarParks
           );
           await queryRunner.manager.remove(
             PatrolOfficerBlacklistSubCarPark,
-            patrolOfficerBlacklistSubCarParks,
+            patrolOfficerBlacklistSubCarParks
           );
           await queryRunner.manager.remove(PatrolOfficer, patrolOfficer);
         }
@@ -437,7 +434,7 @@ export class UserService {
     }
   }
 
-  private async updateAdmin(queryRunner: any, savedUser: User): Promise<void> {
+  private async updateAdmin(queryRunner: any): Promise<void> {
     await queryRunner.manager.save(Admin, {
       status: AdminStatus.ACTIVE,
     });
@@ -446,7 +443,7 @@ export class UserService {
   private async updateCarparkManager(
     queryRunner: any,
     savedUser: User,
-    request: UpdateUserRequest,
+    request: UpdateUserRequest
   ): Promise<void> {
     const carparkManager = await queryRunner.manager.save(CarparkManager, {
       status: CarparkManagerStatus.ACTIVE,
@@ -492,7 +489,7 @@ export class UserService {
   private async updatePatrolOfficer(
     queryRunner: any,
     savedUser: User,
-    request: UpdateUserRequest,
+    request: UpdateUserRequest
   ): Promise<void> {
     const patrolOfficer = await queryRunner.manager.update(
       PatrolOfficer,
@@ -500,7 +497,7 @@ export class UserService {
       {
         officerName: savedUser.name,
         status: PatrolOfficerStatus.ACTIVE,
-      },
+      }
     );
 
     if (
@@ -542,7 +539,7 @@ export class UserService {
 
   async update(
     id: string,
-    request: UpdateUserRequest,
+    request: UpdateUserRequest
   ): Promise<UpdateUserResponse> {
     const { name, email, type, phoneNumber, image } = request;
 
@@ -553,7 +550,7 @@ export class UserService {
     if (!userToBeUpdated) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -565,7 +562,7 @@ export class UserService {
       if (existingUser) {
         throw new CustomException(
           ErrorCode.EMAIL_ALREADY_EXISTS.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -573,7 +570,7 @@ export class UserService {
     if (type === UserType.SUPER_ADMIN) {
       throw new CustomException(
         ErrorCode.INVALID_USER_TYPE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -594,7 +591,7 @@ export class UserService {
         await this.removeExistingUserTypeRecords(
           queryRunner,
           savedUser.id,
-          userToBeUpdated.type,
+          userToBeUpdated.type
         );
 
         userToBeUpdated.type = type;
@@ -613,13 +610,13 @@ export class UserService {
           default:
             throw new CustomException(
               ErrorCode.INVALID_USER_TYPE.key,
-              HttpStatus.BAD_REQUEST,
+              HttpStatus.BAD_REQUEST
             );
         }
       } else {
         switch (userToBeUpdated.type) {
           case UserType.ADMIN:
-            await this.updateAdmin(queryRunner, savedUser);
+            await this.updateAdmin(queryRunner);
             break;
           case UserType.CARPARK_MANAGER:
             await this.updateCarparkManager(queryRunner, savedUser, request);
@@ -666,7 +663,7 @@ export class UserService {
     if (search) {
       whereOptions.push(
         { email: ILike(`%${search}%`) },
-        { name: ILike(`%${search}%`) },
+        { name: ILike(`%${search}%`) }
       );
     }
 
@@ -717,7 +714,7 @@ export class UserService {
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -755,15 +752,15 @@ export class UserService {
       status: user.status,
       visitorSubCarParkIds:
         additionalData?.carparkManagerVisitorSubCarParks?.map(
-          (subCarPark) => subCarPark.subCarParkId,
+          (subCarPark) => subCarPark.subCarParkId
         ) || [],
       whitelistSubCarParkIds:
         additionalData?.carparkManagerWhitelistSubCarParks?.map(
-          (subCarPark) => subCarPark.subCarParkId,
+          (subCarPark) => subCarPark.subCarParkId
         ) || [],
       blacklistSubCarParkIds:
         additionalData?.carparkManagerBlacklistSubCarParks?.map(
-          (subCarPark) => subCarPark.subCarParkId,
+          (subCarPark) => subCarPark.subCarParkId
         ) || [],
     };
   }
@@ -773,7 +770,7 @@ export class UserService {
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -784,7 +781,7 @@ export class UserService {
 
   async updateNotificationToken(
     request: UpdateNotificationTokenRequest,
-    loggedInUser: AuthenticatedUser,
+    loggedInUser: AuthenticatedUser
   ): Promise<void> {
     await this.usersRepository.update(loggedInUser.id, {
       // notificationToken: request.token, // Add this field to User entity if needed

@@ -4,9 +4,8 @@ import {
   IsUUID,
   IsNotEmpty,
   IsDate,
-  IsEnum,
 } from "class-validator";
-import { ApiGetBaseRequest, BlacklistStatus } from "../../common";
+import { ApiGetBaseRequest } from "../../common";
 
 export class CreateBlacklistRequest {
   @IsUUID()

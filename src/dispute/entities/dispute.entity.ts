@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  DeleteDateColumn,
-} from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import { DisputeStatus } from "../../common/enums";
 import { Auditable } from "../../common/decorators";
 import { Infringement } from "../../infringement/entities/infringement.entity";

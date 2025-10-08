@@ -8,7 +8,6 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   Not,
-  In,
 } from "typeorm";
 import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import {
@@ -41,11 +40,11 @@ export class SubCarParkService {
     private masterCarParkService: MasterCarParkService,
     private tenancyService: TenancyService,
     private whitelistCompanyService: WhitelistCompanyService,
-    private dataSource: DataSource,
+    private dataSource: DataSource
   ) {}
 
   async create(
-    request: CreateSubCarParkRequest,
+    request: CreateSubCarParkRequest
   ): Promise<SubCarParkCreateResponse | SubCarParkUpdateResponse> {
     const {
       masterCarParkId,
@@ -67,21 +66,21 @@ export class SubCarParkService {
     if (carSpace <= 0) {
       throw new CustomException(
         ErrorCode.INVALID_CAR_SPACE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (lat < -90 || lat > 90) {
       throw new CustomException(
         ErrorCode.INVALID_LATITUDE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (lang < -180 || lang > 180) {
       throw new CustomException(
         ErrorCode.INVALID_LONGITUDE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -93,14 +92,14 @@ export class SubCarParkService {
     if (event && eventDate && isNaN(eventDateObj.getTime())) {
       throw new CustomException(
         ErrorCode.INVALID_EVENT_DATE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (event && eventExpiryDate && isNaN(eventExpiryDateObj.getTime())) {
       throw new CustomException(
         ErrorCode.INVALID_EVENT_DATE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -108,14 +107,14 @@ export class SubCarParkService {
       if (!eventDateObj || !eventExpiryDateObj) {
         throw new CustomException(
           ErrorCode.INVALID_EVENT_DATE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
       if (eventDateObj >= eventExpiryDateObj) {
         throw new CustomException(
           ErrorCode.INVALID_EVENT_DATE_RANGE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -123,14 +122,14 @@ export class SubCarParkService {
     if (freeHours !== undefined && freeHours < 1) {
       throw new CustomException(
         ErrorCode.INVALID_FREE_HOURS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (noOfPermitsPerRegNo !== undefined && noOfPermitsPerRegNo < 1) {
       throw new CustomException(
         ErrorCode.INVALID_PERMITS_PER_REGISTRATION.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -140,7 +139,7 @@ export class SubCarParkService {
         if (!company.companyName || !company.domainName) {
           throw new CustomException(
             ErrorCode.COMPANY_NAME_AND_DOMAIN_NAME_REQUIRED.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
       }
@@ -157,14 +156,14 @@ export class SubCarParkService {
       if (!masterCarPark) {
         throw new CustomException(
           ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
       if (masterCarPark.status !== ParkingSpotStatus.ACTIVE) {
         throw new CustomException(
           ErrorCode.MASTER_CAR_PARK_NOT_ACTIVE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
@@ -180,12 +179,11 @@ export class SubCarParkService {
       if (existingSubCarPark) {
         throw new CustomException(
           ErrorCode.SUB_CAR_PARK_NAME_ALREADY_EXISTS.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
-      let subCarParkCode: string;
-      subCarParkCode = await this.generateCarParkCode();
+      const subCarParkCode = await this.generateCarParkCode();
       await queryRunner.manager
         .createQueryBuilder(SubCarPark, "subCarPark")
         .where("subCarPark.subCarParkCode = :code", { code: subCarParkCode })
@@ -229,7 +227,7 @@ export class SubCarParkService {
 
         savedTenancies = await this.tenancyService.createBulk(
           tenanciesWithSubCarPark,
-          queryRunner,
+          queryRunner
         );
       }
 
@@ -242,11 +240,11 @@ export class SubCarParkService {
               domainName: company.domainName,
               subCarParkId: savedSubCarPark.id,
             };
-          },
+          }
         );
         savedWhitelistCompanies = await this.whitelistCompanyService.createBulk(
           whitelistCompaniesWithSubCarPark,
-          queryRunner,
+          queryRunner
         );
       }
 
@@ -280,7 +278,7 @@ export class SubCarParkService {
   }
 
   async findAll(
-    request: FindSubCarParkRequest,
+    request: FindSubCarParkRequest
   ): Promise<ApiGetBaseResponse<FindAllSubCarParkResponse>> {
     const { pageNo, pageSize, sortField, sortOrder, search, status } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -323,7 +321,7 @@ export class SubCarParkService {
         lat: subCarPark.lat,
         lang: subCarPark.lang,
         status: subCarPark.status,
-      }),
+      })
     );
 
     return {
@@ -338,7 +336,7 @@ export class SubCarParkService {
   }
 
   async findOne(
-    options?: FindOneOptions<SubCarPark>,
+    options?: FindOneOptions<SubCarPark>
   ): Promise<FindSubCarParkResponse> {
     const subCarPark = await this.subCarParkRepository.findOne({
       ...options,
@@ -386,7 +384,7 @@ export class SubCarParkService {
   }
 
   async findByMasterCarPark(
-    masterCarParkId: string,
+    masterCarParkId: string
   ): Promise<FindSubCarParkResponse[]> {
     const subCarParks = await this.subCarParkRepository.find({
       where: { masterCarParkId },
@@ -436,7 +434,7 @@ export class SubCarParkService {
 
   async update(
     id: string,
-    request: UpdateSubCarParkRequest,
+    request: UpdateSubCarParkRequest
   ): Promise<SubCarParkUpdateResponse> {
     const { tenancies, whitelistCompanies, ...updateData } = request;
 
@@ -451,7 +449,7 @@ export class SubCarParkService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -460,7 +458,7 @@ export class SubCarParkService {
       if (updateData.carSpace <= 0) {
         throw new CustomException(
           ErrorCode.INVALID_CAR_SPACE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -469,7 +467,7 @@ export class SubCarParkService {
       if (updateData.lat < -90 || updateData.lat > 90) {
         throw new CustomException(
           ErrorCode.INVALID_LATITUDE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -478,7 +476,7 @@ export class SubCarParkService {
       if (updateData.lang < -180 || updateData.lang > 180) {
         throw new CustomException(
           ErrorCode.INVALID_LONGITUDE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -495,14 +493,14 @@ export class SubCarParkService {
       if (isNaN(eventDate.getTime()) || isNaN(eventExpiryDate.getTime())) {
         throw new CustomException(
           ErrorCode.INVALID_EVENT_DATE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
       if (eventDate >= eventExpiryDate) {
         throw new CustomException(
           ErrorCode.INVALID_EVENT_DATE_RANGE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -538,7 +536,7 @@ export class SubCarParkService {
             .filter((t) => t.id)
             .map((t) => t.id);
           const tenanciesToRemove = subCarPark.tenancies.filter(
-            (existing) => !providedTenancyIds.includes(existing.id),
+            (existing) => !providedTenancyIds.includes(existing.id)
           );
 
           if (tenanciesToRemove.length > 0) {
@@ -549,12 +547,12 @@ export class SubCarParkService {
         // Validate uniqueness for all provided tenancies first
         const tenantEmails = tenancies.map((t) => t.tenantEmail);
         const duplicateEmails = tenantEmails.filter(
-          (email, index) => tenantEmails.indexOf(email) !== index,
+          (email, index) => tenantEmails.indexOf(email) !== index
         );
         if (duplicateEmails.length > 0) {
           throw new CustomException(
             ErrorCode.TENANT_ALREADY_EXISTS.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
 
@@ -577,7 +575,7 @@ export class SubCarParkService {
               if (emailExists) {
                 throw new CustomException(
                   ErrorCode.TENANT_ALREADY_EXISTS.key,
-                  HttpStatus.BAD_REQUEST,
+                  HttpStatus.BAD_REQUEST
                 );
               }
 
@@ -597,7 +595,7 @@ export class SubCarParkService {
             if (emailExists) {
               throw new CustomException(
                 ErrorCode.TENANT_ALREADY_EXISTS.key,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST
               );
             }
 
@@ -630,7 +628,7 @@ export class SubCarParkService {
             .filter((c) => c.id)
             .map((c) => c.id);
           const companiesToRemove = subCarPark.whitelistCompanies.filter(
-            (existing) => !providedCompanyIds.includes(existing.id),
+            (existing) => !providedCompanyIds.includes(existing.id)
           );
 
           if (companiesToRemove.length > 0) {
@@ -641,12 +639,12 @@ export class SubCarParkService {
         // Validate uniqueness for all provided companies first
         const companyDomainNames = whitelistCompanies.map((c) => c.domainName);
         const duplicateDomains = companyDomainNames.filter(
-          (domain, index) => companyDomainNames.indexOf(domain) !== index,
+          (domain, index) => companyDomainNames.indexOf(domain) !== index
         );
         if (duplicateDomains.length > 0) {
           throw new CustomException(
             ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
         }
 
@@ -656,7 +654,7 @@ export class SubCarParkService {
             // Update existing company
             const existingCompany = await queryRunner.manager.findOne(
               WhitelistCompany,
-              { where: { id: company.id } },
+              { where: { id: company.id } }
             );
             if (existingCompany) {
               // Check for unique domain name constraint (excluding current record)
@@ -667,13 +665,13 @@ export class SubCarParkService {
                     domainName: company.domainName,
                     id: Not(company.id),
                   },
-                },
+                }
               );
 
               if (domainExists) {
                 throw new CustomException(
                   ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-                  HttpStatus.BAD_REQUEST,
+                  HttpStatus.BAD_REQUEST
                 );
               }
 
@@ -690,13 +688,13 @@ export class SubCarParkService {
               WhitelistCompany,
               {
                 where: { domainName: company.domainName },
-              },
+              }
             );
 
             if (domainExists) {
               throw new CustomException(
                 ErrorCode.WHITELIST_COMPANY_DOMAIN_NAME_ALREADY_EXISTS.key,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST
               );
             }
 
@@ -764,21 +762,21 @@ export class SubCarParkService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (subCarPark.visitorBookings && subCarPark.visitorBookings.length > 0) {
       throw new CustomException(
         ErrorCode.CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (subCarPark.tenancies && subCarPark.tenancies.length > 0) {
       throw new CustomException(
         ErrorCode.CANNOT_DELETE_SUB_CAR_PARK_WITH_TENANCIES.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

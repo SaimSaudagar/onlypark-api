@@ -7,8 +7,7 @@ export class PushNotificationService {
 
   async sendPushNotification(
     deviceToken: string,
-    title: string,
-    body: string,
+    title: string
   ): Promise<boolean> {
     // TODO: Implement push notification logic
     console.log(`Sending push notification to ${deviceToken}: ${title}`);

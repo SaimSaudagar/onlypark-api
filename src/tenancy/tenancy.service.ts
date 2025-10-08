@@ -8,7 +8,6 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
-  Or,
 } from "typeorm";
 import { Tenancy } from "./entities/tenancy.entity";
 import {
@@ -25,7 +24,7 @@ import { ApiGetBaseResponse } from "../common/types";
 export class TenancyService {
   constructor(
     @InjectRepository(Tenancy)
-    private tenancyRepository: Repository<Tenancy>,
+    private tenancyRepository: Repository<Tenancy>
   ) {}
 
   async create(request: CreateTenancyRequest): Promise<Tenancy> {
@@ -36,13 +35,13 @@ export class TenancyService {
 
   async createBulk(
     request: CreateTenancyRequest[],
-    queryRunner: QueryRunner,
+    queryRunner: QueryRunner
   ): Promise<CreateTenancyResponse[]> {
     for (const tenant of request) {
       if (!tenant.tenantName || !tenant.tenantEmail) {
         throw new CustomException(
           ErrorCode.INVALID_TENANCY_DATA.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
@@ -54,7 +53,7 @@ export class TenancyService {
         throw new CustomException(
           ErrorCode.TENANT_ALREADY_EXISTS.key,
           HttpStatus.BAD_REQUEST,
-          { tenantEmail: tenant.tenantEmail },
+          { tenantEmail: tenant.tenantEmail }
         );
       }
     }
@@ -67,7 +66,7 @@ export class TenancyService {
           tenantName: tenant.tenantName,
           tenantEmail: tenant.tenantEmail,
           subCarParkId: tenant.subCarParkId,
-        })),
+        }))
       )
       .returning("*")
       .execute();
@@ -83,7 +82,7 @@ export class TenancyService {
   }
 
   async findAll(
-    request: FindTenancyRequest,
+    request: FindTenancyRequest
   ): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
     const { pageNo, pageSize, sortField, sortOrder, search } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -94,7 +93,7 @@ export class TenancyService {
     if (search) {
       whereOptions.push(
         { tenantName: ILike(`%${search}%`) },
-        { tenantEmail: ILike(`%${search}%`) },
+        { tenantEmail: ILike(`%${search}%`) }
       );
     }
 

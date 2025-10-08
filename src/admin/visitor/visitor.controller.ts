@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
   Patch,
   Param,
   Delete,
@@ -15,10 +13,7 @@ import { ApiTags } from "@nestjs/swagger";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { VisitorBookingService } from "./visitor.service";
 import {
-  CreateVisitorBookingRequest,
-  UpdateVisitorBookingRequest,
   VisitorBookingResponse,
-  VisitorBookingCreateResponse,
   VisitorBookingDeleteResponse,
   FindVisitorBookingRequest,
   FindVisitorBookingResponse,

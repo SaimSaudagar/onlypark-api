@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
-  FindManyOptions,
   FindOneOptions,
   FindOptionsOrder,
   FindOptionsWhere,
@@ -34,11 +33,11 @@ export class WhitelistService {
     @InjectRepository(Whitelist)
     private whitelistRepository: Repository<Whitelist>,
     private subCarParkService: SubCarParkService,
-    private tenancyService: TenancyService,
+    private tenancyService: TenancyService
   ) {}
 
   async findAll(
-    request: FindWhitelistRequest,
+    request: FindWhitelistRequest
   ): Promise<ApiGetBaseResponse<FindWhitelistResponse>> {
     const { search, sortField, sortOrder, pageNo, pageSize, type } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -58,7 +57,7 @@ export class WhitelistService {
     if (search) {
       whereOptions.push(
         { email: ILike(`%${search}%`) },
-        { registrationNumber: ILike(`%${search}%`) },
+        { registrationNumber: ILike(`%${search}%`) }
       );
     }
 
@@ -105,14 +104,14 @@ export class WhitelistService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
     return entity;
   }
 
   async create(
-    request: CreateWhitelistRequest,
+    request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     const { type, subCarParkId, tenancyId, email } = request;
 
@@ -123,7 +122,7 @@ export class WhitelistService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -134,7 +133,7 @@ export class WhitelistService {
     if (!tenancy) {
       throw new CustomException(
         ErrorCode.TENANCY_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -155,17 +154,17 @@ export class WhitelistService {
     if (!companyEmails) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
     const domainNames = companyEmails.whitelistCompanies.map(
-      (company) => company.domainName,
+      (company) => company.domainName
     );
     if (domainNames.includes(email)) {
       throw new CustomException(
         ErrorCode.DOMAIN_NAME_NOT_ALLOWED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
     // Route to appropriate booking type handler
@@ -179,13 +178,13 @@ export class WhitelistService {
       default:
         throw new CustomException(
           ErrorCode.CLIENT_ERROR.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
     }
   }
 
   private async createHourlyBooking(
-    request: CreateWhitelistRequest,
+    request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     const {
       registrationNumber,
@@ -200,21 +199,21 @@ export class WhitelistService {
     if (!duration) {
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (duration <= 0) {
       throw new CustomException(
         ErrorCode.INVALID_DURATION.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     // Calculate start and end dates for hourly booking
     const startDateObj = new Date(); // Current date
     const endDateObj = new Date(
-      startDateObj.getTime() + duration * 60 * 60 * 1000,
+      startDateObj.getTime() + duration * 60 * 60 * 1000
     ); // duration in hours
 
     const whitelist = await this.whitelistRepository.save({
@@ -238,7 +237,7 @@ export class WhitelistService {
   }
 
   private async createDateBooking(
-    request: CreateWhitelistRequest,
+    request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     const {
       registrationNumber,
@@ -254,7 +253,7 @@ export class WhitelistService {
     if (!endDate) {
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -265,7 +264,7 @@ export class WhitelistService {
     if (startDateObj >= endDateObj) {
       throw new CustomException(
         ErrorCode.INVALID_DATE_RANGE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -289,7 +288,7 @@ export class WhitelistService {
   }
 
   private async createPermanentBooking(
-    request: CreateWhitelistRequest,
+    request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     const { registrationNumber, email, subCarParkId, tenancyId, comments } =
       request;
@@ -297,7 +296,7 @@ export class WhitelistService {
     // Calculate start and end dates for permanent booking
     const startDateObj = new Date(); // Current date
     const endDateObj = new Date(
-      startDateObj.getTime() + 5 * 365 * 24 * 60 * 60 * 1000,
+      startDateObj.getTime() + 5 * 365 * 24 * 60 * 60 * 1000
     ); // 5 years from now
 
     const whitelist = await this.whitelistRepository.save({
@@ -321,13 +320,13 @@ export class WhitelistService {
 
   async update(
     id: string,
-    request: UpdateWhitelistRequest,
+    request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
     const entity = await this.whitelistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -344,14 +343,14 @@ export class WhitelistService {
       default:
         throw new CustomException(
           ErrorCode.CLIENT_ERROR.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
     }
   }
 
   private async updateHourlyBooking(
     id: string,
-    request: UpdateWhitelistRequest,
+    request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
     const { subCarParkId, tenancyId, duration } = request;
 
@@ -359,7 +358,7 @@ export class WhitelistService {
     if (duration !== undefined && duration <= 0) {
       throw new CustomException(
         ErrorCode.INVALID_DURATION.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -371,7 +370,7 @@ export class WhitelistService {
       if (!subCarPark) {
         throw new CustomException(
           ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -384,7 +383,7 @@ export class WhitelistService {
       if (!tenancy) {
         throw new CustomException(
           ErrorCode.TENANCY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -419,7 +418,7 @@ export class WhitelistService {
 
   private async updateDateBooking(
     id: string,
-    request: UpdateWhitelistRequest,
+    request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
     const { subCarParkId, tenancyId, endDate } = request;
 
@@ -431,7 +430,7 @@ export class WhitelistService {
       if (!subCarPark) {
         throw new CustomException(
           ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -444,7 +443,7 @@ export class WhitelistService {
       if (!tenancy) {
         throw new CustomException(
           ErrorCode.TENANCY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -463,7 +462,7 @@ export class WhitelistService {
       if (startDateObj >= endDateObj) {
         throw new CustomException(
           ErrorCode.INVALID_DATE_RANGE.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -486,7 +485,7 @@ export class WhitelistService {
 
   private async updatePermanentBooking(
     id: string,
-    request: UpdateWhitelistRequest,
+    request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
     const { subCarParkId, tenancyId } = request;
 
@@ -498,7 +497,7 @@ export class WhitelistService {
       if (!subCarPark) {
         throw new CustomException(
           ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -511,7 +510,7 @@ export class WhitelistService {
       if (!tenancy) {
         throw new CustomException(
           ErrorCode.TENANCY_NOT_FOUND.key,
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
     }
@@ -522,7 +521,7 @@ export class WhitelistService {
     // Calculate new dates for permanent booking
     const startDateObj = new Date(); // Current date
     const endDateObj = new Date(
-      startDateObj.getTime() + 365 * 24 * 60 * 60 * 1000,
+      startDateObj.getTime() + 365 * 24 * 60 * 60 * 1000
     ); // 1 year from now
 
     // Update entity
@@ -546,7 +545,7 @@ export class WhitelistService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -559,14 +558,14 @@ export class WhitelistService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
     if (entity.status === WhitelistStatus.ACTIVE) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

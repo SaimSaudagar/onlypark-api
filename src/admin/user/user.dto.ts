@@ -1,4 +1,3 @@
-import { PartialType } from "@nestjs/mapped-types";
 import { Type } from "class-transformer";
 import {
   IsNotEmpty,
@@ -7,7 +6,6 @@ import {
   ValidateNested,
   IsOptional,
   IsEnum,
-  MinLength,
   IsArray,
   IsUUID,
 } from "class-validator";

@@ -1,13 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsOrder,
-  FindOptionsWhere,
-  ILike,
-  Repository,
-} from "typeorm";
+import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Infringement } from "../../infringement/entities/infringement.entity";
 import {
   CreateInfringementRequest,
@@ -54,11 +47,11 @@ export class InfringementService {
     @InjectRepository(InfringementCarPark)
     private infringementCarParkRepository: Repository<InfringementCarPark>,
     @InjectRepository(InfringementReason)
-    private infringementReasonRepository: Repository<InfringementReason>,
+    private infringementReasonRepository: Repository<InfringementReason>
   ) {}
 
   async scan(
-    request: ScanInfringementRequest,
+    request: ScanInfringementRequest
   ): Promise<ScanInfringementResponse> {
     const { registrationNumber } = request;
 
@@ -75,7 +68,7 @@ export class InfringementService {
   }
 
   async create(
-    request: CreateInfringementRequest,
+    request: CreateInfringementRequest
   ): Promise<CreateInfringementResponse> {
     const {
       id,
@@ -94,7 +87,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -130,7 +123,7 @@ export class InfringementService {
 
   async update(
     id: string,
-    request: UpdateInfringementRequest,
+    request: UpdateInfringementRequest
   ): Promise<CreateInfringementResponse> {
     const infringement = await this.infringementRepository.findOne({
       where: { id },
@@ -139,7 +132,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -176,7 +169,7 @@ export class InfringementService {
   }
 
   async findAll(
-    request: FindInfringementRequest,
+    request: FindInfringementRequest
   ): Promise<ApiGetBaseResponse<FindInfringementResponse>> {
     const { search, status, sortField, sortOrder, pageNo, pageSize } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -232,7 +225,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -259,7 +252,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -273,7 +266,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -299,7 +292,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -307,7 +300,7 @@ export class InfringementService {
   }
 
   async getPenalty(
-    infringementCarParkId: string,
+    infringementCarParkId: string
   ): Promise<GetPenaltyResponse[]> {
     const infringementCarPark =
       await this.infringementCarParkRepository.findOne({
@@ -317,7 +310,7 @@ export class InfringementService {
     if (!infringementCarPark) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -337,7 +330,7 @@ export class InfringementService {
 
   async updateStatus(
     id: string,
-    request: UpdateInfringementStatusRequest,
+    request: UpdateInfringementStatusRequest
   ): Promise<UpdateInfringementStatusResponse> {
     const infringement = await this.infringementRepository.findOne({
       where: { id },
@@ -346,7 +339,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -362,9 +355,9 @@ export class InfringementService {
   }
 
   async findAllInfringementCarPark(
-    request: FindInfringementCarParkRequest,
+    request: FindInfringementCarParkRequest
   ): Promise<ApiGetBaseResponse<InfringementCarParkResponse>> {
-    const { pageNo, pageSize, sortField, sortOrder, search } = request;
+    const { pageNo, pageSize, search } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -400,7 +393,7 @@ export class InfringementService {
   }
 
   async findAllInfringementReason(
-    request: FindInfringementReasonRequest,
+    request: FindInfringementReasonRequest
   ): Promise<ApiGetBaseResponse<InfringementReasonResponse>> {
     const { pageNo, pageSize, sortField, sortOrder, search } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -457,7 +450,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -491,7 +484,7 @@ export class InfringementService {
         "assets",
         "templates",
         "html",
-        "ticket.template.hbs",
+        "ticket.template.hbs"
       );
 
       console.log("Template path:", templatePath);
@@ -500,7 +493,7 @@ export class InfringementService {
         console.error("Template file not found at:", templatePath);
         throw new CustomException(
           ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
 
@@ -552,7 +545,7 @@ export class InfringementService {
       if (process.platform === "darwin") {
         const puppeteerChrome = path.join(
           os.homedir(),
-          ".cache/puppeteer/chrome/mac_arm-140.0.7339.185/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+          ".cache/puppeteer/chrome/mac_arm-140.0.7339.185/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
         );
 
         const possiblePaths = [
@@ -605,7 +598,7 @@ export class InfringementService {
 
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }

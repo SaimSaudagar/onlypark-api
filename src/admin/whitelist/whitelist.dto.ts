@@ -3,13 +3,11 @@ import {
   IsString,
   IsOptional,
   IsUUID,
-  IsEnum,
   IsDateString,
   IsNumber,
   IsEmail,
   IsIn,
 } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
 import {
   ApiGetBaseRequest,
   WhitelistStatus,

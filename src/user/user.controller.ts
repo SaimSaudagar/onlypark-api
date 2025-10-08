@@ -1,26 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { AllowedRoles } from "../auth/guards/roles.guard";
-import { PermissionsGuard } from "../common/guards/permission.guard";
-import { UserType } from "../common/enums";
 import { UserService } from "./user.service";
-import {
-  CreateUserRequest,
-  CreateUserResponse,
-  FindUsersRequest,
-  FindUsersResponse,
-  UpdateUserDto,
-} from "./user.dto";
-import JwtAuthenticationGuard from "../auth/guards/jwt-auth.guard";
 
 @ApiTags("User")
 @Controller({ path: "admin/user", version: "1" })

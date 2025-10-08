@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
@@ -36,7 +35,7 @@ export class SubCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async create(
-    @Body() request: CreateSubCarParkRequest,
+    @Body() request: CreateSubCarParkRequest
   ): Promise<SubCarParkCreateResponse> {
     return await this.subCarParkService.create(request);
   }
@@ -45,7 +44,7 @@ export class SubCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async findAll(
-    @Query() request: FindSubCarParkRequest,
+    @Query() request: FindSubCarParkRequest
   ): Promise<ApiGetBaseResponse<FindAllSubCarParkResponse>> {
     return await this.subCarParkService.findAll(request);
   }
@@ -61,7 +60,7 @@ export class SubCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async findByMasterCarPark(
-    @Param("masterCarParkId") masterCarParkId: string,
+    @Param("masterCarParkId") masterCarParkId: string
   ): Promise<FindSubCarParkResponse[]> {
     return await this.subCarParkService.findByMasterCarPark(masterCarParkId);
   }
@@ -71,7 +70,7 @@ export class SubCarParkController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async update(
     @Param("id") id: string,
-    @Body() request: UpdateSubCarParkRequest,
+    @Body() request: UpdateSubCarParkRequest
   ): Promise<SubCarParkUpdateResponse> {
     return await this.subCarParkService.update(id, request);
   }

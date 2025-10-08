@@ -11,12 +11,9 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import JwtAuthenticationGuard, {
-  OptionalJwtAuthGuard,
-} from "../auth/guards/jwt-auth.guard";
+import { OptionalJwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { CarMakeService } from "./car-make.service";
 import { CreateCarMakeRequest, UpdateCarMakeRequest } from "./car-make.dto";
-import { RoleGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("CarMake")
 @Controller({ path: "car-make", version: "1" })
@@ -46,7 +43,7 @@ export class CarMakeController {
   @UseGuards(OptionalJwtAuthGuard)
   update(
     @Param("id") id: string,
-    @Body() updateCarMakeDto: UpdateCarMakeRequest,
+    @Body() updateCarMakeDto: UpdateCarMakeRequest
   ) {
     return this.carMakeService.update(id, updateCarMakeDto);
   }

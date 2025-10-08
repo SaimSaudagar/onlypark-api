@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TemplateEngineService } from "../template-engine/template-engine.service";
-import { TemplateKeys } from "../../constants/template-keys";
 import { MailgunService } from "./mailgun.service";
 import { CustomException } from "../../exceptions/custom.exception";
 import { ErrorCode } from "../../exceptions/error-code";
@@ -15,7 +14,7 @@ export class EmailService implements IEmailService {
   constructor(
     private readonly configService: ConfigService,
     private readonly templateEngine: TemplateEngineService,
-    private readonly mailgunService: MailgunService,
+    private readonly mailgunService: MailgunService
   ) {}
 
   async send(request: SendEmailRequest): Promise<SendEmailResponse> {
@@ -40,12 +39,12 @@ export class EmailService implements IEmailService {
         return result;
       } else {
         this.logger.error(
-          `Failed to send email to ${to}: ${result.errorMessage}`,
+          `Failed to send email to ${to}: ${result.errorMessage}`
         );
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: to, error: result.errorMessage },
+          { email: to, error: result.errorMessage }
         );
       }
     } catch (error) {
@@ -56,7 +55,7 @@ export class EmailService implements IEmailService {
       throw new CustomException(
         ErrorCode.EMAIL_SEND_FAILED.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { email: request.to, error: error.message },
+        { email: request.to, error: error.message }
       );
     }
   }

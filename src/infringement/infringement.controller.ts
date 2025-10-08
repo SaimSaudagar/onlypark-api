@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { InfringementService } from "./infringement.service";
 import {
   GetInfringementPaymentRequest,
@@ -13,7 +13,7 @@ export class InfringementController {
 
   @Get("ticket-details")
   getTicketDetails(
-    @Query() request: GetInfringementPaymentRequest,
+    @Query() request: GetInfringementPaymentRequest
   ): Promise<GetInfringementPaymentResponse> {
     return this.infringementService.getInfringementPayment(request);
   }

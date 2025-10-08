@@ -4,7 +4,6 @@ import {
   IsUUID,
   IsNotEmpty,
   IsDate,
-  IsEnum,
   IsEmail,
   IsIn,
   IsNumber,

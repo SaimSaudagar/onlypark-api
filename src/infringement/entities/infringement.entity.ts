@@ -1,17 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
-  DeleteDateColumn,
-} from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import { InfringementStatus } from "../../common/enums";
 import { Auditable } from "../../common/decorators";
 import { InfringementReason } from "./infringement-reason.entity";
 import { InfringementPenalty } from "./infringement-penalty.entity";
-import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import { CarMake } from "../../car-make/entities/car-make.entity";
 import { BaseEntity } from "../../common/entities/base.entity";
 import { InfringementCarPark } from "./infringement-car-park.entity";

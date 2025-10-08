@@ -1,8 +1,5 @@
 import { NestFactory } from "@nestjs/core";
 import { SeederModule } from "./seeder.module";
-import { RoleSeederService } from "./role/role-seeder.service";
-import { PermissionSeederService } from "./permission/permission-seeder.service";
-import { RolePermissionSeederService } from "./role-permission/role-permission-seeder.service";
 import { UserSeederService } from "./user/user-seeder.service";
 import { CarMakeSeederService } from "./car-make/car-make-seeder.service";
 import { MasterCarParkSeederService } from "./master-car-park/master-car-park-seeder.service";

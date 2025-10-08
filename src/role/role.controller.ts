@@ -11,8 +11,6 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { User } from "../common/decorators";
-import { AuthenticatedUser } from "../common";
 import { RoleGuard, AllowedRoles } from "../auth/guards/roles.guard";
 import { RequirePermissions } from "../common/decorators/permission.decorator";
 import { PermissionsGuard } from "../common/guards/permission.guard";

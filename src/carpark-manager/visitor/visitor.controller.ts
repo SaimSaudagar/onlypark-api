@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
   Patch,
   Param,
   Delete,
@@ -13,11 +11,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VisitorService } from "./visitor.service";
-import {
-  CreateVisitorRequest,
-  FindVisitorRequest,
-  UpdateVisitorRequest,
-} from "./visitor.dto";
+import { FindVisitorRequest } from "./visitor.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { AllowedRoles } from "../../auth/guards/roles.guard";
 import { UserType } from "../../common/enums";
@@ -49,20 +43,20 @@ export class VisitorController {
     return this.visitorService.findOne({ where: { id } });
   }
 
-//   @Post()
-//   @HttpCode(HttpStatus.CREATED)
-//   @UseGuards(JwtAuthenticationGuard, RoleGuard)
-//   @AllowedRoles(UserType.CARPARK_MANAGER)
-//   create(@Body() request: CreateVisitorRequest) {
-//     return this.visitorService.create(request);
-//   }
+  //   @Post()
+  //   @HttpCode(HttpStatus.CREATED)
+  //   @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  //   @AllowedRoles(UserType.CARPARK_MANAGER)
+  //   create(@Body() request: CreateVisitorRequest) {
+  //     return this.visitorService.create(request);
+  //   }
 
-//   @Patch(":id")
-//   @UseGuards(JwtAuthenticationGuard, RoleGuard)
-//   @AllowedRoles(UserType.CARPARK_MANAGER)
-//   update(@Param("id") id: string, @Body() request: UpdateVisitorRequest) {
-//     return this.visitorService.update(id, request);
-//   }
+  //   @Patch(":id")
+  //   @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  //   @AllowedRoles(UserType.CARPARK_MANAGER)
+  //   update(@Param("id") id: string, @Body() request: UpdateVisitorRequest) {
+  //     return this.visitorService.update(id, request);
+  //   }
 
   @Patch("checkout/:id")
   @AllowedRoles(UserType.CARPARK_MANAGER)

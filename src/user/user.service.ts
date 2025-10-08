@@ -2,7 +2,6 @@ import { Injectable, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FindManyOptions,
-  FindOneOptions,
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
@@ -28,10 +27,8 @@ import {
   FindByIdResponse,
   FindUsersRequest,
   FindUsersResponse,
-  GetProfileResponse,
   UpdateNotificationTokenRequest,
   UpdateUserDto,
-  UpdateUserProfileRequest,
 } from "./user.dto";
 import { EmailNotificationService } from "../common/services/email/email-notification.service";
 import { ConfigService } from "@nestjs/config";
@@ -58,7 +55,7 @@ export class UserService {
     @InjectRepository(CarparkManager)
     private carparkManagerRepository: Repository<CarparkManager>,
     @InjectRepository(PatrolOfficer)
-    private patrolOfficerRepository: Repository<PatrolOfficer>,
+    private patrolOfficerRepository: Repository<PatrolOfficer>
   ) {}
 
   async create(request: CreateUserRequest): Promise<CreateUserResponse> {
@@ -67,7 +64,7 @@ export class UserService {
     if (type === UserType.SUPER_ADMIN) {
       throw new CustomException(
         ErrorCode.INVALID_USER_TYPE.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -78,7 +75,7 @@ export class UserService {
     if (userInDb) {
       throw new CustomException(
         ErrorCode.EMAIL_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -120,7 +117,7 @@ export class UserService {
           await this.createCarparkManager(
             queryRunner,
             savedUser,
-            carparkManagerRequest,
+            carparkManagerRequest
           );
           break;
         case UserType.PATROL_OFFICER:
@@ -134,13 +131,13 @@ export class UserService {
           await this.createPatrolOfficer(
             queryRunner,
             savedUser,
-            patrolOfficerRequest,
+            patrolOfficerRequest
           );
           break;
         default:
           throw new CustomException(
             ErrorCode.INVALID_USER_TYPE.key,
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
           );
       }
 
@@ -163,7 +160,7 @@ export class UserService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: savedUser.email, error: emailError.message },
+          { email: savedUser.email, error: emailError.message }
         );
       }
 
@@ -185,7 +182,7 @@ export class UserService {
       await queryRunner.rollbackTransaction();
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     } finally {
       // Release query runner
@@ -203,7 +200,7 @@ export class UserService {
   private async createCarparkManager(
     queryRunner: any,
     savedUser: User,
-    request: CreateCarparkManagerRequest,
+    request: CreateCarparkManagerRequest
   ): Promise<void> {
     const carparkManager = await queryRunner.manager.save(CarparkManager, {
       userId: savedUser.id,
@@ -229,7 +226,7 @@ export class UserService {
   private async createPatrolOfficer(
     queryRunner: any,
     savedUser: User,
-    request: CreatePatrolOfficerRequest,
+    request: CreatePatrolOfficerRequest
   ): Promise<void> {
     const patrolOfficer = await queryRunner.manager.save(PatrolOfficer, {
       userId: savedUser.id,
@@ -263,7 +260,7 @@ export class UserService {
     if (search) {
       whereOptions.push(
         { email: ILike(`%${search}%`) },
-        { name: ILike(`%${search}%`) },
+        { name: ILike(`%${search}%`) }
       );
     }
 
@@ -305,7 +302,7 @@ export class UserService {
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -341,7 +338,7 @@ export class UserService {
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -352,7 +349,7 @@ export class UserService {
 
   async updateNotificationToken(
     request: UpdateNotificationTokenRequest,
-    loggedInUser: AuthenticatedUser,
+    loggedInUser: AuthenticatedUser
   ): Promise<void> {
     await this.usersRepository.update(loggedInUser.id, {
       // notificationToken: request.token, // Add this field to User entity if needed
@@ -407,7 +404,7 @@ export class UserService {
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
     return user;

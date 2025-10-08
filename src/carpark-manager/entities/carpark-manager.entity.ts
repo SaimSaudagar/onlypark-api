@@ -3,7 +3,6 @@ import { CarparkManagerStatus } from "../../common/enums";
 import { User } from "../../user/entities/user.entity";
 import { Auditable } from "../../common/decorators";
 import { BaseEntity } from "../../common/entities/base.entity";
-import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import { CarparkManagerVisitorSubCarPark } from "./carpark-manager-visitor-sub-car-park.entity";
 import { CarparkManagerWhitelistSubCarPark } from "./carpark-manager-whitelist-sub-car-park.entity";
 import { CarparkManagerBlacklistSubCarPark } from "./carpark-manager-blacklist-sub-car-park.entity";
@@ -49,21 +48,21 @@ export class CarparkManager extends BaseEntity {
   @OneToMany(
     () => CarparkManagerVisitorSubCarPark,
     (carparkManagerVisitorSubCarPark) =>
-      carparkManagerVisitorSubCarPark.carparkManager,
+      carparkManagerVisitorSubCarPark.carparkManager
   )
   carparkManagerVisitorSubCarParks: CarparkManagerVisitorSubCarPark[];
 
   @OneToMany(
     () => CarparkManagerWhitelistSubCarPark,
     (carparkManagerWhitelistSubCarPark) =>
-      carparkManagerWhitelistSubCarPark.carparkManager,
+      carparkManagerWhitelistSubCarPark.carparkManager
   )
   carparkManagerWhitelistSubCarParks: CarparkManagerWhitelistSubCarPark[];
 
   @OneToMany(
     () => CarparkManagerBlacklistSubCarPark,
     (carparkManagerBlacklistSubCarPark) =>
-      carparkManagerBlacklistSubCarPark.carparkManager,
+      carparkManagerBlacklistSubCarPark.carparkManager
   )
   carparkManagerBlacklistSubCarParks: CarparkManagerBlacklistSubCarPark[];
 }

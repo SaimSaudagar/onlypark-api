@@ -3,11 +3,9 @@ import {
   IsNotEmpty,
   IsString,
   IsOptional,
-  IsEnum,
   IsNumber,
   IsUUID,
 } from "class-validator";
-import { CarparkManagerStatus } from "../../common/enums";
 
 export class CreateProfileRequest {
   @IsNotEmpty()

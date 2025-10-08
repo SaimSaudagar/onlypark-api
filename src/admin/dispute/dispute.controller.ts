@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -14,19 +13,10 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { RoleGuard } from "../../auth/guards/roles.guard";
 import { Roles } from "../../common/decorators/roles.decorator";
-import { RequirePermissions } from "../../common/decorators/permission.decorator";
 import { PermissionsGuard } from "../../common/guards/permission.guard";
-import {
-  UserType,
-  AdminPermission,
-  UserPermission,
-  CarparkManagerPermission,
-  PatrolOfficerPermission,
-  DisputeStatus,
-} from "../../common/enums";
+import { UserType } from "../../common/enums";
 import { DisputeService } from "./dispute.service";
 import {
-  CreateDisputeRequest,
   FindDisputeRequest,
   UpdateDisputeRequest,
   UpdateDisputeStatusRequest,

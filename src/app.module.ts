@@ -6,11 +6,10 @@ import { BullModule } from "@nestjs/bull";
 
 // Middleware imports
 import { RequestContextMiddleware } from "./common/middlewares/request-context.middleware";
-import { TraceIdMiddleware } from "./common/middlewares/trace-id.middleware";
 import { HttpLoggingMiddleware } from "./common/middlewares/http-logging.middleware";
 
 // Configuration imports
-import { ConfigConstants, ConfigKeys, DependencyInjectionKeys } from "./common";
+import { ConfigConstants, ConfigKeys } from "./common";
 
 // Core modules
 import { AppController } from "./app.controller";

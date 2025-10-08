@@ -9,7 +9,7 @@ import {
   RemoveEvent,
 } from "typeorm";
 import { AUDITABLE_KEY } from "../../decorators/auditable.decorator";
-import { Action, AuditAction } from "../../enums";
+import { AuditAction } from "../../enums";
 import { RequestContextService } from "../request-context/request-context.service";
 import { AuditLogService } from "./audit-log.service";
 
@@ -20,7 +20,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly auditService: AuditLogService,
     private readonly reflector: Reflector,
-    private readonly requestContextService: RequestContextService,
+    private readonly requestContextService: RequestContextService
   ) {
     this.logger = new Logger(AuditSubscriber.name);
     this.dataSource.subscribers.push(this);
@@ -35,7 +35,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
       event.metadata.tableName,
       event.entity.id,
       {},
-      event.entity,
+      event.entity
     );
   }
 
@@ -47,7 +47,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
       event.metadata.tableName,
       event.entity.id,
       event.databaseEntity,
-      event.entity,
+      event.entity
     );
   }
 
@@ -59,7 +59,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
       event.metadata.tableName,
       event.entityId,
       event.databaseEntity,
-      {},
+      {}
     );
   }
 
@@ -68,7 +68,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     entityName: string,
     entityId: string,
     oldValues: Record<string, any>,
-    newValues: Record<string, any>,
+    newValues: Record<string, any>
   ) {
     const context = this.requestContextService.get();
     const userId = context.user !== undefined ? context.user.id : null;

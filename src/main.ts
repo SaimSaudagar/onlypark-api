@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor";
-import { ConfigKeys, DependencyInjectionKeys } from "./common/configs";
+import { ConfigKeys } from "./common/configs";
 import { AppExceptionFilter } from "./common/exceptions/app-exception.filter";
 import { RequestContextService } from "./common/services/request-context/request-context.service";
 import { ExceptionUtils } from "./common/utils/exception.utils";
@@ -46,7 +46,7 @@ async function bootstrap() {
       },
       exceptionFactory: (errors) => ExceptionUtils.handleNestException(errors),
       stopAtFirstError: true,
-    }),
+    })
   );
 
   // Global interceptors

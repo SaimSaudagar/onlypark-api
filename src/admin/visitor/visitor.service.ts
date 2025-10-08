@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
-  FindManyOptions,
   FindOneOptions,
   FindOptionsOrder,
   FindOptionsWhere,
@@ -38,13 +37,11 @@ export class VisitorBookingService {
     request: CreateVisitorBookingRequest
   ): Promise<VisitorBookingCreateResponse> {
     const {
-      referenceNumber,
       subCarParkId,
       registrationNumber,
       email,
       timeTo,
       timeFrom,
-      comments,
       tenancyId,
     } = request;
 

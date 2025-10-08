@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   HttpStatus,
-  Req,
   HttpCode,
   Get,
   Query,
@@ -11,11 +10,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import {
-  ChangePasswordRequest,
   LoginRequest,
-  ResetPasswordRequest,
-  SignUpRequest,
-  ConfirmEmailRequest,
   SendLinkForForgetPasswordRequest,
   SetupPasswordRequest,
 } from "./auth.dto";
@@ -28,7 +23,7 @@ import { ErrorCode } from "../common/exceptions/error-code";
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly userService: UserService
   ) {}
 
   @Post("login")
@@ -40,7 +35,7 @@ export class AuthController {
   @Post("forget-password/send-link")
   @HttpCode(HttpStatus.NO_CONTENT)
   public async sendLinkForForgetPassword(
-    @Body() request: SendLinkForForgetPasswordRequest,
+    @Body() request: SendLinkForForgetPasswordRequest
   ) {
     return this.authService.sendLinkForForgetPassword(request);
   }
@@ -51,7 +46,7 @@ export class AuthController {
     if (!token) {
       throw new CustomException(
         ErrorCode.TOKEN_REQUIRED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -59,7 +54,7 @@ export class AuthController {
     if (!user) {
       throw new CustomException(
         ErrorCode.INVALID_OR_EXPIRED_TOKEN.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -81,14 +76,14 @@ export class AuthController {
     if (!token || !password) {
       throw new CustomException(
         ErrorCode.TOKEN_AND_PASSWORD_REQUIRED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (password.length < 6) {
       throw new CustomException(
         ErrorCode.PASSWORD_TOO_SHORT.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -96,7 +91,7 @@ export class AuthController {
     if (!success) {
       throw new CustomException(
         ErrorCode.INVALID_OR_EXPIRED_TOKEN.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

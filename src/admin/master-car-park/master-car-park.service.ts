@@ -2,9 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FindManyOptions,
-  FindOneOptions,
   Repository,
-  QueryRunner,
   ILike,
   FindOptionsOrder,
   FindOptionsWhere,
@@ -23,7 +21,7 @@ import {
   UpdateMasterCarParkResponse,
 } from "./master-car-park.dto";
 import * as crypto from "crypto";
-import { ParkingSpotStatus, CarParkType } from "../../common/enums";
+import { ParkingSpotStatus } from "../../common/enums";
 import { CustomException } from "../../common/exceptions/custom.exception";
 import { ErrorCode } from "../../common/exceptions/error-code";
 import { HttpStatus } from "@nestjs/common";
@@ -39,18 +37,18 @@ export class MasterCarParkService extends BaseService {
     private masterCarParkRepository: Repository<MasterCarPark>,
     requestContextService: RequestContextService,
     configService: ConfigService,
-    datasource: DataSource,
+    datasource: DataSource
   ) {
     super(
       requestContextService,
       configService,
       datasource,
-      MasterCarParkService.name,
+      MasterCarParkService.name
     );
   }
 
   async create(
-    masterCarParkDto: CreateMasterCarParkRequest,
+    masterCarParkDto: CreateMasterCarParkRequest
   ): Promise<CreateMasterCarParkResponse> {
     const { carParkName, carParkType } = masterCarParkDto;
 
@@ -62,7 +60,7 @@ export class MasterCarParkService extends BaseService {
     if (carParkNameInDb) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NAME_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -84,7 +82,7 @@ export class MasterCarParkService extends BaseService {
   }
 
   async findAll(
-    request: FindMasterCarParkRequest,
+    request: FindMasterCarParkRequest
   ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
     const {
       pageNo,
@@ -143,7 +141,7 @@ export class MasterCarParkService extends BaseService {
           carSpace: subCarPark.carSpace,
           status: subCarPark.status,
         })),
-      }),
+      })
     );
 
     return {
@@ -165,7 +163,7 @@ export class MasterCarParkService extends BaseService {
     if (!masterCarPark) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -193,7 +191,7 @@ export class MasterCarParkService extends BaseService {
 
   async update(
     id: string,
-    request: UpdateMasterCarParkRequest,
+    request: UpdateMasterCarParkRequest
   ): Promise<UpdateMasterCarParkResponse> {
     const { carParkName, carParkType } = request;
     const masterCarParkExists = await this.masterCarParkRepository.exists({
@@ -202,7 +200,7 @@ export class MasterCarParkService extends BaseService {
     if (!masterCarParkExists) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -212,7 +210,7 @@ export class MasterCarParkService extends BaseService {
     if (masterCarParkNameInDb) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NAME_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -243,14 +241,14 @@ export class MasterCarParkService extends BaseService {
     if (!masterCarPark) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (masterCarPark.subCarParks && masterCarPark.subCarParks.length > 0) {
       throw new CustomException(
         ErrorCode.CANNOT_DELETE_MASTER_CAR_PARK_WITH_SUB_CAR_PARKS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -259,7 +257,7 @@ export class MasterCarParkService extends BaseService {
 
   async updateStatus(
     id: string,
-    request: UpdateMasterCarParkStatusRequest,
+    request: UpdateMasterCarParkStatusRequest
   ): Promise<UpdateMasterCarParkStatusResponse> {
     const { status } = request;
     const masterCarPark = await this.masterCarParkRepository.findOne({
@@ -269,7 +267,7 @@ export class MasterCarParkService extends BaseService {
     if (!masterCarPark) {
       throw new CustomException(
         ErrorCode.MASTER_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

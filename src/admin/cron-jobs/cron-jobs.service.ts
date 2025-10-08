@@ -1,13 +1,6 @@
-import { Injectable, Logger, HttpStatus } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
-import { DataSource, LessThan, LessThanOrEqual } from "typeorm";
-import { InfringementStatus, VisitorBookingStatus } from "../../common/enums";
-import { Infringement } from "../../infringement/entities/infringement.entity";
-import { VisitorBooking } from "../../visitor/entities/visitor.entity";
-import { OutstandingRegistration } from "../../outstanding-registration/entities/outstanding-registration.entity";
+import { Injectable, Logger } from "@nestjs/common";
+import { DataSource } from "typeorm";
 import { EmailNotificationService } from "../../common/services/email/email-notification.service";
-import { SendEmailRequest } from "../../common/services/email/email-notification.dto";
-import { CustomException } from "../../common/exceptions/custom.exception";
 
 @Injectable()
 export class CronJobsService {

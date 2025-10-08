@@ -1,7 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import { Whitelist } from "../../whitelist/entities/whitelist.entity";
-import { WhitelistCompany } from "../../whitelist-company/entities/whitelist-company.entity";
 import { Auditable } from "../../common/decorators";
 import { BaseEntity } from "../../common/entities/base.entity";
 

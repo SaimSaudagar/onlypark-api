@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Param,
-  HttpStatus,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VisitorBookingService } from "./visitor.service";
 import {

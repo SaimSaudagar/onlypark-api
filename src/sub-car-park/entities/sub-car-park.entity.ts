@@ -13,7 +13,6 @@ import { CarparkManagerVisitorSubCarPark } from "../../carpark-manager/entities/
 import { CarparkManagerWhitelistSubCarPark } from "../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity";
 import { CarparkManagerBlacklistSubCarPark } from "../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity";
 import { BaseEntity } from "../../common/entities/base.entity";
-import { CarparkManager } from "../../carpark-manager/entities/carpark-manager.entity";
 import { Blacklist } from "../../blacklist/entities/blacklist-reg.entity";
 
 @Entity("sub_car_park")

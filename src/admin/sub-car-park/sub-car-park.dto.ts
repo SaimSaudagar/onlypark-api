@@ -1,10 +1,8 @@
-import { PartialType } from "@nestjs/mapped-types";
 import {
   IsNotEmpty,
   IsString,
   IsOptional,
   IsNumber,
-  IsDecimal,
   IsBoolean,
   IsDateString,
   IsUUID,
@@ -13,7 +11,7 @@ import {
   ValidateIf,
   IsEnum,
 } from "class-validator";
-import { CarParkType, ParkingSpotStatus } from "../../common/enums";
+import { ParkingSpotStatus } from "../../common/enums";
 import { ApiGetBaseRequest } from "../../common/types";
 
 export class CreateSubCarParkRequest {

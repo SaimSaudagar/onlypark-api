@@ -8,18 +8,14 @@ import {
   Delete,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { ProfileService } from "./profile.service";
 import JwtAuthGuard from "../../auth/guards/jwt-auth.guard";
 import { RoleGuard, AllowedRoles } from "../../auth/guards/roles.guard";
 import { RequirePermissions } from "../../common/decorators/permission.decorator";
 import { PermissionsGuard } from "../../common/guards/permission.guard";
 import { UserType, AdminPermission } from "../../common/enums";
-import {
-  CreateProfileDto,
-  UpdateProfileDto,
-  ProfileResponseDto,
-} from "./profile.dto";
+import { CreateProfileDto, UpdateProfileDto } from "./profile.dto";
 
 @ApiTags("Admin => Profile")
 @Controller({ path: "admin/profile", version: "1" })

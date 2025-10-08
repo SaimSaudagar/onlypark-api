@@ -39,18 +39,18 @@ export class WhitelistService extends BaseService {
     private readonly carparkManagerRepository: Repository<CarparkManager>,
     requestContextService: RequestContextService,
     configService: ConfigService,
-    datasource: DataSource,
+    datasource: DataSource
   ) {
     super(
       requestContextService,
       configService,
       datasource,
-      WhitelistService.name,
+      WhitelistService.name
     );
   }
 
   async create(
-    request: CreateWhitelistRequest,
+    request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     const {
       registrationNumber,
@@ -58,7 +58,6 @@ export class WhitelistService extends BaseService {
       comments,
       subCarParkId,
       type,
-      duration,
       startDate,
       endDate,
       tenancyId,
@@ -68,12 +67,12 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -98,7 +97,7 @@ export class WhitelistService extends BaseService {
   }
 
   async findAll(
-    request: FindWhitelistRequest,
+    request: FindWhitelistRequest
   ): Promise<ApiGetBaseResponse<FindWhitelistResponse>> {
     const {
       search,
@@ -121,7 +120,7 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParks = await this.getAssignedSubCarParks();
     if (assignedSubCarParks.length > 0) {
       const subCarParkIds = assignedSubCarParks.map(
-        (subCarPark) => subCarPark.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId
       );
       whereOptions.push({ subCarParkId: In(subCarParkIds) });
     }
@@ -137,7 +136,7 @@ export class WhitelistService extends BaseService {
     if (search) {
       whereOptions.push(
         { registrationNumber: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
+        { email: ILike(`%${search}%`) }
       );
     }
 
@@ -199,7 +198,7 @@ export class WhitelistService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -207,12 +206,12 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -221,13 +220,13 @@ export class WhitelistService extends BaseService {
 
   async update(
     id: string,
-    request: UpdateWhitelistRequest,
+    request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
     const entity = await this.whitelistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -235,12 +234,12 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -262,7 +261,7 @@ export class WhitelistService extends BaseService {
     if (!entity) {
       throw new CustomException(
         ErrorCode.WHITELIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -270,12 +269,12 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === entity.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -288,7 +287,7 @@ export class WhitelistService extends BaseService {
     if (!userId) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -304,7 +303,7 @@ export class WhitelistService extends BaseService {
     if (!carparkManager) {
       throw new CustomException(
         ErrorCode.CARPARK_MANAGER_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -324,7 +323,7 @@ export class WhitelistService extends BaseService {
     if (!whitelist) {
       throw new CustomException(
         ErrorCode.WHITELIST_ENTRY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -332,19 +331,19 @@ export class WhitelistService extends BaseService {
     const assignedSubCarParkIds = await this.getAssignedSubCarParks();
     if (
       !assignedSubCarParkIds.some(
-        (subCarPark) => subCarPark.subCarParkId === whitelist.subCarParkId,
+        (subCarPark) => subCarPark.subCarParkId === whitelist.subCarParkId
       )
     ) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
     if (whitelist.status === WhitelistStatus.CHECKOUT) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
