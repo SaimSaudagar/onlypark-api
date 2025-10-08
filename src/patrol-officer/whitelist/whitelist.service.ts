@@ -121,11 +121,11 @@ export class WhitelistService extends BaseService {
       const subCarParkIds = assignedSubCarParks.map(
         (subCarPark) => subCarPark.subCarParkId
       );
-      whereOptions.push({ subCarParkId: In(subCarParkIds) });
-    }
-
-    if (subCarParkId) {
-      whereOptions.push({ subCarParkId });
+      if (subCarParkId) {
+        whereOptions.push({ subCarParkId: subCarParkId });
+      } else {
+        whereOptions.push({ subCarParkId: In(subCarParkIds) });
+      }
     }
 
     if (dateFrom && dateTo) {
