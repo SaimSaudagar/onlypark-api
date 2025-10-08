@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Role } from '../../role/entities/role.entity';
-import { FileUtils } from '../../common/utils/file.utils';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Role } from "../../role/entities/role.entity";
+import { FileUtils } from "../../common/utils/file.utils";
 
 @Injectable()
 export class RoleSeederService {
@@ -20,8 +20,8 @@ export class RoleSeederService {
   }
 
   private async seed() {
-    this.logger.log('Starting Role Data seed');
-    const roles = FileUtils.getDataForSeeding('roles');
+    this.logger.log("Starting Role Data seed");
+    const roles = FileUtils.getDataForSeeding("roles");
 
     for (const roleData of roles) {
       const existingRole = await this.roleRepository.findOne({

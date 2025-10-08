@@ -1,18 +1,32 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, QueryRunner, FindOptionsOrder, FindOptionsWhere, ILike, Or } from 'typeorm';
-import { Tenancy } from './entities/tenancy.entity';
-import { CreateTenancyRequest, CreateTenancyResponse, FindTenancyRequest, FindTenancyResponse } from './tenancy.dto';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
-import { ApiGetBaseResponse } from '../common/types';
+import { HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import {
+  FindManyOptions,
+  FindOneOptions,
+  Repository,
+  QueryRunner,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  Or,
+} from "typeorm";
+import { Tenancy } from "./entities/tenancy.entity";
+import {
+  CreateTenancyRequest,
+  CreateTenancyResponse,
+  FindTenancyRequest,
+  FindTenancyResponse,
+} from "./tenancy.dto";
+import { CustomException } from "../common/exceptions/custom.exception";
+import { ErrorCode } from "../common/exceptions/error-code";
+import { ApiGetBaseResponse } from "../common/types";
 
 @Injectable()
 export class TenancyService {
   constructor(
     @InjectRepository(Tenancy)
     private tenancyRepository: Repository<Tenancy>,
-  ) { }
+  ) {}
 
   async create(request: CreateTenancyRequest): Promise<Tenancy> {
     const entity = this.tenancyRepository.create(request);
@@ -20,7 +34,10 @@ export class TenancyService {
     return savedEntity as unknown as Tenancy;
   }
 
-  async createBulk(request: CreateTenancyRequest[], queryRunner: QueryRunner): Promise<CreateTenancyResponse[]> {
+  async createBulk(
+    request: CreateTenancyRequest[],
+    queryRunner: QueryRunner,
+  ): Promise<CreateTenancyResponse[]> {
     for (const tenant of request) {
       if (!tenant.tenantName || !tenant.tenantEmail) {
         throw new CustomException(
@@ -29,7 +46,9 @@ export class TenancyService {
         );
       }
 
-      const existingTenant = await this.findOne({ where: { tenantEmail: tenant.tenantEmail } });
+      const existingTenant = await this.findOne({
+        where: { tenantEmail: tenant.tenantEmail },
+      });
 
       if (existingTenant) {
         throw new CustomException(
@@ -43,15 +62,17 @@ export class TenancyService {
       .createQueryBuilder()
       .insert()
       .into(Tenancy)
-      .values(request.map(tenant => ({
-        tenantName: tenant.tenantName,
-        tenantEmail: tenant.tenantEmail,
-        subCarParkId: tenant.subCarParkId,
-      })))
-      .returning('*')
+      .values(
+        request.map((tenant) => ({
+          tenantName: tenant.tenantName,
+          tenantEmail: tenant.tenantEmail,
+          subCarParkId: tenant.subCarParkId,
+        })),
+      )
+      .returning("*")
       .execute();
 
-    const response = result.raw.map(item => ({
+    const response = result.raw.map((item) => ({
       id: item.id,
       tenantName: item.tenantName,
       tenantEmail: item.tenantEmail,
@@ -61,17 +82,19 @@ export class TenancyService {
     return response;
   }
 
-  async findAll(request: FindTenancyRequest): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
+  async findAll(
+    request: FindTenancyRequest,
+  ): Promise<ApiGetBaseResponse<FindTenancyResponse>> {
     const { pageNo, pageSize, sortField, sortOrder, search } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
     console.log(request);
-    let whereOptions: FindOptionsWhere<Tenancy>[] = [];
+    const whereOptions: FindOptionsWhere<Tenancy>[] = [];
     const orderOptions: FindOptionsOrder<Tenancy> = {};
     if (search) {
       whereOptions.push(
         { tenantName: ILike(`%${search}%`) },
-        { tenantEmail: ILike(`%${search}%`) }
+        { tenantEmail: ILike(`%${search}%`) },
       );
     }
 
@@ -86,9 +109,10 @@ export class TenancyService {
       order: orderOptions,
     };
 
-    const [tenancies, totalItems] = await this.tenancyRepository.findAndCount(options);
+    const [tenancies, totalItems] =
+      await this.tenancyRepository.findAndCount(options);
 
-    const response = tenancies.map(tenant => ({
+    const response = tenancies.map((tenant) => ({
       id: tenant.id,
       tenantName: tenant.tenantName,
       tenantEmail: tenant.tenantEmail,
@@ -103,7 +127,7 @@ export class TenancyService {
         totalPages: Math.ceil(totalItems / pageSize),
         totalItems,
       },
-    }
+    };
   }
 
   async findOne(options?: FindOneOptions<Tenancy>): Promise<Tenancy> {

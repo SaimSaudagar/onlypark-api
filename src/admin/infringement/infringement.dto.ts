@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsArray, IsUUID } from 'class-validator';
-import { InfringementStatus } from '../../common/enums';
-import { ApiGetBaseRequest } from '../../common';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsArray,
+  IsUUID,
+} from "class-validator";
+import { InfringementStatus } from "../../common/enums";
+import { ApiGetBaseRequest } from "../../common";
 
 export class ScanInfringementRequest {
   @IsNotEmpty()
@@ -50,7 +57,7 @@ export class CreateInfringementResponse {
   registrationNumber: string;
 }
 
-export class UpdateInfringementRequest extends CreateInfringementRequest { }
+export class UpdateInfringementRequest extends CreateInfringementRequest {}
 
 export interface GetInfringementResponse {
   ticketNumber: string;

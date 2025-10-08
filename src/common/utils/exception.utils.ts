@@ -1,5 +1,5 @@
-import { ErrorCode } from '../exceptions/error-code';
-import { NestCustomException } from '../exceptions/custom.exception';
+import { ErrorCode } from "../exceptions/error-code";
+import { NestCustomException } from "../exceptions/custom.exception";
 
 export class ExceptionUtils {
   static handleNestException(errors) {
@@ -21,8 +21,8 @@ export class ExceptionUtils {
       if (context) {
         const contextkeys = Object.keys(context);
         const contextKey = contextkeys[0];
-        if (context[contextKey]['errorCode']) {
-          const { code, data } = context[contextKey]['errorCode'] as {
+        if (context[contextKey]["errorCode"]) {
+          const { code, data } = context[contextKey]["errorCode"] as {
             code: string;
             data: object;
           };
@@ -46,7 +46,7 @@ export class ExceptionUtils {
   // Recursive function to find the first constraint in the error object
   private static findFirstConstraint(
     error,
-    propertyPath = '',
+    propertyPath = "",
   ): {
     property: string;
     constraints: Record<string, string>;
@@ -74,7 +74,6 @@ export class ExceptionUtils {
       }
     }
 
-    return { property: '', constraints: null, context: null };
+    return { property: "", constraints: null, context: null };
   }
 }
-

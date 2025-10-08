@@ -1,21 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Admin } from '../../admin/entities/admin.entity';
-import { Role } from '../../role/entities/role.entity';
-import { FileUtils } from '../../common/utils/file.utils';
-import { UserType, CarparkManagerStatus, AdminStatus, PatrolOfficerStatus } from '../../common/enums';
-import { PatrolOfficer } from '../../patrol-officer/entities/patrol-officer.entity';
-import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
-import { PatrolOfficerVisitorSubCarPark } from '../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
-import { PatrolOfficerWhitelistSubCarPark } from '../../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
-import { PatrolOfficerBlacklistSubCarPark } from '../../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
-import { CarparkManager } from '../../carpark-manager/entities/carpark-manager.entity';
-import { CarparkManagerVisitorSubCarPark } from '../../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
-import { CarparkManagerWhitelistSubCarPark } from '../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
-import { CarparkManagerBlacklistSubCarPark } from '../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
-import { UserRole } from '../../user/entities/user-role.entity';
-import { User } from '../../user/entities/user.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Admin } from "../../admin/entities/admin.entity";
+import { Role } from "../../role/entities/role.entity";
+import { FileUtils } from "../../common/utils/file.utils";
+import {
+  UserType,
+  CarparkManagerStatus,
+  AdminStatus,
+  PatrolOfficerStatus,
+} from "../../common/enums";
+import { PatrolOfficer } from "../../patrol-officer/entities/patrol-officer.entity";
+import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
+import { PatrolOfficerVisitorSubCarPark } from "../../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity";
+import { PatrolOfficerWhitelistSubCarPark } from "../../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity";
+import { PatrolOfficerBlacklistSubCarPark } from "../../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity";
+import { CarparkManager } from "../../carpark-manager/entities/carpark-manager.entity";
+import { CarparkManagerVisitorSubCarPark } from "../../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity";
+import { CarparkManagerWhitelistSubCarPark } from "../../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity";
+import { CarparkManagerBlacklistSubCarPark } from "../../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity";
+import { UserRole } from "../../user/entities/user-role.entity";
+import { User } from "../../user/entities/user.entity";
 
 @Injectable()
 export class UserSeederService {
@@ -57,13 +62,13 @@ export class UserSeederService {
   }
 
   private async seed() {
-    this.logger.log('Starting User Data seed');
-    const users = FileUtils.getDataForSeeding('users');
+    this.logger.log("Starting User Data seed");
+    const users = FileUtils.getDataForSeeding("users");
 
     for (const userData of users) {
       const existingUser = await this.userRepository.findOne({
         where: { email: userData.email },
-        relations: ['userRoles', 'userRoles.role'],
+        relations: ["userRoles", "userRoles.role"],
       });
 
       if (!existingUser) {
@@ -82,9 +87,11 @@ export class UserSeederService {
         // Assign role based on user type
         await this.assignRoleToUser(savedUser, userData.type);
 
-
         // Handle admin specific logic
-        if (userData.type === UserType.ADMIN || userData.type === UserType.SUPER_ADMIN) {
+        if (
+          userData.type === UserType.ADMIN ||
+          userData.type === UserType.SUPER_ADMIN
+        ) {
           await this.createAdmin(savedUser);
         }
 
@@ -94,11 +101,16 @@ export class UserSeederService {
         }
 
         // Handle carpark manager specific logic
-        if (userData.type === UserType.CARPARK_MANAGER && userData.subCarParks) {
+        if (
+          userData.type === UserType.CARPARK_MANAGER &&
+          userData.subCarParks
+        ) {
           await this.createCarparkManager(savedUser, userData);
         }
 
-        this.logger.log(`User ${userData.email} seeded with role ${userData.type}`);
+        this.logger.log(
+          `User ${userData.email} seeded with role ${userData.type}`,
+        );
       } else {
         this.logger.log(`User ${userData.email} already exists`);
 
@@ -112,7 +124,9 @@ export class UserSeederService {
   }
 
   private async createAdmin(user: User) {
-    const admin = await this.adminRepository.findOne({ where: { userId: user.id } });
+    const admin = await this.adminRepository.findOne({
+      where: { userId: user.id },
+    });
     if (!admin) {
       await this.adminRepository.save({
         userId: user.id,
@@ -164,14 +178,15 @@ export class UserSeederService {
         status: PatrolOfficerStatus.ACTIVE,
       });
 
-      const savedPatrolOfficer = await this.patrolOfficerRepository.save(patrolOfficer);
+      const savedPatrolOfficer =
+        await this.patrolOfficerRepository.save(patrolOfficer);
 
       // Assign carparks based on type
       if (userData.subCarParks.visitor) {
         await this.assignCarparksToPatrolOfficer(
           savedPatrolOfficer.id,
           userData.subCarParks.visitor,
-          'visitor'
+          "visitor",
         );
       }
 
@@ -179,7 +194,7 @@ export class UserSeederService {
         await this.assignCarparksToPatrolOfficer(
           savedPatrolOfficer.id,
           userData.subCarParks.whitelist,
-          'whitelist'
+          "whitelist",
         );
       }
 
@@ -187,20 +202,25 @@ export class UserSeederService {
         await this.assignCarparksToPatrolOfficer(
           savedPatrolOfficer.id,
           userData.subCarParks.blacklist,
-          'blacklist'
+          "blacklist",
         );
       }
 
-      this.logger.log(`Patrol officer ${userData.name} created with assigned carparks`);
+      this.logger.log(
+        `Patrol officer ${userData.name} created with assigned carparks`,
+      );
     } catch (error) {
-      this.logger.error(`Error creating patrol officer for user ${user.email}:`, error);
+      this.logger.error(
+        `Error creating patrol officer for user ${user.email}:`,
+        error,
+      );
     }
   }
 
   private async assignCarparksToPatrolOfficer(
     patrolOfficerId: string,
     carparkCodes: string[],
-    type: 'visitor' | 'whitelist' | 'blacklist'
+    type: "visitor" | "whitelist" | "blacklist",
   ) {
     for (const code of carparkCodes) {
       try {
@@ -215,28 +235,38 @@ export class UserSeederService {
 
         let assignment;
         switch (type) {
-          case 'visitor':
+          case "visitor":
             assignment = this.patrolOfficerVisitorSubCarParkRepository.create({
               patrolOfficerId,
               subCarParkId: subCarPark.id,
             });
-            await this.patrolOfficerVisitorSubCarParkRepository.save(assignment);
+            await this.patrolOfficerVisitorSubCarParkRepository.save(
+              assignment,
+            );
             break;
 
-          case 'whitelist':
-            assignment = this.patrolOfficerWhitelistSubCarParkRepository.create({
-              patrolOfficerId,
-              subCarParkId: subCarPark.id,
-            });
-            await this.patrolOfficerWhitelistSubCarParkRepository.save(assignment);
+          case "whitelist":
+            assignment = this.patrolOfficerWhitelistSubCarParkRepository.create(
+              {
+                patrolOfficerId,
+                subCarParkId: subCarPark.id,
+              },
+            );
+            await this.patrolOfficerWhitelistSubCarParkRepository.save(
+              assignment,
+            );
             break;
 
-          case 'blacklist':
-            assignment = this.patrolOfficerBlacklistSubCarParkRepository.create({
-              patrolOfficerId,
-              subCarParkId: subCarPark.id,
-            });
-            await this.patrolOfficerBlacklistSubCarParkRepository.save(assignment);
+          case "blacklist":
+            assignment = this.patrolOfficerBlacklistSubCarParkRepository.create(
+              {
+                patrolOfficerId,
+                subCarParkId: subCarPark.id,
+              },
+            );
+            await this.patrolOfficerBlacklistSubCarParkRepository.save(
+              assignment,
+            );
             break;
         }
 
@@ -259,14 +289,15 @@ export class UserSeederService {
         canManageTenancies: true,
       });
 
-      const savedCarparkManager = await this.carparkManagerRepository.save(carparkManager);
+      const savedCarparkManager =
+        await this.carparkManagerRepository.save(carparkManager);
 
       // Assign carparks based on type
       if (userData.subCarParks.visitor) {
         await this.assignCarparksToCarparkManager(
           savedCarparkManager.id,
           userData.subCarParks.visitor,
-          'visitor'
+          "visitor",
         );
       }
 
@@ -274,7 +305,7 @@ export class UserSeederService {
         await this.assignCarparksToCarparkManager(
           savedCarparkManager.id,
           userData.subCarParks.whitelist,
-          'whitelist'
+          "whitelist",
         );
       }
 
@@ -282,20 +313,25 @@ export class UserSeederService {
         await this.assignCarparksToCarparkManager(
           savedCarparkManager.id,
           userData.subCarParks.blacklist,
-          'blacklist'
+          "blacklist",
         );
       }
 
-      this.logger.log(`Carpark manager ${userData.name} created with assigned carparks`);
+      this.logger.log(
+        `Carpark manager ${userData.name} created with assigned carparks`,
+      );
     } catch (error) {
-      this.logger.error(`Error creating carpark manager for user ${user.email}:`, error);
+      this.logger.error(
+        `Error creating carpark manager for user ${user.email}:`,
+        error,
+      );
     }
   }
 
   private async assignCarparksToCarparkManager(
     carparkManagerId: string,
     carparkCodes: string[],
-    type: 'visitor' | 'whitelist' | 'blacklist'
+    type: "visitor" | "whitelist" | "blacklist",
   ) {
     for (const code of carparkCodes) {
       try {
@@ -310,28 +346,36 @@ export class UserSeederService {
 
         let assignment;
         switch (type) {
-          case 'visitor':
+          case "visitor":
             assignment = this.carparkManagerVisitorSubCarParkRepository.create({
               carparkManagerId,
               subCarParkId: subCarPark.id,
             });
-            await this.carparkManagerVisitorSubCarParkRepository.save(assignment);
+            await this.carparkManagerVisitorSubCarParkRepository.save(
+              assignment,
+            );
             break;
 
-          case 'whitelist':
-            assignment = this.carparkManagerWhitelistSubCarParkRepository.create({
-              carparkManagerId,
-              subCarParkId: subCarPark.id,
-            });
-            await this.carparkManagerWhitelistSubCarParkRepository.save(assignment);
+          case "whitelist":
+            assignment =
+              this.carparkManagerWhitelistSubCarParkRepository.create({
+                carparkManagerId,
+                subCarParkId: subCarPark.id,
+              });
+            await this.carparkManagerWhitelistSubCarParkRepository.save(
+              assignment,
+            );
             break;
 
-          case 'blacklist':
-            assignment = this.carparkManagerBlacklistSubCarParkRepository.create({
-              carparkManagerId,
-              subCarParkId: subCarPark.id,
-            });
-            await this.carparkManagerBlacklistSubCarParkRepository.save(assignment);
+          case "blacklist":
+            assignment =
+              this.carparkManagerBlacklistSubCarParkRepository.create({
+                carparkManagerId,
+                subCarParkId: subCarPark.id,
+              });
+            await this.carparkManagerBlacklistSubCarParkRepository.save(
+              assignment,
+            );
             break;
         }
 

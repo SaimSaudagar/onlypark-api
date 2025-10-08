@@ -12,7 +12,7 @@ export class InfringementCarParkSeederService {
 
   constructor(
     @InjectRepository(InfringementCarPark)
-    private readonly infringementCarParkRepository: Repository<InfringementCarPark>
+    private readonly infringementCarParkRepository: Repository<InfringementCarPark>,
   ) {
     this.logger = new Logger(this.constructor.name);
   }
@@ -24,7 +24,7 @@ export class InfringementCarParkSeederService {
   private async seed() {
     this.logger.log("Starting Infringement Car Park Data seed");
     const infringementCarParks = FileUtils.getDataForSeeding(
-      "infringement-car-parks"
+      "infringement-car-parks",
     );
 
     for (const carParkData of infringementCarParks) {
@@ -42,21 +42,21 @@ export class InfringementCarParkSeederService {
 
           await this.infringementCarParkRepository.save(carPark);
           this.logger.log(
-            `Infringement car park ${carParkData.carParkName} seeded`
+            `Infringement car park ${carParkData.carParkName} seeded`,
           );
         } else {
           this.logger.log(
-            `Infringement car park ${carParkData.carParkName} already exists`
+            `Infringement car park ${carParkData.carParkName} already exists`,
           );
         }
       } catch (error) {
         this.logger.error(
           `Error seeding infringement car park ${carParkData.carParkName}:`,
-          error
+          error,
         );
         throw new CustomException(
           ErrorCode.SERVER_ERROR.key,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
     }

@@ -1,5 +1,5 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
-import { ApiRequest, UserType } from '../common';
+import { IsEmail, IsNotEmpty } from "class-validator";
+import { ApiRequest, UserType } from "../common";
 
 export class SignUpRequest {
   @IsNotEmpty() name: string;

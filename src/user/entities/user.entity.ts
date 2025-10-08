@@ -5,53 +5,52 @@ import {
   OneToOne,
   BeforeInsert,
   BeforeUpdate,
-} from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { UserStatus, UserType } from '../../common/enums';
-import { Auditable } from '../../common/decorators';
-import { UserRole } from './user-role.entity';
-import { BaseEntity } from '../../common/entities/base.entity';
+} from "typeorm";
+import * as bcrypt from "bcrypt";
+import { UserStatus, UserType } from "../../common/enums";
+import { Auditable } from "../../common/decorators";
+import { UserRole } from "./user-role.entity";
+import { BaseEntity } from "../../common/entities/base.entity";
 
-@Entity('users')
+@Entity("users")
 @Auditable()
 export class User extends BaseEntity {
-
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   name: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
+  @Column({ type: "varchar", unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   password: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   emailVerifiedAt: Date;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: UserType,
     nullable: false,
   })
   type: UserType;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   rememberToken: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   phoneNumber: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   image: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   passwordResetToken: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   passwordResetExpires: Date;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: UserStatus,
     nullable: false,
     default: UserStatus.INACTIVE,

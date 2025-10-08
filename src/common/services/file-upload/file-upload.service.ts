@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class FileUploadService {
@@ -8,7 +8,7 @@ export class FileUploadService {
   async uploadFile(file: any): Promise<string> {
     // TODO: Implement file upload logic
     console.log(`Uploading file: ${file.originalname}`);
-    return 'dummy-file-url';
+    return "dummy-file-url";
   }
 
   async deleteFile(filePath: string): Promise<boolean> {

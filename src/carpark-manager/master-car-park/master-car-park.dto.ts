@@ -1,46 +1,46 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsEnum } from 'class-validator';
-import { ParkingSpotStatus } from '../../common/enums';
-import { ApiGetBaseRequest } from '../../common/types';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsOptional, IsString, IsEnum } from "class-validator";
+import { ParkingSpotStatus } from "../../common/enums";
+import { ApiGetBaseRequest } from "../../common/types";
 
 export class FindMasterCarParkRequest extends ApiGetBaseRequest {
-    @ApiProperty({ required: false })
-    @IsOptional()
-    @IsString()
-    search?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  search?: string;
 
-    @ApiProperty({ required: false })
-    @IsOptional()
-    @IsString()
-    carParkType?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  carParkType?: string;
 
-    @ApiProperty({ required: false, enum: ParkingSpotStatus })
-    @IsOptional()
-    @IsEnum(ParkingSpotStatus)
-    status?: ParkingSpotStatus;
+  @ApiProperty({ required: false, enum: ParkingSpotStatus })
+  @IsOptional()
+  @IsEnum(ParkingSpotStatus)
+  status?: ParkingSpotStatus;
 }
 
 export class FindMasterCarParkResponse {
-    @ApiProperty()
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  carParkName: string;
+
+  @ApiProperty()
+  carParkType: string;
+
+  @ApiProperty()
+  carParkCode: string;
+
+  @ApiProperty()
+  status: string;
+
+  @ApiProperty({ type: [Object] })
+  subCarParks: {
     id: string;
-
-    @ApiProperty()
     carParkName: string;
-
-    @ApiProperty()
-    carParkType: string;
-
-    @ApiProperty()
-    carParkCode: string;
-
-    @ApiProperty()
+    carSpace: number;
     status: string;
-
-    @ApiProperty({ type: [Object] })
-    subCarParks: {
-        id: string;
-        carParkName: string;
-        carSpace: number;
-        status: string;
-    }[];
+  }[];
 }

@@ -1,144 +1,151 @@
-import { IsString, IsOptional, IsEnum, IsObject, IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
-import { DisputeStatus } from '../../common/enums';
-import { ApiGetBaseRequest } from '../../common';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsObject,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+} from "class-validator";
+import { DisputeStatus } from "../../common/enums";
+import { ApiGetBaseRequest } from "../../common";
 
 export class CreateDisputeRequest {
-    @IsString()
-    @IsNotEmpty()
-    registrationNumber: string;
+  @IsString()
+  @IsNotEmpty()
+  registrationNumber: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    ticketNumber: number;
+  @IsNumber()
+  @IsNotEmpty()
+  ticketNumber: number;
 
-    @IsString()
-    @IsOptional()
-    companyName?: string;
+  @IsString()
+  @IsOptional()
+  companyName?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    address: string;
+  @IsString()
+  @IsNotEmpty()
+  address: string;
 
-    @IsString()
-    @IsNotEmpty()
-    firstName: string;
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    lastName: string;
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    state: string;
+  @IsString()
+  @IsNotEmpty()
+  state: string;
 
-    @IsString()
-    @IsNotEmpty()
-    zipCode: string;
+  @IsString()
+  @IsNotEmpty()
+  zipCode: string;
 
-    @IsString()
-    @IsNotEmpty()
-    mobileNumber: string;
+  @IsString()
+  @IsNotEmpty()
+  mobileNumber: string;
 
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-    @IsString()
-    @IsOptional()
-    carMakeId?: string;
+  @IsString()
+  @IsOptional()
+  carMakeId?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    model: string;
+  @IsString()
+  @IsNotEmpty()
+  model: string;
 
-    @IsString()
-    @IsNotEmpty()
-    appeal: string;
+  @IsString()
+  @IsNotEmpty()
+  appeal: string;
 
-    @IsObject()
-    @IsOptional()
-    photos?: object;
+  @IsObject()
+  @IsOptional()
+  photos?: object;
 }
 
 export class UpdateDisputeRequest {
-    @IsString()
-    @IsOptional()
-    responseReason?: string;
+  @IsString()
+  @IsOptional()
+  responseReason?: string;
 
-    @IsObject()
-    @IsOptional()
-    responsePhotos?: object;
+  @IsObject()
+  @IsOptional()
+  responsePhotos?: object;
 
-    @IsEnum(DisputeStatus)
-    @IsOptional()
-    status?: DisputeStatus;
+  @IsEnum(DisputeStatus)
+  @IsOptional()
+  status?: DisputeStatus;
 }
 
 export class CreateDisputeResponse {
-    id: string;
-    infringementId: string;
-    registrationNumber: string;
-    status: DisputeStatus;
+  id: string;
+  infringementId: string;
+  registrationNumber: string;
+  status: DisputeStatus;
 }
 
 export class UpdateDisputeResponse {
-    id: string;
-    status: DisputeStatus;
-    responseReason?: string;
-    responsePhotos?: object;
+  id: string;
+  status: DisputeStatus;
+  responseReason?: string;
+  responsePhotos?: object;
 }
 
 export class UpdateDisputeStatusRequest {
-    @IsString()
-    @IsNotEmpty()
-    id: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-    @IsEnum(DisputeStatus)
-    @IsNotEmpty()
-    status: DisputeStatus;
+  @IsEnum(DisputeStatus)
+  @IsNotEmpty()
+  status: DisputeStatus;
 
-    @IsString()
-    @IsNotEmpty()
-    responseReason?: string;
+  @IsString()
+  @IsNotEmpty()
+  responseReason?: string;
 }
 
-
 export class FindDisputeRequest extends ApiGetBaseRequest {
-    @IsEnum(DisputeStatus)
-    @IsOptional()
-    status?: DisputeStatus;
+  @IsEnum(DisputeStatus)
+  @IsOptional()
+  status?: DisputeStatus;
 
-    @IsString()
-    @IsOptional()
-    search?: string;
+  @IsString()
+  @IsOptional()
+  search?: string;
 }
 
 export class FindDisputeResponse {
-    id: string;
-    registrationNumber: string;
-    email: string;
-    date: string;
-    status: DisputeStatus;
+  id: string;
+  registrationNumber: string;
+  email: string;
+  date: string;
+  status: DisputeStatus;
 }
 
 export class FindOneDisputeResponse {
-    id: string;
-    firstName: string;
-    lastName: string;
-    companyName: string;
-    carMakeName: string;
-    model: string;
-    address: string;
-    state: string;
-    zipCode: string;
-    mobileNumber: string;
-    registrationNumber: string;
-    email: string;
-    appeal: string;
-    photos: object;
-    carParkName: string;
-    date: string;
-    status: DisputeStatus;
-    responseReason?: string;
-    responsePhotos?: string[];
+  id: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  carMakeName: string;
+  model: string;
+  address: string;
+  state: string;
+  zipCode: string;
+  mobileNumber: string;
+  registrationNumber: string;
+  email: string;
+  appeal: string;
+  photos: object;
+  carParkName: string;
+  date: string;
+  status: DisputeStatus;
+  responseReason?: string;
+  responsePhotos?: string[];
 }

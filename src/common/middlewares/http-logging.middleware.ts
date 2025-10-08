@@ -1,12 +1,12 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
-import { RequestContextService } from '../services/request-context/request-context.service';
+import { Injectable, Logger, NestMiddleware } from "@nestjs/common";
+import { NextFunction, Request, Response } from "express";
+import { RequestContextService } from "../services/request-context/request-context.service";
 
 @Injectable()
 export class HttpLoggingMiddleware implements NestMiddleware {
   private readonly logger = new Logger(HttpLoggingMiddleware.name);
 
-  constructor(private readonly requestContextService: RequestContextService) { }
+  constructor(private readonly requestContextService: RequestContextService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
@@ -24,12 +24,12 @@ export class HttpLoggingMiddleware implements NestMiddleware {
       req;
 
     const requestContext = this.requestContextService.get();
-    const traceId = requestContext?.traceId || 'unknown';
+    const traceId = requestContext?.traceId || "unknown";
 
     let responseData = responseBody;
     try {
       // Try to parse as JSON if it's a string
-      if (typeof responseBody === 'string') {
+      if (typeof responseBody === "string") {
         responseData = JSON.parse(responseBody);
       }
     } catch (error) {

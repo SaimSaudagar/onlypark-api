@@ -1,14 +1,14 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
-import { Request } from 'express';
-import { UserService } from '../../user/user.service';
-import { ConfigKeys } from '../../common/configs';
-import { AuthenticatedUser } from '../../common';
-import { RequestContextService } from '../../common/services/request-context/request-context.service';
-import { CustomException } from '../../common/exceptions/custom.exception';
-import { ErrorCode } from '../../common/exceptions/error-code';
+import { Injectable, HttpStatus } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { ConfigService } from "@nestjs/config";
+import { Request } from "express";
+import { UserService } from "../../user/user.service";
+import { ConfigKeys } from "../../common/configs";
+import { AuthenticatedUser } from "../../common";
+import { RequestContextService } from "../../common/services/request-context/request-context.service";
+import { CustomException } from "../../common/exceptions/custom.exception";
+import { ErrorCode } from "../../common/exceptions/error-code";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -43,8 +43,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         user.id,
         user.email,
         user.name,
-        '', // profileImageUrl - add if available
-        user.phoneNumber || '',
+        "", // profileImageUrl - add if available
+        user.phoneNumber || "",
         user.type,
         [], // roles - add if needed
         [], // permissions - add if needed

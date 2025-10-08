@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { ErrorCode } from './error-code';
+import { HttpException, HttpStatus } from "@nestjs/common";
+import { ErrorCode } from "./error-code";
 
 export class CustomException extends HttpException {
   readonly code: string;

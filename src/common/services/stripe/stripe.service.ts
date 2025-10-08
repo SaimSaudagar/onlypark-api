@@ -33,7 +33,7 @@ export class StripeService {
 
   constructor(private readonly configService: ConfigService) {
     const secretKey = this.configService.get<string>(
-      ConfigKeys.STRIPE_SECRET_KEY
+      ConfigKeys.STRIPE_SECRET_KEY,
     );
     if (!secretKey) {
       throw new Error("STRIPE_SECRET is not configured");
@@ -44,17 +44,18 @@ export class StripeService {
   }
 
   async createCheckoutSession(
-    request: StripeCheckoutRequest
+    request: StripeCheckoutRequest,
   ): Promise<StripeCheckoutResponse> {
     try {
       this.logger.log("Creating Stripe checkout session", { request });
-      console.log('cehclllllll', this.configService.get<string>(
-        ConfigKeys.STRIPE_SECRET_KEY
-      ));
+      console.log(
+        "cehclllllll",
+        this.configService.get<string>(ConfigKeys.STRIPE_SECRET_KEY),
+      );
       // Retrieve the price to determine if it's one-time or subscription
       const price = await this.stripe.prices.retrieve(request.stripePriceId);
 
-      console.log('price', price);
+      console.log("price", price);
 
       const metadata: Record<string, string> = {
         reg_no: request.registrationNumber,
@@ -62,7 +63,7 @@ export class StripeService {
         car_make: request.carMake,
       };
 
-      console.log('metadata', metadata);
+      console.log("metadata", metadata);
 
       const sessionData: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ["card"],
@@ -109,18 +110,18 @@ export class StripeService {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: error.message }
+        { error: error.message },
       );
     }
   }
 
   async constructWebhookEvent(
     payload: string,
-    signature: string
+    signature: string,
   ): Promise<Stripe.Event> {
     try {
       const webhookSecret = this.configService.get<string>(
-        ConfigKeys.STRIPE_WEBHOOK_SECRET
+        ConfigKeys.STRIPE_WEBHOOK_SECRET,
       );
       if (!webhookSecret) {
         throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
@@ -129,20 +130,20 @@ export class StripeService {
       return this.stripe.webhooks.constructEvent(
         payload,
         signature,
-        webhookSecret
+        webhookSecret,
       );
     } catch (error) {
       this.logger.error("Error constructing webhook event", error);
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
         HttpStatus.BAD_REQUEST,
-        { error: "Invalid webhook signature" }
+        { error: "Invalid webhook signature" },
       );
     }
   }
 
   async retrieveCheckoutSession(
-    sessionId: string
+    sessionId: string,
   ): Promise<Stripe.Checkout.Session> {
     try {
       return await this.stripe.checkout.sessions.retrieve(sessionId);
@@ -151,13 +152,13 @@ export class StripeService {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: error.message }
+        { error: error.message },
       );
     }
   }
 
   async retrieveSubscription(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<Stripe.Subscription> {
     try {
       return await this.stripe.subscriptions.retrieve(subscriptionId);
@@ -166,13 +167,13 @@ export class StripeService {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: error.message }
+        { error: error.message },
       );
     }
   }
 
   extractMetadataFromSession(
-    session: Stripe.Checkout.Session
+    session: Stripe.Checkout.Session,
   ): StripeCheckoutMetadata | null {
     if (!session.metadata) {
       return null;
@@ -191,7 +192,7 @@ export class StripeService {
   }
 
   extractMetadataFromPaymentIntent(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): StripeCheckoutMetadata | null {
     if (!paymentIntent.metadata) {
       return null;
@@ -210,7 +211,7 @@ export class StripeService {
   }
 
   extractMetadataFromSubscription(
-    subscription: Stripe.Subscription
+    subscription: Stripe.Subscription,
   ): StripeCheckoutMetadata | null {
     if (!subscription.metadata) {
       return null;

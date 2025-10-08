@@ -1,20 +1,20 @@
+import { Controller, Get, Query } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { InfringementService } from "./infringement.service";
 import {
-  Controller,
-  Get,
-  Query,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { InfringementService } from './infringement.service';
-import { GetInfringementPaymentRequest, GetInfringementPaymentResponse } from './infringement.dto';
+  GetInfringementPaymentRequest,
+  GetInfringementPaymentResponse,
+} from "./infringement.dto";
 
-
-@ApiTags('Infringement')
-@Controller({ path: 'infringement', version: '1' })
+@ApiTags("Infringement")
+@Controller({ path: "infringement", version: "1" })
 export class InfringementController {
-  constructor(private readonly infringementService: InfringementService) { }
+  constructor(private readonly infringementService: InfringementService) {}
 
-  @Get('ticket-details')
-  getTicketDetails(@Query() request: GetInfringementPaymentRequest): Promise<GetInfringementPaymentResponse> {
+  @Get("ticket-details")
+  getTicketDetails(
+    @Query() request: GetInfringementPaymentRequest,
+  ): Promise<GetInfringementPaymentResponse> {
     return this.infringementService.getInfringementPayment(request);
   }
 }

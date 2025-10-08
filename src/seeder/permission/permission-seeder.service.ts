@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Permission } from '../../permission/entities/permission.entity';
-import { FileUtils } from '../../common/utils/file.utils';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Permission } from "../../permission/entities/permission.entity";
+import { FileUtils } from "../../common/utils/file.utils";
 
 @Injectable()
 export class PermissionSeederService {
@@ -20,8 +20,8 @@ export class PermissionSeederService {
   }
 
   private async seed() {
-    this.logger.log('Starting Permission Data seed');
-    const permissions = FileUtils.getDataForSeeding('permissions');
+    this.logger.log("Starting Permission Data seed");
+    const permissions = FileUtils.getDataForSeeding("permissions");
 
     for (const permissionData of permissions) {
       const existingPermission = await this.permissionRepository.findOne({

@@ -1,78 +1,82 @@
 import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    HttpStatus,
-    HttpCode,
-    Query,
-    UseGuards,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { VisitorService } from './visitor.service';
-import { CreateVisitorRequest, FindVisitorRequest, UpdateVisitorRequest } from './visitor.dto';
-import JwtAuthenticationGuard from '../../auth/guards/jwt-auth.guard';
-import { AllowedRoles } from '../../auth/guards/roles.guard';
-import { UserType } from '../../common/enums';
-import { RoleGuard } from '../../auth/guards/roles.guard';
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  HttpCode,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { VisitorService } from "./visitor.service";
+import {
+  CreateVisitorRequest,
+  FindVisitorRequest,
+  UpdateVisitorRequest,
+} from "./visitor.dto";
+import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
+import { AllowedRoles } from "../../auth/guards/roles.guard";
+import { UserType } from "../../common/enums";
+import { RoleGuard } from "../../auth/guards/roles.guard";
 
-@ApiTags('Patrol Officer => Visitor')
-@Controller({ path: 'patrol-officer/visitor', version: '1' })
+@ApiTags("Patrol Officer => Visitor")
+@Controller({ path: "patrol-officer/visitor", version: "1" })
 export class VisitorController {
-    constructor(private readonly visitorService: VisitorService) { }
+  constructor(private readonly visitorService: VisitorService) {}
 
-    @Get()
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    findAll(@Query() request: FindVisitorRequest) {
-        return this.visitorService.findAll(request);
-    }
+  @Get()
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  findAll(@Query() request: FindVisitorRequest) {
+    return this.visitorService.findAll(request);
+  }
 
-    @Get('assigned-sub-car-parks')
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    getAssignedSubCarParks() {
-        return this.visitorService.getAssignedSubCarParks();
-    }
+  @Get("assigned-sub-car-parks")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  getAssignedSubCarParks() {
+    return this.visitorService.getAssignedSubCarParks();
+  }
 
-    @Get(':id')
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    findOne(@Param('id') id: string) {
-        return this.visitorService.findOne({ where: { id } });
-    }
+  @Get(":id")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  findOne(@Param("id") id: string) {
+    return this.visitorService.findOne({ where: { id } });
+  }
 
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    create(@Body() request: CreateVisitorRequest) {
-        return this.visitorService.create(request);
-    }
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  create(@Body() request: CreateVisitorRequest) {
+    return this.visitorService.create(request);
+  }
 
-    @Patch(':id')
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    update(@Param('id') id: string, @Body() request: UpdateVisitorRequest) {
-        return this.visitorService.update(id, request);
-    }
+  @Patch(":id")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  update(@Param("id") id: string, @Body() request: UpdateVisitorRequest) {
+    return this.visitorService.update(id, request);
+  }
 
-    @Patch('checkout/:id')
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    checkout(@Param('id') id: string): Promise<void> {
-        return this.visitorService.checkout(id);
-    }
+  @Patch("checkout/:id")
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  checkout(@Param("id") id: string): Promise<void> {
+    return this.visitorService.checkout(id);
+  }
 
-    @Delete(':id')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(JwtAuthenticationGuard, RoleGuard)
-    @AllowedRoles(UserType.PATROL_OFFICER)
-    remove(@Param('id') id: string) {
-        return this.visitorService.remove(id);
-    }
+  @Delete(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  remove(@Param("id") id: string) {
+    return this.visitorService.remove(id);
+  }
 }

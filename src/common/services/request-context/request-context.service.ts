@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { AsyncLocalStorage } from 'async_hooks';
-import { DependencyInjectionKeys } from '../../configs';
-import { RequestContext } from './request-context.interface';
+import { Inject, Injectable } from "@nestjs/common";
+import { AsyncLocalStorage } from "async_hooks";
+import { DependencyInjectionKeys } from "../../configs";
+import { RequestContext } from "./request-context.interface";
 
 @Injectable()
 export class RequestContextService {
-  private readonly KEY: symbol = Symbol('REQUEST_CONTEXT');
+  private readonly KEY: symbol = Symbol("REQUEST_CONTEXT");
   constructor(
     @Inject(DependencyInjectionKeys.ASYNC_LOCAL_STORAGE)
     private readonly asyncLocalStorage: AsyncLocalStorage<Map<symbol, any>>,
-  ) { }
+  ) {}
 
   run(callback: () => void, initialValue: RequestContext = {}) {
     const store = new Map<symbol, any>();

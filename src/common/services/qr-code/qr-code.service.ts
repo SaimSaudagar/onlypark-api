@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class QrCodeService {
@@ -8,6 +8,6 @@ export class QrCodeService {
   async generateQrCode(data: string): Promise<string> {
     // TODO: Implement QR code generation
     console.log(`Generating QR code for: ${data}`);
-    return 'base64-qr-code-data';
+    return "base64-qr-code-data";
   }
 }

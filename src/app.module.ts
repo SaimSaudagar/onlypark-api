@@ -89,7 +89,7 @@ import { UserModule } from "./user/user.module";
         redis: {
           host: configService.get<string>(ConfigKeys.REDIS_HOST) || "localhost",
           port: parseInt(
-            configService.get<string>(ConfigKeys.REDIS_PORT) || "6379"
+            configService.get<string>(ConfigKeys.REDIS_PORT) || "6379",
           ),
           password:
             configService.get<string>(ConfigKeys.REDIS_PASSWORD) || undefined,

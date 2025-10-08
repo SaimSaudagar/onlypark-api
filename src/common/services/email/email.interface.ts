@@ -1,5 +1,5 @@
-import { SendEmailRequest, SendEmailResponse } from './email-notification.dto';
+import { SendEmailRequest, SendEmailResponse } from "./email-notification.dto";
 
 export abstract class IEmailService {
-    abstract send(request: SendEmailRequest): Promise<SendEmailResponse>;
+  abstract send(request: SendEmailRequest): Promise<SendEmailResponse>;
 }

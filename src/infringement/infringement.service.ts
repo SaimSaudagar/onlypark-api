@@ -15,11 +15,11 @@ import { InfringementStatus } from "../common/enums";
 export class InfringementService {
   constructor(
     @InjectRepository(Infringement)
-    private infringementRepository: Repository<Infringement>
+    private infringementRepository: Repository<Infringement>,
   ) {}
 
   async getInfringementPayment(
-    request: GetInfringementPaymentRequest
+    request: GetInfringementPaymentRequest,
   ): Promise<GetInfringementPaymentResponse> {
     const { ticketNumber, registrationNumber } = request;
 
@@ -36,7 +36,7 @@ export class InfringementService {
     if (!infringement) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -83,7 +83,7 @@ export class InfringementService {
 
   async findInfringementForPayment(
     registrationNumber: string,
-    ticketNumber: number
+    ticketNumber: number,
   ): Promise<Infringement | null> {
     return await this.infringementRepository.findOne({
       where: {
@@ -102,7 +102,7 @@ export class InfringementService {
   async updatePaymentStatus(
     registrationNumber: string,
     ticketNumber: number,
-    status: InfringementStatus
+    status: InfringementStatus,
   ): Promise<void> {
     const result = await this.infringementRepository.update(
       {
@@ -110,13 +110,13 @@ export class InfringementService {
         ticketNumber,
         status: InfringementStatus.NOT_PAID, // Only update if not already paid
       },
-      { status }
+      { status },
     );
 
     if (result.affected === 0) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
   }

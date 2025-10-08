@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { EmailService } from './email.service';
-import { MailgunService } from './mailgun.service';
-import { TemplateEngineModule } from '../template-engine/template-engine.module';
-import { DependencyInjectionKeys } from '../../configs';
+import { Module } from "@nestjs/common";
+import { EmailService } from "./email.service";
+import { MailgunService } from "./mailgun.service";
+import { TemplateEngineModule } from "../template-engine/template-engine.module";
+import { DependencyInjectionKeys } from "../../configs";
 
 @Module({
   imports: [TemplateEngineModule],
@@ -16,4 +16,4 @@ import { DependencyInjectionKeys } from '../../configs';
   ],
   exports: [EmailService, DependencyInjectionKeys.EMAIL],
 })
-export class EmailModule { }
+export class EmailModule {}

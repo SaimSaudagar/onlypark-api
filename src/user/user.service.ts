@@ -1,8 +1,25 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
-import { AuthenticatedUser, ErrorCode, CustomException, UserType, UserStatus, AdminStatus, CarparkManagerStatus, PatrolOfficerStatus, TemplateKeys } from '../common';
-import { User } from './entities/user.entity';
+import { Injectable, HttpStatus } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  Repository,
+} from "typeorm";
+import {
+  AuthenticatedUser,
+  ErrorCode,
+  CustomException,
+  UserType,
+  UserStatus,
+  AdminStatus,
+  CarparkManagerStatus,
+  PatrolOfficerStatus,
+  TemplateKeys,
+} from "../common";
+import { User } from "./entities/user.entity";
 import {
   CreateCarparkManagerRequest,
   CreatePatrolOfficerRequest,
@@ -15,20 +32,20 @@ import {
   UpdateNotificationTokenRequest,
   UpdateUserDto,
   UpdateUserProfileRequest,
-} from './user.dto';
-import { EmailNotificationService } from '../common/services/email/email-notification.service';
-import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto';
-import { DataSource } from 'typeorm';
-import { PatrolOfficer } from '../patrol-officer/entities/patrol-officer.entity';
-import { CarparkManager } from '../carpark-manager/entities/carpark-manager.entity';
-import { Admin } from '../admin/entities/admin.entity';
-import { CarparkManagerVisitorSubCarPark } from '../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity';
-import { CarparkManagerWhitelistSubCarPark } from '../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity';
-import { CarparkManagerBlacklistSubCarPark } from '../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity';
-import { PatrolOfficerVisitorSubCarPark } from '../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity';
-import { PatrolOfficerWhitelistSubCarPark } from '../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity';
-import { PatrolOfficerBlacklistSubCarPark } from '../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity';
+} from "./user.dto";
+import { EmailNotificationService } from "../common/services/email/email-notification.service";
+import { ConfigService } from "@nestjs/config";
+import * as crypto from "crypto";
+import { DataSource } from "typeorm";
+import { PatrolOfficer } from "../patrol-officer/entities/patrol-officer.entity";
+import { CarparkManager } from "../carpark-manager/entities/carpark-manager.entity";
+import { Admin } from "../admin/entities/admin.entity";
+import { CarparkManagerVisitorSubCarPark } from "../carpark-manager/entities/carpark-manager-visitor-sub-car-park.entity";
+import { CarparkManagerWhitelistSubCarPark } from "../carpark-manager/entities/carpark-manager-whitelist-sub-car-park.entity";
+import { CarparkManagerBlacklistSubCarPark } from "../carpark-manager/entities/carpark-manager-blacklist-sub-car-park.entity";
+import { PatrolOfficerVisitorSubCarPark } from "../patrol-officer/entities/patrol-officer-visitor-sub-car-park.entity";
+import { PatrolOfficerWhitelistSubCarPark } from "../patrol-officer/entities/patrol-officer-whitelist-sub-car-park.entity";
+import { PatrolOfficerBlacklistSubCarPark } from "../patrol-officer/entities/patrol-officer-blacklist-sub-car-park.entity";
 
 @Injectable()
 export class UserService {
@@ -42,7 +59,7 @@ export class UserService {
     private carparkManagerRepository: Repository<CarparkManager>,
     @InjectRepository(PatrolOfficer)
     private patrolOfficerRepository: Repository<PatrolOfficer>,
-  ) { }
+  ) {}
 
   async create(request: CreateUserRequest): Promise<CreateUserResponse> {
     const { name, email, type, phoneNumber, image } = request;
@@ -65,7 +82,7 @@ export class UserService {
       );
     }
 
-    const passwordResetToken = crypto.randomBytes(32).toString('hex');
+    const passwordResetToken = crypto.randomBytes(32).toString("hex");
     const passwordResetExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     // Start database transaction
@@ -77,7 +94,7 @@ export class UserService {
       const user = this.usersRepository.create({
         name,
         email,
-        password: crypto.randomBytes(16).toString('hex'),
+        password: crypto.randomBytes(16).toString("hex"),
         type,
         phoneNumber,
         image,
@@ -100,7 +117,11 @@ export class UserService {
             blacklistSubCarParkIds: request.blacklistSubCarParkIds,
           };
 
-          await this.createCarparkManager(queryRunner, savedUser, carparkManagerRequest);
+          await this.createCarparkManager(
+            queryRunner,
+            savedUser,
+            carparkManagerRequest,
+          );
           break;
         case UserType.PATROL_OFFICER:
           const patrolOfficerRequest: CreatePatrolOfficerRequest = {
@@ -110,7 +131,11 @@ export class UserService {
             blacklistSubCarParkIds: request.blacklistSubCarParkIds,
           };
 
-          await this.createPatrolOfficer(queryRunner, savedUser, patrolOfficerRequest);
+          await this.createPatrolOfficer(
+            queryRunner,
+            savedUser,
+            patrolOfficerRequest,
+          );
           break;
         default:
           throw new CustomException(
@@ -120,7 +145,7 @@ export class UserService {
       }
 
       // Send registration email
-      const passwordSetupUrl = `${this.configService.get('FRONTEND_URL')}/setup-password?token=${passwordResetToken}`;
+      const passwordSetupUrl = `${this.configService.get("FRONTEND_URL")}/setup-password?token=${passwordResetToken}`;
 
       try {
         await this.emailNotificationService.sendUsingTemplate({
@@ -138,7 +163,7 @@ export class UserService {
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: savedUser.email, error: emailError.message }
+          { email: savedUser.email, error: emailError.message },
         );
       }
 
@@ -175,7 +200,11 @@ export class UserService {
     });
   }
 
-  private async createCarparkManager(queryRunner: any, savedUser: User, request: CreateCarparkManagerRequest): Promise<void> {
+  private async createCarparkManager(
+    queryRunner: any,
+    savedUser: User,
+    request: CreateCarparkManagerRequest,
+  ): Promise<void> {
     const carparkManager = await queryRunner.manager.save(CarparkManager, {
       userId: savedUser.id,
       status: CarparkManagerStatus.ACTIVE,
@@ -197,7 +226,11 @@ export class UserService {
     });
   }
 
-  private async createPatrolOfficer(queryRunner: any, savedUser: User, request: CreatePatrolOfficerRequest): Promise<void> {
+  private async createPatrolOfficer(
+    queryRunner: any,
+    savedUser: User,
+    request: CreatePatrolOfficerRequest,
+  ): Promise<void> {
     const patrolOfficer = await queryRunner.manager.save(PatrolOfficer, {
       userId: savedUser.id,
       status: PatrolOfficerStatus.ACTIVE,
@@ -245,7 +278,8 @@ export class UserService {
       take,
     };
 
-    const [users, totalItems] = await this.usersRepository.findAndCount(options);
+    const [users, totalItems] =
+      await this.usersRepository.findAndCount(options);
 
     return {
       rows: users,
@@ -279,10 +313,14 @@ export class UserService {
 
     switch (user.type) {
       case UserType.CARPARK_MANAGER:
-        additionalData = await this.carparkManagerRepository.findOne({ where: { userId: id } });
+        additionalData = await this.carparkManagerRepository.findOne({
+          where: { userId: id },
+        });
         break;
       case UserType.PATROL_OFFICER:
-        additionalData = await this.patrolOfficerRepository.findOne({ where: { userId: id } });
+        additionalData = await this.patrolOfficerRepository.findOne({
+          where: { userId: id },
+        });
         break;
     }
     return {
@@ -326,7 +364,11 @@ export class UserService {
       where: { passwordResetToken: token },
     });
 
-    if (!user || !user.passwordResetExpires || user.passwordResetExpires < new Date()) {
+    if (
+      !user ||
+      !user.passwordResetExpires ||
+      user.passwordResetExpires < new Date()
+    ) {
       return null;
     }
 

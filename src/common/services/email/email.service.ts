@@ -1,12 +1,12 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { TemplateEngineService } from '../template-engine/template-engine.service';
-import { TemplateKeys } from '../../constants/template-keys';
-import { MailgunService } from './mailgun.service';
-import { CustomException } from '../../exceptions/custom.exception';
-import { ErrorCode } from '../../exceptions/error-code';
-import { IEmailService } from './email.interface';
-import { SendEmailRequest, SendEmailResponse } from './email-notification.dto';
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { TemplateEngineService } from "../template-engine/template-engine.service";
+import { TemplateKeys } from "../../constants/template-keys";
+import { MailgunService } from "./mailgun.service";
+import { CustomException } from "../../exceptions/custom.exception";
+import { ErrorCode } from "../../exceptions/error-code";
+import { IEmailService } from "./email.interface";
+import { SendEmailRequest, SendEmailResponse } from "./email-notification.dto";
 
 @Injectable()
 export class EmailService implements IEmailService {
@@ -16,7 +16,7 @@ export class EmailService implements IEmailService {
     private readonly configService: ConfigService,
     private readonly templateEngine: TemplateEngineService,
     private readonly mailgunService: MailgunService,
-  ) { }
+  ) {}
 
   async send(request: SendEmailRequest): Promise<SendEmailResponse> {
     try {
@@ -30,8 +30,8 @@ export class EmailService implements IEmailService {
         to: [toEmail],
         subject,
         body,
-        from: from || this.configService.get('EMAIL_FROM'),
-        senderName: senderName || 'OnlyPark',
+        from: from || this.configService.get("EMAIL_FROM"),
+        senderName: senderName || "OnlyPark",
         attachments,
       });
 
@@ -39,11 +39,13 @@ export class EmailService implements IEmailService {
         this.logger.log(`Email sent successfully to ${to}: ${subject}`);
         return result;
       } else {
-        this.logger.error(`Failed to send email to ${to}: ${result.errorMessage}`);
+        this.logger.error(
+          `Failed to send email to ${to}: ${result.errorMessage}`,
+        );
         throw new CustomException(
           ErrorCode.EMAIL_SEND_FAILED.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { email: to, error: result.errorMessage }
+          { email: to, error: result.errorMessage },
         );
       }
     } catch (error) {
@@ -54,7 +56,7 @@ export class EmailService implements IEmailService {
       throw new CustomException(
         ErrorCode.EMAIL_SEND_FAILED.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { email: request.to, error: error.message }
+        { email: request.to, error: error.message },
       );
     }
   }

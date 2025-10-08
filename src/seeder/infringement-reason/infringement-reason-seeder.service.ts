@@ -10,7 +10,7 @@ export class InfringementReasonSeederService {
 
   constructor(
     @InjectRepository(InfringementReason)
-    private readonly infringementReasonRepository: Repository<InfringementReason>
+    private readonly infringementReasonRepository: Repository<InfringementReason>,
   ) {
     this.logger = new Logger(this.constructor.name);
   }
@@ -22,7 +22,7 @@ export class InfringementReasonSeederService {
   private async seed() {
     this.logger.log("Starting Infringement Reason Data seed");
     const infringementReasons = FileUtils.getDataForSeeding(
-      "infringement-reasons"
+      "infringement-reasons",
     );
 
     for (const infringementReasonData of infringementReasons) {
@@ -38,11 +38,11 @@ export class InfringementReasonSeederService {
 
         await this.infringementReasonRepository.save(infringementReason);
         this.logger.log(
-          `Infringement Reason "${infringementReasonData.reason}" seeded`
+          `Infringement Reason "${infringementReasonData.reason}" seeded`,
         );
       } else {
         this.logger.log(
-          `Infringement Reason "${infringementReasonData.reason}" already exists`
+          `Infringement Reason "${infringementReasonData.reason}" already exists`,
         );
       }
     }

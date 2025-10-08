@@ -1,34 +1,34 @@
-import { Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { Injectable, UnauthorizedException, HttpStatus } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
 
-import { UserService } from '../user/user.service';
-import { JwtPayload } from '../common/types';
-import {
-  LoginRequest,
-  SendLinkForForgetPasswordRequest,
-} from './auth.dto';
-import { ErrorCode } from '../common/exceptions/error-code';
-import { CustomException } from '../common/exceptions/custom.exception';
+import { UserService } from "../user/user.service";
+import { JwtPayload } from "../common/types";
+import { LoginRequest, SendLinkForForgetPasswordRequest } from "./auth.dto";
+import { ErrorCode } from "../common/exceptions/error-code";
+import { CustomException } from "../common/exceptions/custom.exception";
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async login(request: LoginRequest) {
     const user = await this.userService.findByEmail(request.email);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(request.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      request.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     const payload: JwtPayload = {
@@ -52,7 +52,9 @@ export class AuthService {
   async sendLinkForForgetPassword(
     sendLinkForForgetPasswordRequest: SendLinkForForgetPasswordRequest,
   ): Promise<void> {
-    const user = await this.userService.findById(sendLinkForForgetPasswordRequest.email);
+    const user = await this.userService.findById(
+      sendLinkForForgetPasswordRequest.email,
+    );
     if (!user) {
       throw new CustomException(
         ErrorCode.USER_NOT_FOUND.key,

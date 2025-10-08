@@ -15,7 +15,7 @@ export class InfringementPenaltySeederService {
     @InjectRepository(InfringementPenalty)
     private readonly infringementPenaltyRepository: Repository<InfringementPenalty>,
     @InjectRepository(InfringementCarPark)
-    private readonly infringementCarParkRepository: Repository<InfringementCarPark>
+    private readonly infringementCarParkRepository: Repository<InfringementCarPark>,
   ) {
     this.logger = new Logger(this.constructor.name);
   }
@@ -27,7 +27,7 @@ export class InfringementPenaltySeederService {
   private async seed() {
     this.logger.log("Starting Infringement Penalty Data seed");
     const infringementPenalties = FileUtils.getDataForSeeding(
-      "infringement-penalties"
+      "infringement-penalties",
     );
 
     for (const penaltyData of infringementPenalties) {
@@ -40,7 +40,7 @@ export class InfringementPenaltySeederService {
 
         if (!infringementCarPark) {
           this.logger.warn(
-            `Infringement car park ${penaltyData.carParkName} not found. Skipping penalty ${penaltyData.penaltyName}`
+            `Infringement car park ${penaltyData.carParkName} not found. Skipping penalty ${penaltyData.penaltyName}`,
           );
           continue;
         }
@@ -66,21 +66,21 @@ export class InfringementPenaltySeederService {
 
           await this.infringementPenaltyRepository.save(penalty);
           this.logger.log(
-            `Infringement penalty ${penaltyData.penaltyName} for ${penaltyData.carParkName} seeded`
+            `Infringement penalty ${penaltyData.penaltyName} for ${penaltyData.carParkName} seeded`,
           );
         } else {
           this.logger.log(
-            `Infringement penalty ${penaltyData.penaltyName} for ${penaltyData.carParkName} already exists`
+            `Infringement penalty ${penaltyData.penaltyName} for ${penaltyData.carParkName} already exists`,
           );
         }
       } catch (error) {
         this.logger.error(
           `Error seeding penalty ${penaltyData.penaltyName}:`,
-          error
+          error,
         );
         throw new CustomException(
           ErrorCode.SERVER_ERROR.key,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
     }

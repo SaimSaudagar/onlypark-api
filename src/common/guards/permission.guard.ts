@@ -1,7 +1,7 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthenticatedUser } from '../types';
-import { RequestContextService } from '../services/request-context/request-context.service';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthenticatedUser } from "../types";
+import { RequestContextService } from "../services/request-context/request-context.service";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -12,14 +12,14 @@ export class PermissionsGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const parameter = this.reflector.get<string[]>(
-      'permissions',
+      "permissions",
       context.getHandler(),
     );
     if (!parameter) {
       return true; // No specific permission required
     }
     const requiredPermissions = parameter.map((permission) => {
-      const [subject, action] = permission.split('.');
+      const [subject, action] = permission.split(".");
       return {
         subject,
         action,

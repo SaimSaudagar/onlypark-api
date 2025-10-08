@@ -1,21 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { CarMake } from './entities/car-make.entity';
-import {
-  CreateCarMakeRequest,
-  UpdateCarMakeRequest,
-} from './car-make.dto';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
-import { HttpStatus } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindManyOptions, FindOneOptions, Repository } from "typeorm";
+import { CarMake } from "./entities/car-make.entity";
+import { CreateCarMakeRequest, UpdateCarMakeRequest } from "./car-make.dto";
+import { CustomException } from "../common/exceptions/custom.exception";
+import { ErrorCode } from "../common/exceptions/error-code";
+import { HttpStatus } from "@nestjs/common";
 
 @Injectable()
 export class CarMakeService {
   constructor(
     @InjectRepository(CarMake)
     private carMakeRepository: Repository<CarMake>,
-  ) { }
+  ) {}
 
   async create(request: CreateCarMakeRequest): Promise<CarMake> {
     const { carMakeName } = request;

@@ -1,5 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { PartialType } from "@nestjs/mapped-types";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreatePermissionRequest {
   @IsNotEmpty()
@@ -7,7 +7,9 @@ export class CreatePermissionRequest {
   name: string;
 }
 
-export class UpdatePermissionRequest extends PartialType(CreatePermissionRequest) {}
+export class UpdatePermissionRequest extends PartialType(
+  CreatePermissionRequest,
+) {}
 
 export interface GetPermissionResponse {
   id: string;

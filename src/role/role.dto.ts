@@ -1,8 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
+import { PartialType } from "@nestjs/mapped-types";
+import { IsNotEmpty, IsString, IsArray, IsOptional } from "class-validator";
 
 export class CreateRoleRequest {
-  @IsNotEmpty() 
+  @IsNotEmpty()
   @IsString()
   name: string;
 

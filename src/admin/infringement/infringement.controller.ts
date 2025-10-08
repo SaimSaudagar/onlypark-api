@@ -108,7 +108,7 @@ export class InfringementController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   updateStatus(
     @Param("id") id: string,
-    @Body() request: UpdateInfringementStatusRequest
+    @Body() request: UpdateInfringementStatusRequest,
   ) {
     return this.infringementService.updateStatus(id, request);
   }
@@ -131,7 +131,7 @@ export class InfringementController {
   @Get("ticket/:ticketNumber/png")
   async getTicketPng(
     @Param("ticketNumber") ticketNumber: number,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<void> {
     const pngBuffer =
       await this.infringementService.generateTicketPng(ticketNumber);

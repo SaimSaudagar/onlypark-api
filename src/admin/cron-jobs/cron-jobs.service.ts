@@ -1,13 +1,13 @@
-import { Injectable, Logger, HttpStatus } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { DataSource, LessThan, LessThanOrEqual } from 'typeorm';
-import { InfringementStatus, VisitorBookingStatus } from '../../common/enums';
-import { Infringement } from '../../infringement/entities/infringement.entity';
-import { VisitorBooking } from '../../visitor-booking/entities/visitor-booking.entity';
-import { OutstandingRegistration } from '../../outstanding-registration/entities/outstanding-registration.entity';
-import { EmailNotificationService } from '../../common/services/email/email-notification.service';
-import { SendEmailRequest } from '../../common/services/email/email-notification.dto';
-import { CustomException } from '../../common/exceptions/custom.exception';
+import { Injectable, Logger, HttpStatus } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { DataSource, LessThan, LessThanOrEqual } from "typeorm";
+import { InfringementStatus, VisitorBookingStatus } from "../../common/enums";
+import { Infringement } from "../../infringement/entities/infringement.entity";
+import { VisitorBooking } from "../../visitor-booking/entities/visitor-booking.entity";
+import { OutstandingRegistration } from "../../outstanding-registration/entities/outstanding-registration.entity";
+import { EmailNotificationService } from "../../common/services/email/email-notification.service";
+import { SendEmailRequest } from "../../common/services/email/email-notification.dto";
+import { CustomException } from "../../common/exceptions/custom.exception";
 
 @Injectable()
 export class CronJobsService {
@@ -20,7 +20,7 @@ export class CronJobsService {
   constructor(
     protected readonly datasource: DataSource,
     private readonly emailNotificationService: EmailNotificationService,
-  ) { }
+  ) {}
 
   // @Cron('0 9 * * *') // Every day at 9 AM
   // async runInfringementReminderJob() {
@@ -308,7 +308,6 @@ export class CronJobsService {
   //         await this.datasource
   //           .getRepository(VisitorBooking)
   //           .update(booking.id, { status: VisitorBookingStatus.PENDING });
-
 
   //         this.logger.log(`Updated visitor booking ${booking.id} to expired status`);
   //       } catch (error) {

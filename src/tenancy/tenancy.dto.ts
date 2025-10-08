@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from "class-validator";
 import { ApiGetBaseRequest } from "../common/types";
 
 export class FindTenancyRequest extends ApiGetBaseRequest {

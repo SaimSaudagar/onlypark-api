@@ -1,5 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { PartialType } from "@nestjs/mapped-types";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateCarMakeRequest {
   @IsNotEmpty()
@@ -7,7 +7,7 @@ export class CreateCarMakeRequest {
   carMakeName: string;
 }
 
-export class UpdateCarMakeRequest extends PartialType(CreateCarMakeRequest) { }
+export class UpdateCarMakeRequest extends PartialType(CreateCarMakeRequest) {}
 
 export interface GetCarMakeResponse {
   id: string;

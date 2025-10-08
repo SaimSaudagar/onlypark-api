@@ -9,20 +9,19 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import JwtAuthenticationGuard, { OptionalJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CarMakeService } from './car-make.service';
-import {
-  CreateCarMakeRequest,
-  UpdateCarMakeRequest,
-} from './car-make.dto';
-import { RoleGuard } from '../auth/guards/roles.guard';
+} from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import JwtAuthenticationGuard, {
+  OptionalJwtAuthGuard,
+} from "../auth/guards/jwt-auth.guard";
+import { CarMakeService } from "./car-make.service";
+import { CreateCarMakeRequest, UpdateCarMakeRequest } from "./car-make.dto";
+import { RoleGuard } from "../auth/guards/roles.guard";
 
-@ApiTags('CarMake')
-@Controller({ path: 'car-make', version: '1' })
+@ApiTags("CarMake")
+@Controller({ path: "car-make", version: "1" })
 export class CarMakeController {
-  constructor(private readonly carMakeService: CarMakeService) { }
+  constructor(private readonly carMakeService: CarMakeService) {}
 
   @Get()
   @UseGuards(OptionalJwtAuthGuard)
@@ -30,9 +29,9 @@ export class CarMakeController {
     return this.carMakeService.findAll();
   }
 
-  @Get(':id')
+  @Get(":id")
   @UseGuards(OptionalJwtAuthGuard)
-  findOne(@Param('id') id: string) {
+  findOne(@Param("id") id: string) {
     return this.carMakeService.findOne({ where: { id } });
   }
 
@@ -43,16 +42,19 @@ export class CarMakeController {
     return this.carMakeService.create(createCarMakeDto);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @UseGuards(OptionalJwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateCarMakeDto: UpdateCarMakeRequest) {
+  update(
+    @Param("id") id: string,
+    @Body() updateCarMakeDto: UpdateCarMakeRequest,
+  ) {
     return this.carMakeService.update(id, updateCarMakeDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(OptionalJwtAuthGuard)
-  remove(@Param('id') id: string) {
+  remove(@Param("id") id: string) {
     return this.carMakeService.remove(id);
   }
 }

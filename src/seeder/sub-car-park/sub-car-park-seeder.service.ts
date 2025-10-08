@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
-import { MasterCarPark } from '../../master-car-park/entities/master-car-park.entity';
-import { FileUtils } from '../../common/utils/file.utils';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
+import { MasterCarPark } from "../../master-car-park/entities/master-car-park.entity";
+import { FileUtils } from "../../common/utils/file.utils";
 
 @Injectable()
 export class SubCarParkSeederService {
@@ -23,8 +23,8 @@ export class SubCarParkSeederService {
   }
 
   private async seed() {
-    this.logger.log('Starting Sub Car Park Data seed');
-    const subCarParks = FileUtils.getDataForSeeding('sub-car-parks');
+    this.logger.log("Starting Sub Car Park Data seed");
+    const subCarParks = FileUtils.getDataForSeeding("sub-car-parks");
 
     for (const subCarParkData of subCarParks) {
       const existingSubCarPark = await this.subCarParkRepository.findOne({
@@ -38,10 +38,11 @@ export class SubCarParkSeederService {
         });
 
         if (!masterCarPark) {
-          this.logger.warn(`Master Car Park ${subCarParkData.masterCarParkName} not found for Sub Car Park ${subCarParkData.carParkName}`);
+          this.logger.warn(
+            `Master Car Park ${subCarParkData.masterCarParkName} not found for Sub Car Park ${subCarParkData.carParkName}`,
+          );
           continue;
         }
-
 
         const subCarPark = this.subCarParkRepository.create({
           carParkName: subCarParkData.carParkName,
@@ -63,24 +64,31 @@ export class SubCarParkSeederService {
         });
 
         await this.subCarParkRepository.save(subCarPark);
-        this.logger.log(`Sub Car Park ${subCarParkData.carParkName} seeded under ${subCarParkData.masterCarParkName}`);
+        this.logger.log(
+          `Sub Car Park ${subCarParkData.carParkName} seeded under ${subCarParkData.masterCarParkName}`,
+        );
       } else {
-        this.logger.log(`Sub Car Park ${subCarParkData.carParkName} already exists`);
+        this.logger.log(
+          `Sub Car Park ${subCarParkData.carParkName} already exists`,
+        );
       }
     }
   }
 
   private generateCarParkCode(): string {
-    const prefix = 'SC';
-    const randomSuffix = Math.random().toString(36).substring(2, 5).toUpperCase();
+    const prefix = "SC";
+    const randomSuffix = Math.random()
+      .toString(36)
+      .substring(2, 5)
+      .toUpperCase();
     return `${prefix}${randomSuffix}`;
   }
 
   private generateSlug(name: string): string {
     return name
       .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
       .trim();
   }
 }

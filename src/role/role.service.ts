@@ -1,16 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository, In } from 'typeorm';
-import { Role } from './entities/role.entity';
-import { Permission } from '../permission/entities/permission.entity';
-import { RolePermission } from './entities/role-permission.entity';
-import {
-  CreateRoleRequest,
-  UpdateRoleRequest,
-} from './role.dto';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
-import { HttpStatus } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindManyOptions, FindOneOptions, Repository, In } from "typeorm";
+import { Role } from "./entities/role.entity";
+import { Permission } from "../permission/entities/permission.entity";
+import { RolePermission } from "./entities/role-permission.entity";
+import { CreateRoleRequest, UpdateRoleRequest } from "./role.dto";
+import { CustomException } from "../common/exceptions/custom.exception";
+import { ErrorCode } from "../common/exceptions/error-code";
+import { HttpStatus } from "@nestjs/common";
 
 @Injectable()
 export class RoleService {
@@ -21,7 +18,7 @@ export class RoleService {
     private permissionRepository: Repository<Permission>,
     @InjectRepository(RolePermission)
     private rolePermissionRepository: Repository<RolePermission>,
-  ) { }
+  ) {}
 
   async create(roleDto: CreateRoleRequest): Promise<Role> {
     const { name, permissions } = roleDto;
@@ -44,11 +41,11 @@ export class RoleService {
     // Add permissions if provided
     if (permissions && permissions.length > 0) {
       const permissionEntities = await this.permissionRepository.findBy({
-        id: In(permissions)
+        id: In(permissions),
       });
 
       // Create role-permission relationships
-      const rolePermissions = permissionEntities.map(permission => {
+      const rolePermissions = permissionEntities.map((permission) => {
         const rolePermission = new RolePermission();
         rolePermission.rolesId = role.id;
         rolePermission.permissionsId = permission.id;
@@ -74,7 +71,7 @@ export class RoleService {
   async findByRoleName(name: string) {
     return await this.roleRepository.findOne({
       where: { name },
-      relations: ['rolePermissions', 'rolePermissions.permission'],
+      relations: ["rolePermissions", "rolePermissions.permission"],
     });
   }
 

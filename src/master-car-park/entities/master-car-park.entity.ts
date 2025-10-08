@@ -1,36 +1,28 @@
-import {
-  Entity,
-  Column,
-  OneToMany,
-} from 'typeorm';
-import {
-  CarParkType,
-  ParkingSpotStatus,
-} from '../../common/enums';
-import { Auditable } from '../../common/decorators';
-import { SubCarPark } from '../../sub-car-park/entities/sub-car-park.entity';
-import { BaseEntity } from '../../common/entities/base.entity';
-import { Blacklist } from '../../blacklist/entities/blacklist-reg.entity';
+import { Entity, Column, OneToMany } from "typeorm";
+import { CarParkType, ParkingSpotStatus } from "../../common/enums";
+import { Auditable } from "../../common/decorators";
+import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
+import { BaseEntity } from "../../common/entities/base.entity";
+import { Blacklist } from "../../blacklist/entities/blacklist-reg.entity";
 
-@Entity('master_car_park')
+@Entity("master_car_park")
 @Auditable()
 export class MasterCarPark extends BaseEntity {
-
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   carParkName: string;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: CarParkType,
     nullable: false,
   })
   carParkType: CarParkType;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
+  @Column({ type: "varchar", unique: true, nullable: false })
   masterCarParkCode: string;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: ParkingSpotStatus,
     default: ParkingSpotStatus.ACTIVE,
   })

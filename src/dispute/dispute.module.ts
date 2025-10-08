@@ -1,14 +1,18 @@
-import { Module } from '@nestjs/common';
-import { InfringementModule } from '../admin/infringement/infringement.module';
-import { DisputeController } from './dispute.controller';
-import { DisputeService } from './dispute.service';
-import { Dispute } from './entities/dispute.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailNotificationModule } from '../common/services/email/email-notification.module';
+import { Module } from "@nestjs/common";
+import { InfringementModule } from "../admin/infringement/infringement.module";
+import { DisputeController } from "./dispute.controller";
+import { DisputeService } from "./dispute.service";
+import { Dispute } from "./entities/dispute.entity";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { EmailNotificationModule } from "../common/services/email/email-notification.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Dispute]), InfringementModule, EmailNotificationModule],
-    controllers: [DisputeController],
-    providers: [DisputeService],
+  imports: [
+    TypeOrmModule.forFeature([Dispute]),
+    InfringementModule,
+    EmailNotificationModule,
+  ],
+  controllers: [DisputeController],
+  providers: [DisputeService],
 })
-export class DisputeModule { }
+export class DisputeModule {}

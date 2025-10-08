@@ -7,9 +7,9 @@ import {
   HttpCode,
   Get,
   Query,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
+} from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { AuthService } from "./auth.service";
 import {
   ChangePasswordRequest,
   LoginRequest,
@@ -18,26 +18,26 @@ import {
   ConfirmEmailRequest,
   SendLinkForForgetPasswordRequest,
   SetupPasswordRequest,
-} from './auth.dto';
-import { UserService } from '../user/user.service';
-import { CustomException } from '../common/exceptions/custom.exception';
-import { ErrorCode } from '../common/exceptions/error-code';
+} from "./auth.dto";
+import { UserService } from "../user/user.service";
+import { CustomException } from "../common/exceptions/custom.exception";
+import { ErrorCode } from "../common/exceptions/error-code";
 
-@ApiTags('Auth')
-@Controller({ path: 'auth', version: '1' })
+@ApiTags("Auth")
+@Controller({ path: "auth", version: "1" })
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-  ) { }
+  ) {}
 
-  @Post('login')
+  @Post("login")
   public async login(@Body() request: LoginRequest) {
     const loginInfo = await this.authService.login(request);
     return loginInfo;
   }
 
-  @Post('forget-password/send-link')
+  @Post("forget-password/send-link")
   @HttpCode(HttpStatus.NO_CONTENT)
   public async sendLinkForForgetPassword(
     @Body() request: SendLinkForForgetPasswordRequest,
@@ -45,9 +45,9 @@ export class AuthController {
     return this.authService.sendLinkForForgetPassword(request);
   }
 
-  @Get('setup-password')
+  @Get("setup-password")
   @HttpCode(HttpStatus.OK)
-  public async getPasswordSetupPage(@Query('token') token: string) {
+  public async getPasswordSetupPage(@Query("token") token: string) {
     if (!token) {
       throw new CustomException(
         ErrorCode.TOKEN_REQUIRED.key,
@@ -66,18 +66,16 @@ export class AuthController {
     // Return a simple HTML page for password setup
     // In a real application, this would redirect to a frontend page
     return {
-      message: 'Token is valid. Please proceed to set your password.',
+      message: "Token is valid. Please proceed to set your password.",
       userId: user.id,
       email: user.email,
       token: token,
     };
   }
 
-  @Post('setup-password')
+  @Post("setup-password")
   @HttpCode(HttpStatus.OK)
-  public async setupPassword(
-    @Body() request: SetupPasswordRequest,
-  ) {
+  public async setupPassword(@Body() request: SetupPasswordRequest) {
     const { token, password } = request;
 
     if (!token || !password) {
@@ -103,7 +101,8 @@ export class AuthController {
     }
 
     return {
-      message: 'Password set successfully. You can now login with your email and password.',
+      message:
+        "Password set successfully. You can now login with your email and password.",
     };
   }
 }

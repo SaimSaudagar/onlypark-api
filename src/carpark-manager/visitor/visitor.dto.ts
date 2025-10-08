@@ -1,88 +1,96 @@
-import { IsString, IsOptional, IsUUID, IsNotEmpty, IsDate, IsEnum, IsEmail } from 'class-validator';
-import { ApiGetBaseRequest, VisitorBookingStatus } from '../../common';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsNotEmpty,
+  IsDate,
+  IsEnum,
+  IsEmail,
+} from "class-validator";
+import { ApiGetBaseRequest, VisitorBookingStatus } from "../../common";
 
 export class CreateVisitorRequest {
-    @IsUUID()
-    @IsNotEmpty()
-    subCarParkId: string;
+  @IsUUID()
+  @IsNotEmpty()
+  subCarParkId: string;
 
-    @IsString()
-    @IsNotEmpty()
-    registrationNumber: string;
+  @IsString()
+  @IsNotEmpty()
+  registrationNumber: string;
 
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-    @IsUUID()
-    @IsNotEmpty()
-    tenancyId: string;
+  @IsUUID()
+  @IsNotEmpty()
+  tenancyId: string;
 
-    @IsDate()
-    @IsNotEmpty()
-    startDate: Date;
+  @IsDate()
+  @IsNotEmpty()
+  startDate: Date;
 
-    @IsDate()
-    @IsNotEmpty()
-    endDate: Date;
+  @IsDate()
+  @IsNotEmpty()
+  endDate: Date;
 
-    @IsOptional()
-    @IsEnum(VisitorBookingStatus)
-    status?: VisitorBookingStatus;
+  @IsOptional()
+  @IsEnum(VisitorBookingStatus)
+  status?: VisitorBookingStatus;
 }
 
 export class CreateVisitorResponse {
-    id: string;
-    registrationNumber: string;
-    email: string;
-    startDate: Date;
-    endDate: Date;
-    status: VisitorBookingStatus;
-    token: string;
+  id: string;
+  registrationNumber: string;
+  email: string;
+  startDate: Date;
+  endDate: Date;
+  status: VisitorBookingStatus;
+  token: string;
 }
 
-export class UpdateVisitorRequest extends CreateVisitorRequest { }
+export class UpdateVisitorRequest extends CreateVisitorRequest {}
 
-export class UpdateVisitorResponse extends CreateVisitorResponse { }
+export class UpdateVisitorResponse extends CreateVisitorResponse {}
 
 export class FindVisitorRequest extends ApiGetBaseRequest {
-    @IsOptional()
-    @IsString()
-    search?: string;
+  @IsOptional()
+  @IsString()
+  search?: string;
 
-    @IsOptional()
-    @IsDate()
-    dateFrom?: Date;
+  @IsOptional()
+  @IsDate()
+  dateFrom?: Date;
 
-    @IsOptional()
-    @IsDate()
-    dateTo?: Date;
+  @IsOptional()
+  @IsDate()
+  dateTo?: Date;
 
-    @IsOptional()
-    @IsEnum(VisitorBookingStatus)
-    status?: VisitorBookingStatus;
+  @IsOptional()
+  @IsEnum(VisitorBookingStatus)
+  status?: VisitorBookingStatus;
 }
 
 export class FindVisitorResponse {
+  id: string;
+  registrationNumber: string;
+  email: string;
+  startDate: Date;
+  endDate: Date;
+  status: VisitorBookingStatus;
+  token: string;
+  createdAt: Date;
+  subCarPark: {
     id: string;
-    registrationNumber: string;
-    email: string;
-    startDate: Date;
-    endDate: Date;
-    status: VisitorBookingStatus;
-    token: string;
-    createdAt: Date;
-    subCarPark: {
-        id: string;
-        carParkName: string;
-    };
-    tenancy: {
-        id: string;
-        tenantName: string;
-    };
+    carParkName: string;
+  };
+  tenancy: {
+    id: string;
+    tenantName: string;
+  };
 }
 
 export class GetAssignedSubCarParksResponse {
-    subCarParkId: string;
-    subCarParkName: string;
+  subCarParkId: string;
+  subCarParkName: string;
 }

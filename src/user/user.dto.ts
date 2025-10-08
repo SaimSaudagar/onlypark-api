@@ -1,8 +1,18 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEmail, IsString, ValidateNested, IsOptional, IsEnum, MinLength, IsArray, IsUUID } from 'class-validator';
-import { UserType, AddressType, UserStatus } from '../common/enums';
-import { ApiGetBaseRequest, ApiGetBaseResponse } from '../common';
+import { PartialType } from "@nestjs/mapped-types";
+import { Type } from "class-transformer";
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsString,
+  ValidateNested,
+  IsOptional,
+  IsEnum,
+  MinLength,
+  IsArray,
+  IsUUID,
+} from "class-validator";
+import { UserType, AddressType, UserStatus } from "../common/enums";
+import { ApiGetBaseRequest, ApiGetBaseResponse } from "../common";
 
 export class CreateUserRequest {
   @IsNotEmpty()
@@ -29,7 +39,6 @@ export class CreateUserRequest {
   @IsArray()
   @IsUUID(4, { each: true })
   visitorSubCarParkIds: string[];
-
 
   @IsOptional()
   @IsArray()

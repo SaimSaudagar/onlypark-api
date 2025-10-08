@@ -10,7 +10,7 @@ export class CarMakeSeederService {
 
   constructor(
     @InjectRepository(CarMake)
-    private readonly carMakeRepository: Repository<CarMake>
+    private readonly carMakeRepository: Repository<CarMake>,
   ) {
     this.logger = new Logger(this.constructor.name);
   }

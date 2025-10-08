@@ -1,17 +1,17 @@
-import { Reflector } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { Reflector } from "@nestjs/core";
+import { Logger } from "@nestjs/common";
+import { InjectDataSource } from "@nestjs/typeorm";
 import {
   DataSource,
   EntitySubscriberInterface,
   InsertEvent,
   UpdateEvent,
   RemoveEvent,
-} from 'typeorm';
-import { AUDITABLE_KEY } from '../../decorators/auditable.decorator';
-import { Action, AuditAction } from '../../enums';
-import { RequestContextService } from '../request-context/request-context.service';
-import { AuditLogService } from './audit-log.service';
+} from "typeorm";
+import { AUDITABLE_KEY } from "../../decorators/auditable.decorator";
+import { Action, AuditAction } from "../../enums";
+import { RequestContextService } from "../request-context/request-context.service";
+import { AuditLogService } from "./audit-log.service";
 
 export class AuditSubscriber implements EntitySubscriberInterface {
   private readonly logger: Logger;
@@ -24,7 +24,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
   ) {
     this.logger = new Logger(AuditSubscriber.name);
     this.dataSource.subscribers.push(this);
-    this.logger.log('AuditSubscriber initialized');
+    this.logger.log("AuditSubscriber initialized");
   }
 
   afterInsert(event: InsertEvent<any>): void {
@@ -82,9 +82,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
         newValue: newValues,
         userId,
       });
-      this.logger.log('Audit log created successfully');
+      this.logger.log("Audit log created successfully");
     } catch (error) {
-      this.logger.error('Error creating audit log', error.stack);
+      this.logger.error("Error creating audit log", error.stack);
     }
   }
 

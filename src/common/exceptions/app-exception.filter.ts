@@ -5,14 +5,14 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import * as Sentry from '@sentry/nestjs';
-import * as handlebars from 'handlebars';
-import { ApiResponse } from '../types';
-import { ErrorCode } from './error-code';
-import { CustomException, NestCustomException } from './custom.exception';
-import { RequestContextService } from '../services/request-context/request-context.service';
+} from "@nestjs/common";
+import { HttpAdapterHost } from "@nestjs/core";
+import * as Sentry from "@sentry/nestjs";
+import * as handlebars from "handlebars";
+import { ApiResponse } from "../types";
+import { ErrorCode } from "./error-code";
+import { CustomException, NestCustomException } from "./custom.exception";
+import { RequestContextService } from "../services/request-context/request-context.service";
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
@@ -21,19 +21,19 @@ export class AppExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpAdapterrHost: HttpAdapterHost,
     private readonly requestContextService: RequestContextService,
-  ) { }
+  ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const traceId = this.requestContextService.get()?.traceId;
     let exceptionMessage = `${traceId}: `;
-    if (typeof exception === 'object') {
+    if (typeof exception === "object") {
       exceptionMessage += JSON.stringify(exception);
     } else exceptionMessage += String(exception);
 
     const errorDetail = await this.getExceptionDetails(exception);
-    if (errorDetail.statusCode >= 500 && exception['stack']) {
-      const stack = `${traceId}: ${exception['stack']}`;
+    if (errorDetail.statusCode >= 500 && exception["stack"]) {
+      const stack = `${traceId}: ${exception["stack"]}`;
       Sentry.captureException(exception);
       this.logger.error(exceptionMessage, stack);
     }
@@ -56,9 +56,7 @@ export class AppExceptionFilter implements ExceptionFilter {
     );
   }
 
-  private async getExceptionDetails(
-    exception: unknown,
-  ): Promise<{
+  private async getExceptionDetails(exception: unknown): Promise<{
     statusCode: number;
     code: string;
     message: string;

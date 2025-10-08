@@ -46,7 +46,7 @@ async function bootstrap() {
       },
       exceptionFactory: (errors) => ExceptionUtils.handleNestException(errors),
       stopAtFirstError: true,
-    })
+    }),
   );
 
   // Global interceptors

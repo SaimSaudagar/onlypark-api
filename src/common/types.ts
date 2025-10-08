@@ -1,8 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { SortOrder } from './enums';
-import { ConfigConstants } from './configs';
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
+import { IsEnum, IsNumber, IsOptional } from "class-validator";
+import { Transform } from "class-transformer";
+import { SortOrder } from "./enums";
+import { ConfigConstants } from "./configs";
 
 // JWT Payload Interfaces
 export interface JwtPayload {
@@ -18,7 +18,7 @@ export interface JwtPayload {
 export interface AwsCognitoJwtPayload {
   sub: string;
   email: string;
-  'cognito:username': string;
+  "cognito:username": string;
 }
 
 // Authenticated User Class
@@ -76,7 +76,7 @@ export interface PaginationOptions {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
 }
 
 export interface PaginatedResponse<T> {
@@ -232,7 +232,7 @@ export interface InfringementDetails {
 export interface ReportOptions {
   startDate: Date;
   endDate: Date;
-  format: 'PDF' | 'CSV' | 'EXCEL';
+  format: "PDF" | "CSV" | "EXCEL";
   filters?: Record<string, any>;
 }
 
@@ -272,7 +272,7 @@ export interface SearchOptions {
   filters?: Record<string, any>;
   sorting?: {
     field: string;
-    order: 'ASC' | 'DESC';
+    order: "ASC" | "DESC";
   };
   pagination?: PaginationOptions;
 }
@@ -304,7 +304,7 @@ export interface NotificationPreferences {
 
 // System Health Interfaces
 export interface HealthCheckResult {
-  status: 'ok' | 'error';
+  status: "ok" | "error";
   info?: Record<string, any>;
   error?: Record<string, any>;
   details?: Record<string, any>;
