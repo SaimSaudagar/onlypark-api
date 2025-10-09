@@ -39,10 +39,10 @@ export class SubCarPark extends BaseEntity {
   @Column({ type: "varchar", unique: true, nullable: false })
   subCarParkCode: string;
 
-  @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
   freeHours: number;
 
-  @Column({ type: "int", nullable: true })
+  @Column({ type: "int", nullable: false, default: 1 })
   noOfPermitsPerRegNo: number;
 
   @Column({ type: "boolean", default: false })
