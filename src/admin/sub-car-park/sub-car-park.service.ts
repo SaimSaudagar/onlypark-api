@@ -518,6 +518,8 @@ export class SubCarParkService {
     try {
       // Update the sub car park basic fields
       Object.assign(subCarPark, updateData);
+      console.log(subCarPark);
+      console.log(updateData);
       const updatedSubCarPark = await queryRunner.manager.save(subCarPark);
 
       // Handle tenancies update
