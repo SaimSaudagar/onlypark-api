@@ -115,6 +115,9 @@ export class VisitorBookingService {
       },
     });
 
+    console.log(existingBookings);
+    console.log(subCarPark.noOfPermitsPerRegNo);
+
     if (existingBookings >= subCarPark.noOfPermitsPerRegNo) {
       throw new CustomException(
         ErrorCode.PERMITS_PER_REGISTRATION_EXCEEDED.key,
