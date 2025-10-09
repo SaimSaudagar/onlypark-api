@@ -36,7 +36,34 @@ export class MasterCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async findAll(
-    @Query() request: FindMasterCarParkRequest,
+    @Query() request: FindMasterCarParkRequest
+  ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+    return await this.masterCarParkService.findAll(request);
+  }
+
+  @Get("visitor")
+  @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  async findVisitorMasterCarParks(
+    @Query() request: FindMasterCarParkRequest
+  ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+    return await this.masterCarParkService.findAll(request);
+  }
+
+  @Get("whitelist")
+  @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  async findWhitelistMasterCarParks(
+    @Query() request: FindMasterCarParkRequest
+  ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
+    return await this.masterCarParkService.findAll(request);
+  }
+
+  @Get("blacklist")
+  @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  async findBlacklistMasterCarParks(
+    @Query() request: FindMasterCarParkRequest
   ): Promise<ApiGetBaseResponse<FindMasterCarParkResponse>> {
     return await this.masterCarParkService.findAll(request);
   }
@@ -45,7 +72,7 @@ export class MasterCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async findById(
-    @Param("id") id: string,
+    @Param("id") id: string
   ): Promise<FindMasterCarParkByIdResponse> {
     return await this.masterCarParkService.findById(id);
   }
@@ -54,7 +81,7 @@ export class MasterCarParkController {
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async create(
-    @Body() request: CreateMasterCarParkRequest,
+    @Body() request: CreateMasterCarParkRequest
   ): Promise<CreateMasterCarParkResponse> {
     return await this.masterCarParkService.create(request);
   }
@@ -64,7 +91,7 @@ export class MasterCarParkController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async update(
     @Param("id") id: string,
-    @Body() request: UpdateMasterCarParkRequest,
+    @Body() request: UpdateMasterCarParkRequest
   ): Promise<UpdateMasterCarParkResponse> {
     return await this.masterCarParkService.update(id, request);
   }
@@ -74,7 +101,7 @@ export class MasterCarParkController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   async updateStatus(
     @Param("id") id: string,
-    @Body() request: UpdateMasterCarParkStatusRequest,
+    @Body() request: UpdateMasterCarParkStatusRequest
   ): Promise<UpdateMasterCarParkStatusResponse> {
     return await this.masterCarParkService.updateStatus(id, request);
   }

@@ -47,6 +47,10 @@ export class FindBlacklistRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsDate()
   dateTo?: Date;
+
+  @IsOptional()
+  @IsUUID(4)
+  subCarParkId?: string;
 }
 
 export class FindBlacklistResponse {
