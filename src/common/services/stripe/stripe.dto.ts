@@ -3,15 +3,15 @@ import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 export class CreateStripeCheckoutRequest {
   @IsString()
   @IsNotEmpty()
-  stripe_product_id: string;
+  stripeProductId: string;
 
   @IsString()
   @IsNotEmpty()
-  reg_no: string;
+  registrationNumber: string;
 
   @IsString()
   @IsNotEmpty()
-  ticket_number: string;
+  ticketNumber: string;
 }
 
 export class CreateStripeCheckoutResponse {
@@ -25,13 +25,13 @@ export class StripeWebhookRequest {
 export class PaymentSuccessRequest {
   @IsOptional()
   @IsString()
-  session_id?: string;
+  sessionId?: string;
 
   @IsOptional()
   @IsString()
-  reg_no?: string;
+  registrationNumber?: string;
 
   @IsOptional()
   @IsString()
-  ticket_number?: string;
+  ticketNumber?: string;
 }

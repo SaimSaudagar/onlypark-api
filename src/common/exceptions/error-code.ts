@@ -286,6 +286,12 @@ export class ErrorCode {
     message: "Patrol officer blacklist sub car park not found",
   };
 
+  public static readonly REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK = {
+    key: "REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK",
+    code: "REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK",
+    message: "Registration number is blacklisted in this sub car park",
+  };
+
   public static readonly CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS = {
     key: "CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS",
     code: "CANNOT_DELETE_SUB_CAR_PARK_WITH_BOOKINGS",

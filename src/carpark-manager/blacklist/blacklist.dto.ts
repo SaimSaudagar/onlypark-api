@@ -14,7 +14,7 @@ export class CreateBlacklistRequest {
 
   @IsString()
   @IsNotEmpty()
-  regNo: string;
+  registrationNumber: string;
 
   @IsString()
   @IsNotEmpty()
@@ -26,7 +26,7 @@ export class CreateBlacklistRequest {
 }
 export class CreateBlacklistResponse {
   id: string;
-  regNo: string;
+  registrationNumber: string;
   email: string;
   comments: string;
 }
@@ -55,7 +55,7 @@ export class FindBlacklistRequest extends ApiGetBaseRequest {
 
 export class FindBlacklistResponse {
   id: string;
-  regNo: string;
+  registrationNumber: string;
   email: string;
   createdAt: Date;
   subCarPark: {

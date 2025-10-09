@@ -64,7 +64,7 @@ export interface GetInfringementResponse {
   ticketDate: string;
   ticketTime: string;
   carPark: string;
-  regNo: string;
+  registrationNumber: string;
   carMakeID?: string;
   status?: InfringementStatus;
   reasonId?: string;

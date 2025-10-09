@@ -6,7 +6,7 @@ import { BaseEntity } from "../../common/entities/base.entity";
 @Auditable()
 export class OutstandingRegistration extends BaseEntity {
   @Column({ type: "varchar", nullable: false })
-  regNo: string;
+  registrationNumber: string;
 
   @Column({ type: "varchar", nullable: false })
   email: string;

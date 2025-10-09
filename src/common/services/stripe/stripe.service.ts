@@ -58,9 +58,9 @@ export class StripeService {
       console.log("price", price);
 
       const metadata: Record<string, string> = {
-        reg_no: request.registrationNumber,
-        ticket_number: request.ticketNumber,
-        car_make: request.carMake,
+        registrationNumber: request.registrationNumber,
+        ticketNumber: request.ticketNumber,
+        carMake: request.carMake,
       };
 
       console.log("metadata", metadata);
@@ -77,7 +77,7 @@ export class StripeService {
         customer_creation: "always",
         allow_promotion_codes: true,
         phone_number_collection: { enabled: true },
-        success_url: `${request.successUrl}?session_id={CHECKOUT_SESSION_ID}&reg_no=${request.registrationNumber}&ticket_number=${request.ticketNumber}`,
+        success_url: `${request.successUrl}?session_id={CHECKOUT_SESSION_ID}&registrationNumber=${request.registrationNumber}&ticket_number=${request.ticketNumber}`,
         cancel_url: request.cancelUrl,
         metadata,
       };
@@ -179,15 +179,15 @@ export class StripeService {
       return null;
     }
 
-    const { reg_no, ticket_number, car_make } = session.metadata;
-    if (!reg_no || !ticket_number) {
+    const { registrationNumber, ticketNumber, carMake } = session.metadata;
+    if (!registrationNumber || !ticketNumber) {
       return null;
     }
 
     return {
-      registrationNumber: reg_no,
-      ticketNumber: ticket_number,
-      carMake: car_make || "",
+      registrationNumber: registrationNumber,
+      ticketNumber: ticketNumber,
+      carMake: carMake || "",
     };
   }
 
@@ -198,15 +198,15 @@ export class StripeService {
       return null;
     }
 
-    const { reg_no, ticket_number, car_make } = paymentIntent.metadata;
-    if (!reg_no || !ticket_number) {
+    const { registrationNumber, ticketNumber, carMake } = paymentIntent.metadata;
+    if (!registrationNumber || !ticketNumber) {
       return null;
     }
 
     return {
-      registrationNumber: reg_no,
-      ticketNumber: ticket_number,
-      carMake: car_make || "",
+      registrationNumber: registrationNumber,
+      ticketNumber: ticketNumber,
+      carMake: carMake || "",
     };
   }
 
@@ -217,15 +217,15 @@ export class StripeService {
       return null;
     }
 
-    const { reg_no, ticket_number, car_make } = subscription.metadata;
-    if (!reg_no || !ticket_number) {
+    const { registrationNumber, ticketNumber, carMake } = subscription.metadata;
+    if (!registrationNumber || !ticketNumber) {
       return null;
     }
 
     return {
-      registrationNumber: reg_no,
-      ticketNumber: ticket_number,
-      carMake: car_make || "",
+      registrationNumber: registrationNumber,
+      ticketNumber: ticketNumber,
+      carMake: carMake || "",
     };
   }
 }

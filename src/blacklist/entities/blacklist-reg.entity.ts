@@ -7,7 +7,7 @@ import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 @Auditable()
 export class Blacklist extends BaseEntity {
   @Column({ type: "varchar", nullable: false })
-  regNo: string;
+  registrationNumber: string;
 
   @Column({ type: "varchar", nullable: false })
   email: string;

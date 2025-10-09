@@ -18,6 +18,7 @@ import {
   CreateVisitorBookingResponse,
   GetBookingByTokenResponse,
 } from "./visitor.dto";
+import { Blacklist } from "src/blacklist/entities/blacklist-reg.entity";
 
 @Injectable()
 export class VisitorBookingService {
@@ -30,7 +31,9 @@ export class VisitorBookingService {
     private tenancyRepository: Repository<Tenancy>,
     private emailNotificationService: EmailNotificationService,
     private configService: ConfigService,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    @InjectRepository(Blacklist)
+    private blacklistRepository: Repository<Blacklist>
   ) {}
 
   async create(
@@ -48,6 +51,16 @@ export class VisitorBookingService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const isBlacklisted = await this.blacklistRepository.exists({
+      where: { registrationNumber, subCarParkId },
+    });
+    if (isBlacklisted) {
+      throw new CustomException(
+        ErrorCode.REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK.key,
         HttpStatus.BAD_REQUEST
       );
     }

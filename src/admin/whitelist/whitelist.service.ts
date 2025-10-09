@@ -26,6 +26,7 @@ import {
   WhitelistStatus,
   WhitelistType,
 } from "../../common";
+import { BlacklistService } from "../blacklist/blacklist.service";
 
 @Injectable()
 export class WhitelistService {
@@ -33,7 +34,8 @@ export class WhitelistService {
     @InjectRepository(Whitelist)
     private whitelistRepository: Repository<Whitelist>,
     private subCarParkService: SubCarParkService,
-    private tenancyService: TenancyService
+    private tenancyService: TenancyService,
+    private blacklistService: BlacklistService
   ) {}
 
   async findAll(
@@ -120,7 +122,8 @@ export class WhitelistService {
   async create(
     request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
-    const { type, subCarParkId, tenancyId, email } = request;
+    const { type, subCarParkId, tenancyId, email, registrationNumber } =
+      request;
 
     // Validate subCarPark
     const subCarPark = await this.subCarParkService.findOne({
@@ -141,6 +144,18 @@ export class WhitelistService {
       throw new CustomException(
         ErrorCode.TENANCY_NOT_FOUND.key,
         HttpStatus.NOT_FOUND
+      );
+    }
+
+    const isBlacklisted =
+      await this.blacklistService.isRegistrationNumberBlacklistedInSubCarPark(
+        registrationNumber,
+        subCarParkId
+      );
+    if (isBlacklisted) {
+      throw new CustomException(
+        ErrorCode.REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK.key,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -334,6 +349,18 @@ export class WhitelistService {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
         HttpStatus.NOT_FOUND
+      );
+    }
+
+    const isBlacklisted =
+      await this.blacklistService.isRegistrationNumberBlacklistedInSubCarPark(
+        entity.registrationNumber,
+        entity.subCarParkId
+      );
+    if (isBlacklisted) {
+      throw new CustomException(
+        ErrorCode.REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK.key,
+        HttpStatus.BAD_REQUEST
       );
     }
 

@@ -32,12 +32,12 @@ export class StripeController {
 
   constructor(
     private readonly stripeService: StripeService,
-    private readonly infringementService: InfringementService,
+    private readonly infringementService: InfringementService
   ) {}
 
   @Post("checkout")
   async createCheckout(
-    @Body() request: CreateStripeCheckoutRequest,
+    @Body() request: CreateStripeCheckoutRequest
   ): Promise<CreateStripeCheckoutResponse> {
     try {
       this.logger.log("Stripe checkout request received", { request });
@@ -45,14 +45,14 @@ export class StripeController {
       // Find the infringement
       const infringement =
         await this.infringementService.findInfringementForPayment(
-          request.reg_no,
-          parseInt(request.ticket_number),
+          request.registrationNumber,
+          parseInt(request.ticketNumber)
         );
 
       if (!infringement) {
         throw new CustomException(
           ErrorCode.INFRINGEMENT_NOT_FOUND.key,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
 
@@ -60,7 +60,7 @@ export class StripeController {
         throw new CustomException(
           ErrorCode.CLIENT_ERROR.key,
           HttpStatus.BAD_REQUEST,
-          { error: "Infringement already paid" },
+          { error: "Infringement already paid" }
         );
       }
 
@@ -74,15 +74,15 @@ export class StripeController {
         : infringement.penalty?.stripePriceIdBeforeDue;
 
       // If stripe_product_id is provided in request, use it (for manual overrides)
-      if (request.stripe_product_id) {
-        stripePriceId = request.stripe_product_id;
+      if (request.stripeProductId) {
+        stripePriceId = request.stripeProductId;
       }
 
       if (!stripePriceId) {
         throw new CustomException(
           ErrorCode.SERVER_ERROR.key,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          { error: "Stripe price ID not configured for this penalty" },
+          { error: "Stripe price ID not configured for this penalty" }
         );
       }
 
@@ -93,8 +93,8 @@ export class StripeController {
       // Create checkout session
       const checkoutResponse = await this.stripeService.createCheckoutSession({
         stripePriceId,
-        registrationNumber: request.reg_no,
-        ticketNumber: request.ticket_number,
+        registrationNumber: request.registrationNumber,
+        ticketNumber: request.ticketNumber,
         carMake: infringement.carMake?.carMakeName || "",
         successUrl: `${frontendUrl}/payment/success`,
         cancelUrl: `${frontendUrl}/payment/cancel`,
@@ -113,7 +113,7 @@ export class StripeController {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: "An unexpected error occurred. Please try again." },
+        { error: "An unexpected error occurred. Please try again." }
       );
     }
   }
@@ -121,20 +121,20 @@ export class StripeController {
   @Get("success")
   async paymentSuccess(
     @Query() query: PaymentSuccessRequest,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
-      const { session_id, reg_no, ticket_number } = query;
+      const { sessionId, registrationNumber, ticketNumber } = query;
 
       this.logger.log("Payment success page accessed", {
-        sessionId: session_id,
-        regNo: reg_no,
-        ticketNumber: ticket_number,
+        sessionId: sessionId,
+        registrationNumber: registrationNumber,
+        ticketNumber: ticketNumber,
       });
 
       // Redirect to frontend success page with parameters
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-      const redirectUrl = `${frontendUrl}/customer/noncompliance-payment-form?success=true&reg_no=${reg_no}&ticket_number=${ticket_number}`;
+      const redirectUrl = `${frontendUrl}/customer/noncompliance-payment-form?success=true&registrationNumber=${registrationNumber}&ticket_number=${ticketNumber}`;
 
       return res.redirect(redirectUrl);
     } catch (error) {
@@ -168,7 +168,7 @@ export class StripeController {
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
     @Req() req: RawBodyRequest<Request>,
-    @Headers("stripe-signature") signature: string,
+    @Headers("stripe-signature") signature: string
   ) {
     try {
       const payload = req.rawBody.toString();
@@ -181,7 +181,7 @@ export class StripeController {
       // Construct the webhook event
       const event = await this.stripeService.constructWebhookEvent(
         payload,
-        signature,
+        signature
       );
 
       this.logger.log("Webhook event verified", {
@@ -215,7 +215,7 @@ export class StripeController {
       throw new CustomException(
         ErrorCode.SERVER_ERROR.key,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { error: "Webhook processing failed" },
+        { error: "Webhook processing failed" }
       );
     }
   }
@@ -277,7 +277,7 @@ export class StripeController {
     if (invoice.subscription) {
       try {
         const subscription = await this.stripeService.retrieveSubscription(
-          invoice.subscription,
+          invoice.subscription
         );
 
         const metadata =
@@ -299,14 +299,14 @@ export class StripeController {
 
   private async updateInfringementStatus(
     metadata: StripeCheckoutMetadata,
-    stripeId: string,
+    stripeId: string
   ) {
     try {
       // Check if already processed to prevent duplicate updates
       const existingInfringement =
         await this.infringementService.findInfringementForPayment(
           metadata.registrationNumber,
-          parseInt(metadata.ticketNumber),
+          parseInt(metadata.ticketNumber)
         );
 
       if (!existingInfringement) {
@@ -329,7 +329,7 @@ export class StripeController {
       await this.infringementService.updatePaymentStatus(
         metadata.registrationNumber,
         parseInt(metadata.ticketNumber),
-        InfringementStatus.PAID,
+        InfringementStatus.PAID
       );
 
       this.logger.log("Successfully updated infringement status to paid", {

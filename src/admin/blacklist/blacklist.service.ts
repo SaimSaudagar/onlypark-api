@@ -35,7 +35,7 @@ export class BlacklistService {
   async create(
     request: CreateBlacklistRequest
   ): Promise<CreateBlacklistResponse> {
-    const { regNo, email, comments, subCarParkId } = request;
+    const { registrationNumber, email, comments, subCarParkId } = request;
 
     const subCarPark = await this.subCarParkService.exists(subCarParkId);
     if (!subCarPark) {
@@ -46,7 +46,7 @@ export class BlacklistService {
     }
 
     const existingBlacklist = await this.blacklistRepository.findOne({
-      where: { regNo, email, subCarParkId },
+      where: { registrationNumber, email, subCarParkId },
     });
     if (existingBlacklist) {
       throw new CustomException(
@@ -56,7 +56,7 @@ export class BlacklistService {
     }
 
     const savedBlacklist = await this.blacklistRepository.save({
-      regNo,
+      registrationNumber,
       email,
       comments,
       subCarParkId,
@@ -64,7 +64,7 @@ export class BlacklistService {
 
     return {
       id: savedBlacklist.id,
-      regNo: savedBlacklist.regNo,
+      registrationNumber: savedBlacklist.registrationNumber,
       email: savedBlacklist.email,
       comments: savedBlacklist.comments,
     };
@@ -73,8 +73,16 @@ export class BlacklistService {
   async findAll(
     request: FindBlacklistRequest
   ): Promise<ApiGetBaseResponse<FindBlacklistResponse>> {
-    const { search, dateFrom, dateTo, sortField, sortOrder, pageNo, pageSize, subCarParkId } =
-      request;
+    const {
+      search,
+      dateFrom,
+      dateTo,
+      sortField,
+      sortOrder,
+      pageNo,
+      pageSize,
+      subCarParkId,
+    } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 
@@ -96,7 +104,7 @@ export class BlacklistService {
     const query: FindManyOptions<Blacklist> = {
       where: search
         ? [
-            { ...whereOptions, regNo: ILike(`%${search}%`) },
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
             { ...whereOptions, email: ILike(`%${search}%`) },
           ]
         : whereOptions,
@@ -114,7 +122,7 @@ export class BlacklistService {
     let response: FindBlacklistResponse[] = [];
     response = blacklist.map((blacklist) => ({
       id: blacklist.id,
-      regNo: blacklist.regNo,
+      registrationNumber: blacklist.registrationNumber,
       email: blacklist.email,
       subCarPark: {
         id: blacklist.subCarPark.id,
@@ -171,7 +179,7 @@ export class BlacklistService {
 
     return {
       id: updatedEntity.id,
-      regNo: updatedEntity.regNo,
+      registrationNumber: updatedEntity.registrationNumber,
       email: updatedEntity.email,
       comments: updatedEntity.comments,
     };
@@ -186,5 +194,15 @@ export class BlacklistService {
       );
     }
     await this.blacklistRepository.softRemove(entity);
+  }
+
+  async isRegistrationNumberBlacklistedInSubCarPark(
+    registrationNumber: string,
+    subCarParkId: string
+  ): Promise<boolean> {
+    const entity = await this.blacklistRepository.findOne({
+      where: { registrationNumber, subCarParkId },
+    });
+    return !!entity;
   }
 }
