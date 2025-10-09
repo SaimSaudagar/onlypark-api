@@ -24,6 +24,9 @@ export class Whitelist extends BaseEntity {
   @Column({ type: "varchar", nullable: true })
   token: string;
 
+  @Column({ type: "int", nullable: true, default: 0 })
+  duration: number;
+
   @Column({ type: "timestamp", nullable: false })
   startDate: Date;
 
