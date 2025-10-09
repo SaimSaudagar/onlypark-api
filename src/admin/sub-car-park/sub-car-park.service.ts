@@ -4,10 +4,10 @@ import {
   FindOneOptions,
   Repository,
   DataSource,
-  Like,
   FindOptionsOrder,
   FindOptionsWhere,
   Not,
+  ILike,
 } from "typeorm";
 import { SubCarPark } from "../../sub-car-park/entities/sub-car-park.entity";
 import {
@@ -288,7 +288,7 @@ export class SubCarParkService {
     const orderOptions: FindOptionsOrder<SubCarPark> = {};
 
     if (search) {
-      whereOptions.carParkName = Like(`%${search}%`);
+      whereOptions.carParkName = ILike(`%${search.toLowerCase()}%`);
     }
 
     if (status) {
