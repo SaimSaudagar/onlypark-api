@@ -412,6 +412,8 @@ export class WhitelistService {
       ...request,
       startDate: startDateObj,
       endDate: endDateObj,
+      duration: duration,
+      type: WhitelistType.HOUR,
     });
 
     const updatedEntity = await this.whitelistRepository.save(entity);
@@ -479,6 +481,7 @@ export class WhitelistService {
       ...request,
       startDate: startDateObj,
       endDate: endDateObj,
+      type: WhitelistType.DATE,
     });
 
     const updatedEntity = await this.whitelistRepository.save(entity);
