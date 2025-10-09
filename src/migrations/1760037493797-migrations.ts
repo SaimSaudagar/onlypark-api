@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1760037196137 implements MigrationInterface {
-    name = 'Migrations1760037196137'
+export class Migrations1760037493797 implements MigrationInterface {
+    name = 'Migrations1760037493797'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -64,6 +64,7 @@ export class Migrations1760037196137 implements MigrationInterface {
                 "email" character varying NOT NULL,
                 "whitelistType" character varying NOT NULL,
                 "token" character varying,
+                "duration" integer DEFAULT '0',
                 "startDate" TIMESTAMP NOT NULL,
                 "endDate" TIMESTAMP NOT NULL,
                 "subCarParkId" uuid NOT NULL,
@@ -327,6 +328,16 @@ export class Migrations1760037196137 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE TABLE "infringement_reason" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "deletedAt" TIMESTAMP WITH TIME ZONE,
+                "reason" character varying NOT NULL,
+                CONSTRAINT "PK_c9d9e5e9de49848e06b3f157277" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
             CREATE TABLE "infringement_car_park" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -389,16 +400,6 @@ export class Migrations1760037196137 implements MigrationInterface {
                 "penaltyId" uuid,
                 "reasonId" uuid,
                 CONSTRAINT "PK_17d7ed648f5173f967afa8935d9" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "infringement_reason" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deletedAt" TIMESTAMP WITH TIME ZONE,
-                "reason" character varying NOT NULL,
-                CONSTRAINT "PK_c9d9e5e9de49848e06b3f157277" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -737,9 +738,6 @@ export class Migrations1760037196137 implements MigrationInterface {
             DROP TYPE "public"."disputes_status_enum"
         `);
         await queryRunner.query(`
-            DROP TABLE "infringement_reason"
-        `);
-        await queryRunner.query(`
             DROP TABLE "infringements"
         `);
         await queryRunner.query(`
@@ -753,6 +751,9 @@ export class Migrations1760037196137 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "infringement_car_park"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "infringement_reason"
         `);
         await queryRunner.query(`
             DROP TABLE "outstanding_registrations"
