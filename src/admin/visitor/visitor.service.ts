@@ -6,6 +6,7 @@ import {
   FindOptionsWhere,
   ILike,
   Repository,
+  FindManyOptions,
 } from "typeorm";
 import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import {
@@ -314,5 +315,82 @@ export class VisitorBookingService {
     // Basic validation - can be enhanced based on requirements
     const regex = /^[A-Z0-9]{1,10}$/i;
     return regex.test(registrationNumber) && registrationNumber.length >= 3;
+  }
+
+  async exportToCsv(request: FindVisitorBookingRequest): Promise<string> {
+    const { search, sortField, sortOrder, subCarParkId, status } = request;
+
+    const whereOptions: FindOptionsWhere<VisitorBooking> = {};
+    const orderOptions: FindOptionsOrder<VisitorBooking> = {};
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    if (subCarParkId) {
+      whereOptions.subCarParkId = subCarParkId;
+    }
+
+    if (status) {
+      whereOptions.status = status;
+    }
+
+    const query: FindManyOptions<VisitorBooking> = {
+      where: search
+        ? [
+            { ...whereOptions, email: ILike(`%${search}%`) },
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+        tenancy: true,
+      },
+    };
+
+    const visitorBookings = await this.visitorBookingRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Start Time",
+      "End Time",
+      "Car Park Name",
+      "Tenancy Name",
+      "Status",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = visitorBookings.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.startDate.toISOString(),
+      item.endDate.toISOString(),
+      item.subCarPark?.carParkName || "",
+      item.tenancy?.tenantName || "",
+      item.status,
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
   }
 }
