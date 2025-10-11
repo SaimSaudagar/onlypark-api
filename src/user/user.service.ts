@@ -292,6 +292,10 @@ export class UserService {
     return userToBeUpdated;
   }
 
+  async updateUserImage(userId: string, imageUrl: string) {
+    await this.usersRepository.update(userId, { image: imageUrl });
+  }
+
   async findById(id: string): Promise<FindByIdResponse> {
     const user = await this.usersRepository.findOne({
       where: { id },

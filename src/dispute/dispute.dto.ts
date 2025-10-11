@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsObject,
   IsEmail,
+  IsOptional,
 } from "class-validator";
 
 export class CreateDisputeResponse {
@@ -23,7 +24,7 @@ export class CreateDisputeResponse {
   carMakeId: string;
   model: string;
   appeal: string;
-  photos: object;
+  photos: string[];
   ticketNumber: number;
 }
 
@@ -80,7 +81,7 @@ export class CreateDisputeRequest {
   @IsNotEmpty()
   appeal: string;
 
-  @IsObject()
-  @IsNotEmpty()
-  photos: object;
+  @IsOptional()
+  @IsString()
+  photos?: string;
 }

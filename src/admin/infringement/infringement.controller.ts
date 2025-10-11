@@ -11,8 +11,11 @@ import {
   UseGuards,
   Query,
   Res,
+  UseInterceptors,
+  UploadedFiles,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiConsumes } from "@nestjs/swagger";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
 import { AllowedRoles, RoleGuard } from "../../auth/guards/roles.guard";
 import { UserType } from "../../common/enums";
@@ -82,15 +85,26 @@ export class InfringementController {
   @HttpCode(HttpStatus.CREATED)
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
-  create(@Body() request: CreateInfringementRequest) {
-    return this.infringementService.create(request);
+  @UseInterceptors(FilesInterceptor("photos", 10)) // Allow up to 10 photos
+  @ApiConsumes("multipart/form-data")
+  create(
+    @Body() request: CreateInfringementRequest,
+    @UploadedFiles() photos?: Express.Multer.File[]
+  ) {
+    return this.infringementService.create(request, photos);
   }
 
   @Patch("update/:id")
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
-  update(@Param("id") id: string, @Body() request: UpdateInfringementRequest) {
-    return this.infringementService.update(id, request);
+  @UseInterceptors(FilesInterceptor("photos", 10)) // Allow up to 10 photos
+  @ApiConsumes("multipart/form-data")
+  update(
+    @Param("id") id: string,
+    @Body() request: UpdateInfringementRequest,
+    @UploadedFiles() photos?: Express.Multer.File[]
+  ) {
+    return this.infringementService.update(id, request, photos);
   }
 
   @Patch("mark-as-waived/:id")

@@ -6,6 +6,7 @@ import { Infringement } from "../../infringement/entities/infringement.entity";
 import { InfringementReason } from "../../infringement/entities/infringement-reason.entity";
 import { InfringementPenalty } from "../../infringement/entities/infringement-penalty.entity";
 import { InfringementCarPark } from "../../infringement/entities/infringement-car-park.entity";
+import { FileUploadModule } from "../../common/services/file-upload/file-upload.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { InfringementCarPark } from "../../infringement/entities/infringement-ca
       InfringementPenalty,
       InfringementCarPark,
     ]),
+    FileUploadModule,
   ],
   controllers: [InfringementController],
   providers: [InfringementService],

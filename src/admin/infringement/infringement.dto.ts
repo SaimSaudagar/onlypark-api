@@ -43,8 +43,8 @@ export class CreateInfringementRequest {
   penaltyId: string;
 
   @IsOptional()
-  @IsArray()
-  photos?: string[];
+  @IsString()
+  photos?: string;
 
   @IsOptional()
   @IsString()

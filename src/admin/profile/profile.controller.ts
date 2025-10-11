@@ -7,8 +7,11 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiConsumes } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { ProfileService } from "./profile.service";
 import JwtAuthGuard from "../../auth/guards/jwt-auth.guard";
 import { RoleGuard, AllowedRoles } from "../../auth/guards/roles.guard";
@@ -26,8 +29,13 @@ export class ProfileController {
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_CREATE)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
+  @UseInterceptors(FileInterceptor("image"))
+  @ApiConsumes("multipart/form-data")
+  create(
+    @Body() createProfileDto: CreateProfileDto,
+    @UploadedFile() image?: Express.Multer.File
+  ) {
+    return this.profileService.create(createProfileDto, image);
   }
 
   @Get()
@@ -50,8 +58,14 @@ export class ProfileController {
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @RequirePermissions(AdminPermission.USER_EDIT)
   @UseGuards(JwtAuthGuard, RoleGuard, PermissionsGuard)
-  update(@Param("id") id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(id, updateProfileDto);
+  @UseInterceptors(FileInterceptor("image"))
+  @ApiConsumes("multipart/form-data")
+  update(
+    @Param("id") id: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+    @UploadedFile() image?: Express.Multer.File
+  ) {
+    return this.profileService.update(id, updateProfileDto, image);
   }
 
   @Delete(":id")

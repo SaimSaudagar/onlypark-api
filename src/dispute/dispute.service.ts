@@ -7,6 +7,7 @@ import { InfringementService } from "../admin/infringement/infringement.service"
 import { InfringementStatus } from "../common/enums";
 import { CustomException, ErrorCode } from "../common";
 import { EmailNotificationService } from "../common/services/email/email-notification.service";
+import { FileUploadService } from "../common/services/file-upload/file-upload.service";
 
 @Injectable()
 export class DisputeService {
@@ -15,10 +16,14 @@ export class DisputeService {
     private disputeRepository: Repository<Dispute>,
     private infringementService: InfringementService,
     private emailNotificationService: EmailNotificationService,
-    private dataSource: DataSource,
+    private fileUploadService: FileUploadService,
+    private dataSource: DataSource
   ) {}
 
-  async create(request: CreateDisputeRequest): Promise<CreateDisputeResponse> {
+  async create(
+    request: CreateDisputeRequest,
+    photos?: Express.Multer.File[]
+  ): Promise<CreateDisputeResponse> {
     const {
       registrationNumber,
       ticketNumber,
@@ -33,8 +38,16 @@ export class DisputeService {
       carMakeId,
       model,
       appeal,
-      photos,
     } = request;
+
+    // Upload photos to S3 if provided
+    let photoUrls: string[] = [];
+    if (photos && photos.length > 0) {
+      photoUrls = await this.fileUploadService.uploadMultipleFiles(
+        photos,
+        "disputes"
+      );
+    }
 
     // Get infringement details before starting transaction
     const infringementId = await this.infringementService.getInfringementId({
@@ -47,7 +60,7 @@ export class DisputeService {
     if (infringement.status === InfringementStatus.PAID) {
       throw new CustomException(
         ErrorCode.INFRINGEMENT_ALREADY_PAID.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -77,7 +90,7 @@ export class DisputeService {
         model,
         registrationNumber,
         appeal,
-        photos,
+        photos: photoUrls,
         ticketNumber,
       });
 
@@ -120,7 +133,7 @@ export class DisputeService {
       response.carMakeId = dispute.carMakeId;
       response.model = dispute.model;
       response.appeal = dispute.appeal;
-      response.photos = dispute.photos;
+      response.photos = dispute.photos as string[];
       response.ticketNumber = dispute.ticketNumber;
 
       return response;
@@ -129,7 +142,7 @@ export class DisputeService {
       await queryRunner.rollbackTransaction();
       throw new CustomException(
         ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     } finally {
       // Release query runner

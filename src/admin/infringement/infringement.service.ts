@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Infringement } from "../../infringement/entities/infringement.entity";
+import { FileUploadService } from "../../common/services/file-upload/file-upload.service";
 import {
   CreateInfringementRequest,
   CreateInfringementResponse,
@@ -47,7 +48,8 @@ export class InfringementService {
     @InjectRepository(InfringementCarPark)
     private infringementCarParkRepository: Repository<InfringementCarPark>,
     @InjectRepository(InfringementReason)
-    private infringementReasonRepository: Repository<InfringementReason>
+    private infringementReasonRepository: Repository<InfringementReason>,
+    private fileUploadService: FileUploadService
   ) {}
 
   async scan(
@@ -68,7 +70,8 @@ export class InfringementService {
   }
 
   async create(
-    request: CreateInfringementRequest
+    request: CreateInfringementRequest,
+    photos?: Express.Multer.File[]
   ): Promise<CreateInfringementResponse> {
     const {
       id,
@@ -76,9 +79,17 @@ export class InfringementService {
       carMakeId,
       reasonId,
       penaltyId,
-      photos,
       comments,
     } = request;
+
+    // Upload photos to S3 if provided
+    let photoUrls: string[] = [];
+    if (photos && photos.length > 0) {
+      photoUrls = await this.fileUploadService.uploadMultipleFiles(
+        photos,
+        "infringements"
+      );
+    }
 
     // make sure the infringement exists
     const infringement = await this.infringementRepository.findOne({
@@ -104,7 +115,7 @@ export class InfringementService {
     infringement.carMakeId = carMakeId;
     infringement.reasonId = reasonId;
     infringement.penaltyId = penaltyId;
-    infringement.photos = photos;
+    infringement.photos = photoUrls;
     infringement.status = InfringementStatus.NOT_PAID;
     infringement.dueDate = dueDate;
     infringement.ticketDate = ticketDate;
@@ -123,7 +134,8 @@ export class InfringementService {
 
   async update(
     id: string,
-    request: UpdateInfringementRequest
+    request: UpdateInfringementRequest,
+    photos?: Express.Multer.File[]
   ): Promise<CreateInfringementResponse> {
     const infringement = await this.infringementRepository.findOne({
       where: { id },
@@ -136,14 +148,17 @@ export class InfringementService {
       );
     }
 
-    const {
-      infringementCarParkId,
-      carMakeId,
-      reasonId,
-      penaltyId,
-      photos,
-      comments,
-    } = request;
+    const { infringementCarParkId, carMakeId, reasonId, penaltyId, comments } =
+      request;
+
+    // Upload photos to S3 if provided
+    let photoUrls: string[] = [];
+    if (photos && photos.length > 0) {
+      photoUrls = await this.fileUploadService.uploadMultipleFiles(
+        photos,
+        "infringements"
+      );
+    }
 
     // Update the infringement with new data
     await this.infringementRepository.update(id, {
@@ -151,7 +166,7 @@ export class InfringementService {
       carMakeId,
       reasonId,
       penaltyId,
-      photos,
+      photos: photoUrls,
       comments,
     });
 
@@ -462,7 +477,7 @@ export class InfringementService {
     response.status = infringement.status;
     response.dueDate = infringement.dueDate;
     response.comments = infringement.comments;
-    response.photos = infringement.photos;
+    response.photos = infringement.photos as string[];
     response.carMakeName = infringement.carMake?.carMakeName || "";
     response.carParkName = infringement.infringementCarPark?.carParkName || "";
     response.reasonName = infringement.reason?.reason || "";
