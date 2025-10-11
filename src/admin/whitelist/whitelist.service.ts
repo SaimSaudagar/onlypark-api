@@ -6,6 +6,7 @@ import {
   FindOptionsWhere,
   ILike,
   Repository,
+  FindManyOptions,
 } from "typeorm";
 import { Whitelist } from "../../whitelist/entities/whitelist.entity";
 import { CustomException } from "../../common/exceptions/custom.exception";
@@ -609,5 +610,84 @@ export class WhitelistService {
 
     entity.status = WhitelistStatus.CHECKOUT;
     await this.whitelistRepository.save(entity);
+  }
+
+  async exportToCsv(request: FindWhitelistRequest): Promise<string> {
+    const { search, sortField, sortOrder, type, subCarParkId } = request;
+
+    const whereOptions: FindOptionsWhere<Whitelist> = {};
+    const orderOptions: FindOptionsOrder<Whitelist> = {};
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    if (type) {
+      whereOptions.whitelistType = type;
+    }
+
+    if (subCarParkId) {
+      whereOptions.subCarParkId = subCarParkId;
+    }
+
+    const query: FindManyOptions<Whitelist> = {
+      where: search
+        ? [
+            { ...whereOptions, email: ILike(`%${search}%`) },
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+        tenancy: true,
+      },
+    };
+
+    const whitelists = await this.whitelistRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Start Date",
+      "End Date",
+      "Type",
+      "Car Park Name",
+      "Tenancy Name",
+      "Status",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = whitelists.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.startDate?.toISOString().split("T")[0] || "",
+      item.endDate?.toISOString().split("T")[0] || "",
+      item.whitelistType,
+      item.subCarPark?.carParkName || "",
+      item.tenancy?.tenantName || "",
+      item.status,
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
   }
 }

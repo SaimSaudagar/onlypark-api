@@ -8,8 +8,10 @@ import {
   HttpCode,
   UseGuards,
   Query,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { VisitorBookingService } from "./visitor.service";
 import {
@@ -38,6 +40,23 @@ export class VisitorBookingController {
     @Query() request: FindVisitorBookingRequest
   ): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
     return this.visitorBookingService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  async exportCsv(
+    @Query() request: FindVisitorBookingRequest,
+    @Res() res: Response
+  ) {
+    const csvData = await this.visitorBookingService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="admin-visitor-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Get(":id")

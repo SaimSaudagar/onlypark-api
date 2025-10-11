@@ -205,4 +205,75 @@ export class BlacklistService {
     });
     return !!entity;
   }
+
+  async exportToCsv(request: FindBlacklistRequest): Promise<string> {
+    const { search, dateFrom, dateTo, sortField, sortOrder, subCarParkId } =
+      request;
+
+    const whereOptions: FindOptionsWhere<Blacklist> = {};
+    const orderOptions: FindOptionsOrder<Blacklist> = {};
+
+    if (dateFrom && dateTo) {
+      whereOptions.createdAt = Between(dateFrom, dateTo);
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    if (subCarParkId) {
+      whereOptions.subCarParkId = subCarParkId;
+    }
+
+    const query: FindManyOptions<Blacklist> = {
+      where: search
+        ? [
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+      },
+    };
+
+    const blacklist = await this.blacklistRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Sub Car Park Name",
+      "Comments",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = blacklist.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.subCarPark?.carParkName || "",
+      item.comments || "",
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
+  }
 }

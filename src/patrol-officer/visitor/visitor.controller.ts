@@ -10,8 +10,10 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import { VisitorService } from "./visitor.service";
 import {
   CreateVisitorRequest,
@@ -33,6 +35,20 @@ export class VisitorController {
   @AllowedRoles(UserType.PATROL_OFFICER)
   findAll(@Query() request: FindVisitorRequest) {
     return this.visitorService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  async exportCsv(@Query() request: FindVisitorRequest, @Res() res: Response) {
+    const csvData = await this.visitorService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="patrol-officer-visitor-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Get("assigned-sub-car-parks")

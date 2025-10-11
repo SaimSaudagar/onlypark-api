@@ -10,8 +10,10 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import { WhitelistService } from "./whitelist.service";
 import {
   CreateWhitelistRequest,
@@ -35,16 +37,33 @@ export class WhitelistController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   findAll(
-    @Query() request: FindWhitelistRequest,
+    @Query() request: FindWhitelistRequest
   ): Promise<ApiGetBaseResponse<FindWhitelistResponse>> {
     return this.whitelistService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
+  async exportCsv(
+    @Query() request: FindWhitelistRequest,
+    @Res() res: Response
+  ) {
+    const csvData = await this.whitelistService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="admin-whitelist-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Post()
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @AllowedRoles(UserType.SUPER_ADMIN, UserType.ADMIN)
   create(
-    @Body() request: CreateWhitelistRequest,
+    @Body() request: CreateWhitelistRequest
   ): Promise<CreateWhitelistResponse> {
     return this.whitelistService.create(request);
   }

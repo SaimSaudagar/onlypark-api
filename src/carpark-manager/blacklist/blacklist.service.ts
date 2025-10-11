@@ -289,4 +289,90 @@ export class BlacklistService extends BaseService {
       })) || []
     );
   }
+
+  async exportToCsv(request: FindBlacklistRequest): Promise<string> {
+    const { search, dateFrom, dateTo, sortField, sortOrder, subCarParkId } =
+      request;
+
+    const whereOptions: FindOptionsWhere<Blacklist> = {};
+    const orderOptions: FindOptionsOrder<Blacklist> = {};
+
+    // Filter by assigned sub car parks
+    const assignedSubCarParks = await this.getAssignedSubCarParks();
+    if (assignedSubCarParks.length > 0) {
+      const subCarParkIds = assignedSubCarParks.map(
+        (subCarPark) => subCarPark.subCarParkId
+      );
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
+    }
+
+    if (dateFrom && dateTo) {
+      whereOptions.createdAt = Between(dateFrom, dateTo);
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    const query: FindManyOptions<Blacklist> = {
+      where: search
+        ? [
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+            { ...whereOptions, email: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+      },
+    };
+
+    const blacklist = await this.blacklistRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Sub Car Park Name",
+      "Comments",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = blacklist.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.subCarPark?.carParkName || "",
+      item.comments || "",
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
+  }
 }

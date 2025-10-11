@@ -8,8 +8,10 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import { VisitorService } from "./visitor.service";
 import { FindVisitorRequest } from "./visitor.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
@@ -27,6 +29,20 @@ export class VisitorController {
   @AllowedRoles(UserType.CARPARK_MANAGER)
   findAll(@Query() request: FindVisitorRequest) {
     return this.visitorService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.CARPARK_MANAGER)
+  async exportCsv(@Query() request: FindVisitorRequest, @Res() res: Response) {
+    const csvData = await this.visitorService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="carpark-manager-visitor-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Get("assigned-sub-car-parks")

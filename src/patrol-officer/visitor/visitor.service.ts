@@ -366,4 +366,98 @@ export class VisitorService extends BaseService {
     visitorBooking.status = VisitorBookingStatus.CHECKOUT;
     await this.visitorBookingRepository.save(visitorBooking);
   }
+
+  async exportToCsv(request: FindVisitorRequest): Promise<string> {
+    const { search, sortField, sortOrder, subCarParkId, status } = request;
+
+    const whereOptions: FindOptionsWhere<VisitorBooking> = {};
+    const orderOptions: FindOptionsOrder<VisitorBooking> = {};
+
+    // Filter by assigned sub car parks
+    const assignedSubCarParks = await this.getAssignedSubCarParks();
+    if (assignedSubCarParks.length > 0) {
+      const subCarParkIds = assignedSubCarParks.map(
+        (subCarPark) => subCarPark.subCarParkId
+      );
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    if (status) {
+      whereOptions.status = status;
+    }
+
+    const query: FindManyOptions<VisitorBooking> = {
+      where: search
+        ? [
+            { ...whereOptions, email: ILike(`%${search}%`) },
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+        tenancy: true,
+      },
+    };
+
+    const visitorBookings = await this.visitorBookingRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Start Date",
+      "End Date",
+      "Car Park Name",
+      "Tenancy Name",
+      "Status",
+      "Token",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = visitorBookings.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.startDate.toISOString(),
+      item.endDate.toISOString(),
+      item.subCarPark?.carParkName || "",
+      item.tenancy?.tenantName || "",
+      item.status,
+      item.token,
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
+  }
 }

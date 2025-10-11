@@ -10,8 +10,10 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import { BlacklistService } from "./blacklist.service";
 import {
   CreateBlacklistRequest,
@@ -33,6 +35,23 @@ export class BlacklistController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   findAll(@Query() request: FindBlacklistRequest) {
     return this.blacklistService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  async exportCsv(
+    @Query() request: FindBlacklistRequest,
+    @Res() res: Response
+  ) {
+    const csvData = await this.blacklistService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="blacklist-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Get(":id")

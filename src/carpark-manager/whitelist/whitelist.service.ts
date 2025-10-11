@@ -165,7 +165,6 @@ export class WhitelistService extends BaseService {
       take,
     };
 
-
     const [whitelist, totalItems] =
       await this.whitelistRepository.findAndCount(query);
 
@@ -356,5 +355,99 @@ export class WhitelistService extends BaseService {
 
     whitelist.status = WhitelistStatus.CHECKOUT;
     await this.whitelistRepository.save(whitelist);
+  }
+
+  async exportToCsv(request: FindWhitelistRequest): Promise<string> {
+    const { search, sortField, sortOrder, type, subCarParkId } = request;
+
+    const whereOptions: FindOptionsWhere<Whitelist> = {};
+    const orderOptions: FindOptionsOrder<Whitelist> = {};
+
+    // Filter by assigned sub car parks
+    const assignedSubCarParks = await this.getAssignedSubCarParks();
+    if (assignedSubCarParks.length > 0) {
+      const subCarParkIds = assignedSubCarParks.map(
+        (subCarPark) => subCarPark.subCarParkId
+      );
+      if (subCarParkId) {
+        if (!subCarParkIds.includes(subCarParkId)) {
+          throw new CustomException(
+            ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+            HttpStatus.FORBIDDEN
+          );
+        }
+        whereOptions.subCarParkId = subCarParkId;
+      } else {
+        whereOptions.subCarParkId = In(subCarParkIds);
+      }
+    }
+
+    if (sortField) {
+      orderOptions[sortField] = sortOrder;
+    }
+
+    if (type) {
+      whereOptions.whitelistType = type;
+    }
+
+    const query: FindManyOptions<Whitelist> = {
+      where: search
+        ? [
+            { ...whereOptions, email: ILike(`%${search}%`) },
+            { ...whereOptions, registrationNumber: ILike(`%${search}%`) },
+          ]
+        : whereOptions,
+      order: orderOptions,
+      relations: {
+        subCarPark: true,
+        tenancy: true,
+      },
+    };
+
+    const whitelists = await this.whitelistRepository.find(query);
+
+    // CSV Headers
+    const headers = [
+      "ID",
+      "Registration Number",
+      "Email",
+      "Start Date",
+      "End Date",
+      "Type",
+      "Car Park Name",
+      "Tenancy Name",
+      "Status",
+      "Created At",
+    ];
+
+    // Convert data to CSV format
+    const csvRows = whitelists.map((item) => [
+      item.id,
+      item.registrationNumber,
+      item.email,
+      item.startDate?.toISOString().split("T")[0] || "",
+      item.endDate?.toISOString().split("T")[0] || "",
+      item.whitelistType,
+      item.subCarPark?.carParkName || "",
+      item.tenancy?.tenantName || "",
+      item.status,
+      item.createdAt.toISOString(),
+    ]);
+
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map((row) =>
+        row
+          .map((field) =>
+            typeof field === "string" &&
+            (field.includes(",") || field.includes('"') || field.includes("\n"))
+              ? `"${field.replace(/"/g, '""')}"`
+              : field
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    return csvContent;
   }
 }

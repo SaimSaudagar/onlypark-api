@@ -10,8 +10,10 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
 import { WhitelistService } from "./whitelist.service";
 import {
   CreateWhitelistRequest,
@@ -33,6 +35,23 @@ export class WhitelistController {
   @AllowedRoles(UserType.CARPARK_MANAGER)
   findAll(@Query() request: FindWhitelistRequest) {
     return this.whitelistService.findAll(request);
+  }
+
+  @Get("reports/csv")
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.CARPARK_MANAGER)
+  async exportCsv(
+    @Query() request: FindWhitelistRequest,
+    @Res() res: Response
+  ) {
+    const csvData = await this.whitelistService.exportToCsv(request);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="carpark-manager-whitelist-report.csv"'
+    );
+    res.send(csvData);
   }
 
   @Get(":id")
