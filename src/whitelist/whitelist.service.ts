@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Whitelist } from "./entities/whitelist.entity";
 import {
   CreateSelfServeWhitelistRequest,
@@ -16,9 +16,12 @@ import { EmailNotificationService } from "../common/services/email/email-notific
 import { TemplateKeys } from "../common/constants/template-keys";
 import * as crypto from "crypto";
 import { Blacklist } from "../blacklist/entities/blacklist-reg.entity";
+import { BaseService } from "../common/base.service";
+import { RequestContextService } from "../common/services/request-context/request-context.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class WhitelistService {
+export class WhitelistService extends BaseService {
   constructor(
     @InjectRepository(Whitelist)
     private whitelistRepository: Repository<Whitelist>,
@@ -29,10 +32,20 @@ export class WhitelistService {
     private emailNotificationService: EmailNotificationService,
     @InjectRepository(Blacklist)
     private blacklistRepository: Repository<Blacklist>,
-  ) {}
+    requestContextService: RequestContextService,
+    configService: ConfigService,
+    datasource: DataSource
+  ) {
+    super(
+      requestContextService,
+      configService,
+      datasource,
+      WhitelistService.name
+    );
+  }
 
   async createSelfServeWhitelist(
-    request: CreateSelfServeWhitelistRequest,
+    request: CreateSelfServeWhitelistRequest
   ): Promise<CreateSelfServeWhitelistResponse> {
     const { registrationNumber, email, subCarParkId, tenancyId } = request;
 
@@ -42,7 +55,7 @@ export class WhitelistService {
     if (existingWhitelist) {
       throw new CustomException(
         ErrorCode.WHITELIST_PERMIT_ALREADY_EXISTS.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -52,7 +65,7 @@ export class WhitelistService {
     if (!subCarPark) {
       throw new CustomException(
         ErrorCode.SUB_CAR_PARK_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -62,7 +75,7 @@ export class WhitelistService {
     if (isBlacklisted) {
       throw new CustomException(
         ErrorCode.REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -72,7 +85,7 @@ export class WhitelistService {
     if (!tenancy) {
       throw new CustomException(
         ErrorCode.TENANCY_NOT_FOUND.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -83,18 +96,18 @@ export class WhitelistService {
     });
 
     const domainNames = companyEmails.whitelistCompanies.map(
-      (company) => company.domainName,
+      (company) => company.domainName
     );
     if (domainNames.includes(email)) {
       throw new CustomException(
         ErrorCode.DOMAIN_NAME_NOT_ALLOWED.key,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     const startDate = new Date();
     const endDate = new Date(
-      startDate.getTime() + 5 * 365 * 24 * 60 * 60 * 1000,
+      startDate.getTime() + 5 * 365 * 24 * 60 * 60 * 1000
     );
 
     // Generate a unique token for this whitelist registration
@@ -114,6 +127,7 @@ export class WhitelistService {
     });
 
     const savedEntity = await this.whitelistRepository.save(entity);
+    const bookingUrl = `${this.configService.get("FRONTEND_URL")}/whitelist/success/${token}`;
 
     // Send confirmation email
     try {
@@ -127,7 +141,7 @@ export class WhitelistService {
           startDate: startDate.toLocaleDateString(),
           endDate: endDate.toLocaleDateString(),
           comments: savedEntity.comments,
-          token: token,
+          bookingUrl: bookingUrl,
         },
       });
     } catch (emailError) {
@@ -150,7 +164,7 @@ export class WhitelistService {
   }
 
   async getWhitelistByToken(
-    token: string,
+    token: string
   ): Promise<GetWhitelistByTokenResponse> {
     const whitelist = await this.whitelistRepository.findOne({
       where: { token },
@@ -163,7 +177,7 @@ export class WhitelistService {
     if (!whitelist) {
       throw new CustomException(
         ErrorCode.WHITELIST_NOT_FOUND.key,
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 

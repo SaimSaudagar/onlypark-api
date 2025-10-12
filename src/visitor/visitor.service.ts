@@ -128,9 +128,6 @@ export class VisitorBookingService {
       },
     });
 
-    console.log(existingBookings);
-    console.log(subCarPark.noOfPermitsPerRegNo);
-
     if (existingBookings >= subCarPark.noOfPermitsPerRegNo) {
       throw new CustomException(
         ErrorCode.PERMITS_PER_REGISTRATION_EXCEEDED.key,
@@ -280,12 +277,12 @@ export class VisitorBookingService {
       );
     }
 
-    if (booking.status !== VisitorBookingStatus.UNAUTHENTICATED) {
-      throw new CustomException(
-        ErrorCode.CLIENT_ERROR.key,
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // if (booking.status !== VisitorBookingStatus.UNAUTHENTICATED) {
+    //   throw new CustomException(
+    //     ErrorCode.CLIENT_ERROR.key,
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
 
     // Check if booking has expired
     if (new Date() > booking.endDate) {
@@ -343,8 +340,8 @@ export class VisitorBookingService {
     subCarPark: SubCarPark,
     tenancy: Tenancy
   ): Promise<void> {
-    const verificationUrl = `${this.configService.get("APP_URL")}/visitor-bookings/verify-tenant/${booking.token}`;
-
+    const verificationUrl = `${this.configService.get("FRONTEND_URL")}/visitor/verify-tenant/${booking.token}`;
+    console.log(verificationUrl);
     await this.emailNotificationService.sendUsingTemplate({
       to: [tenancy.tenantEmail],
       templateKey: TemplateKeys.TENANT_EMAIL_VERIFICATION,
@@ -366,7 +363,7 @@ export class VisitorBookingService {
     booking: VisitorBooking,
     subCarPark: SubCarPark
   ): Promise<void> {
-    const bookingUrl = `${this.configService.get("APP_URL")}/visitor-booking/${booking.token}`;
+    const bookingUrl = `${this.configService.get("FRONTEND_URL")}/visitor/success/${booking.token}`;
 
     // Get tenancy name if exists
     let tenancyName = "";
@@ -376,6 +373,8 @@ export class VisitorBookingService {
       });
       tenancyName = tenancy?.tenantName || "";
     }
+
+    console.log("sadas", bookingUrl);
 
     await this.emailNotificationService.sendUsingTemplate({
       to: [booking.email],

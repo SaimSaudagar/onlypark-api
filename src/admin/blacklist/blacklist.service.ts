@@ -175,6 +175,11 @@ export class BlacklistService {
       );
     }
 
+    entity.registrationNumber = request.registrationNumber;
+    entity.email = request.email;
+    entity.subCarParkId = request.subCarParkId;
+    entity.comments = request.comments;
+
     const updatedEntity = await this.blacklistRepository.save(entity);
 
     return {

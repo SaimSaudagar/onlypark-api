@@ -24,6 +24,7 @@ import { VisitorBookingStatus } from "../../common/enums";
 import { TenancyService } from "../../tenancy/tenancy.service";
 import { SubCarParkService } from "../sub-car-park/sub-car-park.service";
 import { ApiGetBaseResponse } from "../../common";
+import { BlacklistService } from "../blacklist/blacklist.service";
 
 @Injectable()
 export class VisitorBookingService {
@@ -31,7 +32,8 @@ export class VisitorBookingService {
     @InjectRepository(VisitorBooking)
     private visitorBookingRepository: Repository<VisitorBooking>,
     private tenancyService: TenancyService,
-    private subCarParkService: SubCarParkService
+    private subCarParkService: SubCarParkService,
+    private blacklistService: BlacklistService
   ) {}
 
   async create(
@@ -61,6 +63,18 @@ export class VisitorBookingService {
     if (durationHours > 24) {
       throw new CustomException(
         ErrorCode.BOOKING_DURATION_EXCEEDED.key,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const isBlacklisted =
+      await this.blacklistService.isRegistrationNumberBlacklistedInSubCarPark(
+        registrationNumber,
+        subCarParkId
+      );
+    if (isBlacklisted) {
+      throw new CustomException(
+        ErrorCode.REGISTRATION_NUMBER_BLACKLISTED_IN_SUB_CAR_PARK.key,
         HttpStatus.BAD_REQUEST
       );
     }
@@ -153,7 +167,15 @@ export class VisitorBookingService {
   async findAll(
     request: FindVisitorBookingRequest
   ): Promise<ApiGetBaseResponse<FindVisitorBookingResponse>> {
-    const { search, sortField, sortOrder, pageNo, pageSize, status, subCarParkId } = request;
+    const {
+      search,
+      sortField,
+      sortOrder,
+      pageNo,
+      pageSize,
+      status,
+      subCarParkId,
+    } = request;
     const skip = (pageNo - 1) * pageSize;
     const take = pageSize;
 

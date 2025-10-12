@@ -506,7 +506,7 @@ export class ErrorCode {
   public static readonly BOOKING_CAPACITY_EXCEEDED = {
     key: "BOOKING_CAPACITY_EXCEEDED",
     code: "BOOKING_CAPACITY_EXCEEDED",
-    message: "No available spaces for the requested time",
+    message: "Booking capacity exceeded for the registration number",
   };
 
   public static readonly BOOKING_ALREADY_CANCELLED = {
