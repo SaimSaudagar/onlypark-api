@@ -5,6 +5,7 @@ import { CarMakeSeederService } from "./car-make/car-make-seeder.service";
 import { MasterCarParkSeederService } from "./master-car-park/master-car-park-seeder.service";
 import { SubCarParkSeederService } from "./sub-car-park/sub-car-park-seeder.service";
 import { TenancySeederService } from "./tenancy/tenancy-seeder.service";
+import { WhitelistCompanySeederService } from "./whitelist-company/whitelist-company-seeder.service";
 import { InfringementCarParkSeederService } from "./infringement-car-park/infringement-car-park-seeder.service";
 import { InfringementPenaltySeederService } from "./infringement-penalty/infringement-penalty-seeder.service";
 import { InfringementReasonSeederService } from "./infringement-reason/infringement-reason-seeder.service";
@@ -42,6 +43,10 @@ const runSeed = async () => {
     // Seed tenancies
     console.log("Seeding tenancies...");
     await app.get(TenancySeederService).run();
+
+    // Seed whitelist companies
+    console.log("Seeding whitelist companies...");
+    await app.get(WhitelistCompanySeederService).run();
 
     // Seed infringement car parks
     console.log("Seeding infringement car parks...");
