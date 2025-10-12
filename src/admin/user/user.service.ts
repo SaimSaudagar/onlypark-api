@@ -146,7 +146,7 @@ export class UserService {
       }
 
       // Send registration email
-      const passwordSetupUrl = `${this.configService.get("APP_URL")}/auth/setup-password?token=${passwordResetToken}`;
+      const passwordSetupUrl = `${this.configService.get("FRONTEND_URL")}/setup-password?token=${passwordResetToken}`;
 
       try {
         await this.emailNotificationService.sendUsingTemplate({
