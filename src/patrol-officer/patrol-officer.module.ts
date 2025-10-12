@@ -6,6 +6,8 @@ import { SubCarParkModule } from "./sub-car-park/sub-car-park.module";
 import { BlacklistModule } from "./blacklist/blacklist.module";
 import { WhitelistModule } from "./whitelist/whitelist.module";
 import { VisitorModule } from "./visitor/visitor.module";
+import { InfringementModule } from "./infringement/infringement.module";
+import { DisputeModule } from "./dispute/dispute.module";
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { VisitorModule } from "./visitor/visitor.module";
     BlacklistModule,
     WhitelistModule,
     VisitorModule,
+    InfringementModule,
+    DisputeModule,
   ],
 })
 export class PatrolOfficerModule {}
