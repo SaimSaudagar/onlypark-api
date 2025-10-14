@@ -9,11 +9,17 @@ import {
   Query,
   UseGuards,
   Res,
+  Body,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
 import { VisitorService } from "./visitor.service";
-import { FindVisitorRequest } from "./visitor.dto";
+import {
+  FindVisitorRequest,
+  BulkDeleteVisitorRequest,
+  BulkDeleteVisitorResponse,
+  VisitorDeleteResponse,
+} from "./visitor.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { AllowedRoles } from "../../auth/guards/roles.guard";
 import { UserType } from "../../common/enums";
@@ -82,11 +88,21 @@ export class VisitorController {
     return this.visitorService.checkout(id);
   }
 
-  @Delete(":id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete("bulk")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @AllowedRoles(UserType.CARPARK_MANAGER)
-  remove(@Param("id") id: string) {
+  bulkRemove(
+    @Body() request: BulkDeleteVisitorRequest
+  ): Promise<BulkDeleteVisitorResponse> {
+    return this.visitorService.bulkRemove(request.ids);
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.CARPARK_MANAGER)
+  remove(@Param("id") id: string): Promise<VisitorDeleteResponse> {
     return this.visitorService.remove(id);
   }
 }

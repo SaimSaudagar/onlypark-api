@@ -6,6 +6,8 @@ import {
   IsOptional,
   IsDateString,
   IsEnum,
+  IsArray,
+  ArrayNotEmpty,
 } from "class-validator";
 import { ApiGetBaseRequest, VisitorBookingStatus } from "../../common";
 
@@ -98,10 +100,30 @@ export class VisitorBookingUpdateResponse {
   message: string;
 }
 
+export class BulkDeleteVisitorBookingRequest {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(4, { each: true })
+  ids: string[];
+}
+
 export class VisitorBookingDeleteResponse {
   id: string;
   email: string;
   registrationNumber: string;
+  message: string;
+  deletedAt: Date;
+}
+
+export class FailedDeleteItem {
+  id: string;
+  reason: string;
+}
+
+export class BulkDeleteVisitorBookingResponse {
+  deletedIds: string[];
+  failedIds: FailedDeleteItem[];
   message: string;
   deletedAt: Date;
 }

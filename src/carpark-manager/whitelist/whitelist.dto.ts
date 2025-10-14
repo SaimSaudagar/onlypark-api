@@ -7,6 +7,8 @@ import {
   IsEmail,
   IsIn,
   IsNumber,
+  IsArray,
+  ArrayNotEmpty,
 } from "class-validator";
 import {
   ApiGetBaseRequest,
@@ -107,4 +109,32 @@ export class FindWhitelistResponse {
 export class GetAssignedSubCarParksResponse {
   subCarParkId: string;
   subCarParkName: string;
+}
+
+export class BulkDeleteWhitelistRequest {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(4, { each: true })
+  ids: string[];
+}
+
+export class WhitelistDeleteResponse {
+  id: string;
+  registrationNumber: string;
+  email: string;
+  message: string;
+  deletedAt: Date;
+}
+
+export class FailedDeleteItem {
+  id: string;
+  reason: string;
+}
+
+export class BulkDeleteWhitelistResponse {
+  deletedIds: string[];
+  failedIds: FailedDeleteItem[];
+  message: string;
+  deletedAt: Date;
 }

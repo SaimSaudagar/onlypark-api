@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   Res,
+  Body,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
@@ -17,6 +18,8 @@ import { VisitorBookingService } from "./visitor.service";
 import {
   VisitorBookingResponse,
   VisitorBookingDeleteResponse,
+  BulkDeleteVisitorBookingRequest,
+  BulkDeleteVisitorBookingResponse,
   FindVisitorBookingRequest,
   FindVisitorBookingResponse,
 } from "./visitor.dto";
@@ -85,6 +88,16 @@ export class VisitorBookingController {
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   checkout(@Param("id") id: string): Promise<void> {
     return this.visitorBookingService.checkout(id);
+  }
+
+  @Delete("bulk")
+  @HttpCode(HttpStatus.OK)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  bulkRemove(
+    @Body() request: BulkDeleteVisitorBookingRequest
+  ): Promise<BulkDeleteVisitorBookingResponse> {
+    return this.visitorBookingService.bulkRemove(request.ids);
   }
 
   @Delete(":id")

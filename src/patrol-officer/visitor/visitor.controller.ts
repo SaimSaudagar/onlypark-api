@@ -19,6 +19,9 @@ import {
   CreateVisitorRequest,
   FindVisitorRequest,
   UpdateVisitorRequest,
+  BulkDeleteVisitorRequest,
+  BulkDeleteVisitorResponse,
+  VisitorDeleteResponse,
 } from "./visitor.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { AllowedRoles } from "../../auth/guards/roles.guard";
@@ -88,11 +91,21 @@ export class VisitorController {
     return this.visitorService.checkout(id);
   }
 
-  @Delete(":id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete("bulk")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @AllowedRoles(UserType.PATROL_OFFICER)
-  remove(@Param("id") id: string) {
+  bulkRemove(
+    @Body() request: BulkDeleteVisitorRequest
+  ): Promise<BulkDeleteVisitorResponse> {
+    return this.visitorService.bulkRemove(request.ids);
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  remove(@Param("id") id: string): Promise<VisitorDeleteResponse> {
     return this.visitorService.remove(id);
   }
 }

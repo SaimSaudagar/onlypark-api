@@ -19,6 +19,9 @@ import {
   CreateBlacklistRequest,
   FindBlacklistRequest,
   UpdateBlacklistRequest,
+  BulkDeleteBlacklistRequest,
+  BulkDeleteBlacklistResponse,
+  BlacklistDeleteResponse,
 } from "./blacklist.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { AllowedRoles } from "../../auth/guards/roles.guard";
@@ -76,11 +79,21 @@ export class BlacklistController {
     return this.blacklistService.update(id, request);
   }
 
-  @Delete(":id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete("bulk")
+  @HttpCode(HttpStatus.OK)
   @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
-  remove(@Param("id") id: string) {
+  bulkRemove(
+    @Body() request: BulkDeleteBlacklistRequest
+  ): Promise<BulkDeleteBlacklistResponse> {
+    return this.blacklistService.bulkRemove(request.ids);
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  @AllowedRoles(UserType.ADMIN, UserType.SUPER_ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  remove(@Param("id") id: string): Promise<BlacklistDeleteResponse> {
     return this.blacklistService.remove(id);
   }
 }

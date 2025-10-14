@@ -19,6 +19,8 @@ import {
   UpdateWhitelistRequest,
   UpdateWhitelistResponse,
   GetAssignedSubCarParksResponse,
+  WhitelistDeleteResponse,
+  BulkDeleteWhitelistResponse,
 } from "./whitelist.dto";
 import { CustomException } from "../../common/exceptions/custom.exception";
 import { ErrorCode } from "../../common/exceptions/error-code";
@@ -262,7 +264,7 @@ export class WhitelistService extends BaseService {
     };
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<WhitelistDeleteResponse> {
     const entity = await this.whitelistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
@@ -284,7 +286,76 @@ export class WhitelistService extends BaseService {
       );
     }
 
-    await this.whitelistRepository.delete(id);
+    const registrationNumber = entity.registrationNumber;
+    const email = entity.email;
+    await this.whitelistRepository.softRemove(entity);
+
+    return {
+      id,
+      registrationNumber,
+      email,
+      message: "Whitelist entry removed successfully",
+      deletedAt: new Date(),
+    };
+  }
+
+  async bulkRemove(ids: string[]): Promise<BulkDeleteWhitelistResponse> {
+    const deletedIds: string[] = [];
+    const failedIds: { id: string; reason: string }[] = [];
+
+    // Get assigned sub car parks once for efficiency
+    const assignedSubCarParkIds = await this.getAssignedSubCarParks();
+    const assignedSubCarParkIdSet = new Set(
+      assignedSubCarParkIds.map((subCarPark) => subCarPark.subCarParkId)
+    );
+
+    for (const id of ids) {
+      try {
+        const entity = await this.whitelistRepository.findOne({
+          where: { id },
+        });
+
+        if (!entity) {
+          failedIds.push({
+            id,
+            reason: "Whitelist entry not found",
+          });
+          continue;
+        }
+
+        // Check if the user has access to this whitelist entry
+        if (!assignedSubCarParkIdSet.has(entity.subCarParkId)) {
+          failedIds.push({
+            id,
+            reason: "Sub car park not assigned to user",
+          });
+          continue;
+        }
+
+        await this.whitelistRepository.softRemove(entity);
+        deletedIds.push(id);
+      } catch (error) {
+        failedIds.push({
+          id,
+          reason: error.message || "Unknown error occurred",
+        });
+      }
+    }
+
+    const totalDeleted = deletedIds.length;
+    const totalFailed = failedIds.length;
+
+    let message = `Bulk delete completed: ${totalDeleted} deleted`;
+    if (totalFailed > 0) {
+      message += `, ${totalFailed} failed`;
+    }
+
+    return {
+      deletedIds,
+      failedIds,
+      message,
+      deletedAt: new Date(),
+    };
   }
 
   async getAssignedSubCarParks(): Promise<GetAssignedSubCarParksResponse[]> {

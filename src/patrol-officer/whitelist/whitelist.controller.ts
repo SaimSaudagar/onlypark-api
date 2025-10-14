@@ -19,6 +19,9 @@ import {
   CreateWhitelistRequest,
   FindWhitelistRequest,
   UpdateWhitelistRequest,
+  BulkDeleteWhitelistRequest,
+  BulkDeleteWhitelistResponse,
+  WhitelistDeleteResponse,
 } from "./whitelist.dto";
 import JwtAuthenticationGuard from "../../auth/guards/jwt-auth.guard";
 import { AllowedRoles } from "../../auth/guards/roles.guard";
@@ -91,11 +94,19 @@ export class WhitelistController {
     return this.whitelistService.checkout(id);
   }
 
-  @Delete(":id")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete("bulk")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @AllowedRoles(UserType.PATROL_OFFICER)
-  remove(@Param("id") id: string) {
+  bulkRemove(@Body() request: BulkDeleteWhitelistRequest): Promise<BulkDeleteWhitelistResponse> {
+    return this.whitelistService.bulkRemove(request.ids);
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
+  @AllowedRoles(UserType.PATROL_OFFICER)
+  remove(@Param("id") id: string): Promise<WhitelistDeleteResponse> {
     return this.whitelistService.remove(id);
   }
 }

@@ -6,6 +6,8 @@ import {
   IsDate,
   IsEnum,
   IsEmail,
+  IsArray,
+  ArrayNotEmpty,
 } from "class-validator";
 import { ApiGetBaseRequest, VisitorBookingStatus } from "../../common";
 
@@ -97,4 +99,32 @@ export class FindVisitorResponse {
 export class GetAssignedSubCarParksResponse {
   subCarParkId: string;
   subCarParkName: string;
+}
+
+export class BulkDeleteVisitorRequest {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(4, { each: true })
+  ids: string[];
+}
+
+export class VisitorDeleteResponse {
+  id: string;
+  registrationNumber: string;
+  email: string;
+  message: string;
+  deletedAt: Date;
+}
+
+export class FailedDeleteItem {
+  id: string;
+  reason: string;
+}
+
+export class BulkDeleteVisitorResponse {
+  deletedIds: string[];
+  failedIds: FailedDeleteItem[];
+  message: string;
+  deletedAt: Date;
 }

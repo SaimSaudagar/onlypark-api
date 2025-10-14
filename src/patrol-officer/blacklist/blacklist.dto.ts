@@ -4,6 +4,8 @@ import {
   IsUUID,
   IsNotEmpty,
   IsDate,
+  IsArray,
+  ArrayNotEmpty,
 } from "class-validator";
 import { ApiGetBaseRequest } from "../../common";
 
@@ -67,4 +69,32 @@ export class FindBlacklistResponse {
 export class GetAssignedSubCarParksResponse {
   subCarParkId: string;
   subCarParkName: string;
+}
+
+export class BulkDeleteBlacklistRequest {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(4, { each: true })
+  ids: string[];
+}
+
+export class BlacklistDeleteResponse {
+  id: string;
+  registrationNumber: string;
+  email: string;
+  message: string;
+  deletedAt: Date;
+}
+
+export class FailedDeleteItem {
+  id: string;
+  reason: string;
+}
+
+export class BulkDeleteBlacklistResponse {
+  deletedIds: string[];
+  failedIds: FailedDeleteItem[];
+  message: string;
+  deletedAt: Date;
 }

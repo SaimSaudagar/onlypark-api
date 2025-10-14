@@ -14,6 +14,7 @@ import {
   VisitorBookingResponse,
   VisitorBookingCreateResponse,
   VisitorBookingDeleteResponse,
+  BulkDeleteVisitorBookingResponse,
   FindVisitorBookingResponse,
   FindVisitorBookingRequest,
 } from "./visitor.dto";
@@ -304,6 +305,58 @@ export class VisitorBookingService {
       email,
       registrationNumber,
       message: "Visitor booking deleted successfully",
+      deletedAt: new Date(),
+    };
+  }
+
+  async bulkRemove(ids: string[]): Promise<BulkDeleteVisitorBookingResponse> {
+    const deletedIds: string[] = [];
+    const failedIds: { id: string; reason: string }[] = [];
+
+    for (const id of ids) {
+      try {
+        const visitorBooking = await this.visitorBookingRepository.findOne({
+          where: { id },
+        });
+
+        if (!visitorBooking) {
+          failedIds.push({
+            id,
+            reason: "Booking not found",
+          });
+          continue;
+        }
+
+        if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
+          failedIds.push({
+            id,
+            reason: "Booking already completed",
+          });
+          continue;
+        }
+
+        await this.visitorBookingRepository.softRemove(visitorBooking);
+        deletedIds.push(id);
+      } catch (error) {
+        failedIds.push({
+          id,
+          reason: error.message || "Unknown error occurred",
+        });
+      }
+    }
+
+    const totalDeleted = deletedIds.length;
+    const totalFailed = failedIds.length;
+
+    let message = `Bulk delete completed: ${totalDeleted} deleted`;
+    if (totalFailed > 0) {
+      message += `, ${totalFailed} failed`;
+    }
+
+    return {
+      deletedIds,
+      failedIds,
+      message,
       deletedAt: new Date(),
     };
   }

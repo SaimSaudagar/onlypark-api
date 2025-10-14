@@ -18,6 +18,8 @@ import {
   FindBlacklistResponse,
   UpdateBlacklistRequest,
   UpdateBlacklistResponse,
+  BlacklistDeleteResponse,
+  BulkDeleteBlacklistResponse,
 } from "./blacklist.dto";
 import { CustomException } from "../../common/exceptions/custom.exception";
 import { ErrorCode } from "../../common/exceptions/error-code";
@@ -230,7 +232,7 @@ export class BlacklistService extends BaseService {
     };
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<BlacklistDeleteResponse> {
     const entity = await this.blacklistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
@@ -252,7 +254,74 @@ export class BlacklistService extends BaseService {
       );
     }
 
-    await this.blacklistRepository.delete(id);
+    const registrationNumber = entity.registrationNumber;
+    const email = entity.email;
+    await this.blacklistRepository.softRemove(entity);
+
+    return {
+      id,
+      registrationNumber,
+      email,
+      message: "Blacklist entry removed successfully",
+      deletedAt: new Date(),
+    };
+  }
+
+  async bulkRemove(ids: string[]): Promise<BulkDeleteBlacklistResponse> {
+    const deletedIds: string[] = [];
+    const failedIds: { id: string; reason: string }[] = [];
+
+    // Get assigned sub car parks once for efficiency
+    const assignedSubCarParkIds = await this.getAssignedSubCarParks();
+    const assignedSubCarParkIdSet = new Set(
+      assignedSubCarParkIds.map((subCarPark) => subCarPark.subCarParkId)
+    );
+
+    for (const id of ids) {
+      try {
+        const entity = await this.blacklistRepository.findOne({ where: { id } });
+
+        if (!entity) {
+          failedIds.push({
+            id,
+            reason: "Blacklist entry not found",
+          });
+          continue;
+        }
+
+        // Check if the user has access to this blacklist entry
+        if (!assignedSubCarParkIdSet.has(entity.subCarParkId)) {
+          failedIds.push({
+            id,
+            reason: "Sub car park not assigned to user",
+          });
+          continue;
+        }
+
+        await this.blacklistRepository.softRemove(entity);
+        deletedIds.push(id);
+      } catch (error) {
+        failedIds.push({
+          id,
+          reason: error.message || "Unknown error occurred",
+        });
+      }
+    }
+
+    const totalDeleted = deletedIds.length;
+    const totalFailed = failedIds.length;
+
+    let message = `Bulk delete completed: ${totalDeleted} deleted`;
+    if (totalFailed > 0) {
+      message += `, ${totalFailed} failed`;
+    }
+
+    return {
+      deletedIds,
+      failedIds,
+      message,
+      deletedAt: new Date(),
+    };
   }
 
   async getAssignedSubCarParks(): Promise<GetAssignedSubCarParksResponse[]> {

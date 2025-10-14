@@ -17,6 +17,8 @@ import {
   FindBlacklistResponse,
   UpdateBlacklistRequest,
   UpdateBlacklistResponse,
+  BlacklistDeleteResponse,
+  BulkDeleteBlacklistResponse,
 } from "./blacklist.dto";
 import { CustomException } from "../../common/exceptions/custom.exception";
 import { ErrorCode } from "../../common/exceptions/error-code";
@@ -190,7 +192,7 @@ export class BlacklistService {
     };
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<BlacklistDeleteResponse> {
     const entity = await this.blacklistRepository.findOne({ where: { id } });
     if (!entity) {
       throw new CustomException(
@@ -198,7 +200,60 @@ export class BlacklistService {
         HttpStatus.BAD_REQUEST
       );
     }
+
+    const registrationNumber = entity.registrationNumber;
+    const email = entity.email;
     await this.blacklistRepository.softRemove(entity);
+
+    return {
+      id,
+      registrationNumber,
+      email,
+      message: "Blacklist entry removed successfully",
+      deletedAt: new Date(),
+    };
+  }
+
+  async bulkRemove(ids: string[]): Promise<BulkDeleteBlacklistResponse> {
+    const deletedIds: string[] = [];
+    const failedIds: { id: string; reason: string }[] = [];
+
+    for (const id of ids) {
+      try {
+        const entity = await this.blacklistRepository.findOne({ where: { id } });
+
+        if (!entity) {
+          failedIds.push({
+            id,
+            reason: "Blacklist entry not found",
+          });
+          continue;
+        }
+
+        await this.blacklistRepository.softRemove(entity);
+        deletedIds.push(id);
+      } catch (error) {
+        failedIds.push({
+          id,
+          reason: error.message || "Unknown error occurred",
+        });
+      }
+    }
+
+    const totalDeleted = deletedIds.length;
+    const totalFailed = failedIds.length;
+
+    let message = `Bulk delete completed: ${totalDeleted} deleted`;
+    if (totalFailed > 0) {
+      message += `, ${totalFailed} failed`;
+    }
+
+    return {
+      deletedIds,
+      failedIds,
+      message,
+      deletedAt: new Date(),
+    };
   }
 
   async isRegistrationNumberBlacklistedInSubCarPark(
