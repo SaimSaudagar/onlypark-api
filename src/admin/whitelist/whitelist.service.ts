@@ -7,6 +7,7 @@ import {
   ILike,
   Repository,
   FindManyOptions,
+  Between,
 } from "typeorm";
 import { Whitelist } from "../../whitelist/entities/whitelist.entity";
 import { CustomException } from "../../common/exceptions/custom.exception";
@@ -668,7 +669,7 @@ export class WhitelistService {
   }
 
   async exportToCsv(request: FindWhitelistRequest): Promise<string> {
-    const { search, sortField, sortOrder, type, subCarParkId } = request;
+    const { search, sortField, sortOrder, type, subCarParkId, dateFrom, dateTo } = request;
 
     const whereOptions: FindOptionsWhere<Whitelist> = {};
     const orderOptions: FindOptionsOrder<Whitelist> = {};
@@ -683,6 +684,10 @@ export class WhitelistService {
 
     if (subCarParkId) {
       whereOptions.subCarParkId = subCarParkId;
+    }
+
+    if (dateFrom && dateTo) {
+      whereOptions.startDate = Between(new Date(dateFrom), new Date(dateTo));
     }
 
     const query: FindManyOptions<Whitelist> = {

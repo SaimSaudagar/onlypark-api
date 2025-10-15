@@ -140,6 +140,14 @@ export class FindVisitorBookingRequest extends ApiGetBaseRequest {
   @IsOptional()
   @IsUUID(4)
   subCarParkId?: string;
+
+  @IsOptional()
+  @IsDateString()
+  dateFrom?: string;
+
+  @IsOptional()
+  @IsDateString()
+  dateTo?: string;
 }
 
 export class FindVisitorBookingResponse {

@@ -7,6 +7,7 @@ import {
   ILike,
   Repository,
   FindManyOptions,
+  Between,
 } from "typeorm";
 import { VisitorBooking } from "../../visitor/entities/visitor.entity";
 import {
@@ -385,7 +386,7 @@ export class VisitorBookingService {
   }
 
   async exportToCsv(request: FindVisitorBookingRequest): Promise<string> {
-    const { search, sortField, sortOrder, subCarParkId, status } = request;
+    const { search, sortField, sortOrder, subCarParkId, status, dateFrom, dateTo } = request;
 
     const whereOptions: FindOptionsWhere<VisitorBooking> = {};
     const orderOptions: FindOptionsOrder<VisitorBooking> = {};
@@ -400,6 +401,10 @@ export class VisitorBookingService {
 
     if (status) {
       whereOptions.status = status;
+    }
+
+    if (dateFrom && dateTo) {
+      whereOptions.startDate = Between(new Date(dateFrom), new Date(dateTo));
     }
 
     const query: FindManyOptions<VisitorBooking> = {
