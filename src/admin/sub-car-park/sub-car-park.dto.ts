@@ -133,6 +133,7 @@ export class FindSubCarParkResponse {
   event: boolean;
   eventDate?: Date;
   eventExpiryDate?: Date;
+  noOfPermitsPerRegNo?: number;
   status: ParkingSpotStatus;
   masterCarParkId: string;
   tenancies?: TenancyResponse[];

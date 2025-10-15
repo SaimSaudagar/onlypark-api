@@ -366,6 +366,7 @@ export class SubCarParkService {
       event: subCarPark.event,
       eventDate: subCarPark.eventDate,
       eventExpiryDate: subCarPark.eventExpiryDate,
+      noOfPermitsPerRegNo: subCarPark.noOfPermitsPerRegNo,
       status: subCarPark.status,
       masterCarParkId: subCarPark.masterCarParkId,
       tenancies:
