@@ -547,16 +547,19 @@ export class SubCarParkService {
         }
 
         // Validate uniqueness for all provided tenancies first
-        const tenantEmails = tenancies.map((t) => t.tenantEmail);
-        const duplicateEmails = tenantEmails.filter(
-          (email, index) => tenantEmails.indexOf(email) !== index
-        );
-        if (duplicateEmails.length > 0) {
-          throw new CustomException(
-            ErrorCode.TENANT_ALREADY_EXISTS.key,
-            HttpStatus.BAD_REQUEST
-          );
-        }
+        // const tenantEmails = tenancies.map((t) => t.tenantEmail);
+        // const duplicateEmails = tenantEmails.filter(
+        //   (email, index) => tenantEmails.indexOf(email) !== index
+        // );
+        // if (duplicateEmails.length > 0) {
+        //   throw new CustomException(
+        //     ErrorCode.TENANT_ALREADY_EXISTS.key,
+        //     HttpStatus.BAD_REQUEST,
+        //     {
+        //       tenantEmails: tenantEmails,
+        //     }
+        //   );
+        // }
 
         // Process each tenancy (update existing or create new)
         for (const tenancy of tenancies) {
