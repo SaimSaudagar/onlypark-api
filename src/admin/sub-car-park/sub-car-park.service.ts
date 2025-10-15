@@ -556,7 +556,7 @@ export class SubCarParkService {
         //     ErrorCode.TENANT_ALREADY_EXISTS.key,
         //     HttpStatus.BAD_REQUEST,
         //     {
-        //       tenantEmails: tenantEmails,
+        //       tenantEmail: tenantEmails,
         //     }
         //   );
         // }
@@ -570,19 +570,22 @@ export class SubCarParkService {
             });
             if (existingTenancy) {
               // Check for unique email constraint (excluding current record)
-              const emailExists = await queryRunner.manager.findOne(Tenancy, {
-                where: {
-                  tenantEmail: tenancy.tenantEmail,
-                  id: Not(tenancy.id),
-                },
-              });
+              // const emailExists = await queryRunner.manager.findOne(Tenancy, {
+              //   where: {
+              //     tenantEmail: tenancy.tenantEmail,
+              //     id: Not(tenancy.id),
+              //   },
+              // });
 
-              if (emailExists) {
-                throw new CustomException(
-                  ErrorCode.TENANT_ALREADY_EXISTS.key,
-                  HttpStatus.BAD_REQUEST
-                );
-              }
+              // if (emailExists) {
+              //   throw new CustomException(
+              //     ErrorCode.TENANT_ALREADY_EXISTS.key,
+              //     HttpStatus.BAD_REQUEST,
+              //     {
+              //       tenantEmail: tenancy.tenantEmail,
+              //     }
+              //   );
+              // }
 
               Object.assign(existingTenancy, {
                 tenantName: tenancy.tenantName,
@@ -593,16 +596,16 @@ export class SubCarParkService {
           } else {
             // Create new tenancy
             // Check for unique email constraint
-            const emailExists = await queryRunner.manager.findOne(Tenancy, {
-              where: { tenantEmail: tenancy.tenantEmail },
-            });
+            // const emailExists = await queryRunner.manager.findOne(Tenancy, {
+            //   where: { tenantEmail: tenancy.tenantEmail },
+            // });
 
-            if (emailExists) {
-              throw new CustomException(
-                ErrorCode.TENANT_ALREADY_EXISTS.key,
-                HttpStatus.BAD_REQUEST
-              );
-            }
+            // if (emailExists) {
+            //   throw new CustomException(
+            //     ErrorCode.TENANT_ALREADY_EXISTS.key,
+            //     HttpStatus.BAD_REQUEST
+            //   );
+            // }
 
             const newTenancy = queryRunner.manager.create(Tenancy, {
               tenantName: tenancy.tenantName,
