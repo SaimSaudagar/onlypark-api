@@ -327,14 +327,6 @@ export class VisitorBookingService {
           continue;
         }
 
-        if (visitorBooking.status === VisitorBookingStatus.CHECKOUT) {
-          failedIds.push({
-            id,
-            reason: "Booking already completed",
-          });
-          continue;
-        }
-
         await this.visitorBookingRepository.softRemove(visitorBooking);
         deletedIds.push(id);
       } catch (error) {
