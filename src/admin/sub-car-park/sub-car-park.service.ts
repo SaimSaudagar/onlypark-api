@@ -119,12 +119,12 @@ export class SubCarParkService {
       }
     }
 
-    if (freeHours !== undefined && freeHours < 1) {
-      throw new CustomException(
-        ErrorCode.INVALID_FREE_HOURS.key,
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // if (freeHours !== undefined && freeHours < 1) {
+    //   throw new CustomException(
+    //     ErrorCode.INVALID_FREE_HOURS.key,
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
 
     if (noOfPermitsPerRegNo !== undefined && noOfPermitsPerRegNo < 1) {
       throw new CustomException(
