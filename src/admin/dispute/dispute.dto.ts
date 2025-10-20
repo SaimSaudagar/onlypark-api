@@ -73,10 +73,6 @@ export class UpdateDisputeRequest {
   @IsOptional()
   responseReason?: string;
 
-  @IsObject()
-  @IsOptional()
-  responsePhotos?: object;
-
   @IsEnum(DisputeStatus)
   @IsOptional()
   status?: DisputeStatus;
@@ -93,7 +89,7 @@ export class UpdateDisputeResponse {
   id: string;
   status: DisputeStatus;
   responseReason?: string;
-  responsePhotos?: object;
+  responsePhotos?: string[];
 }
 
 export class UpdateDisputeStatusRequest {

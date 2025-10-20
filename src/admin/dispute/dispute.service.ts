@@ -26,6 +26,7 @@ import { ApiGetBaseResponse } from "../../common";
 import { Dispute } from "../../dispute/entities/dispute.entity";
 import { EmailNotificationService } from "../../common/services/email/email-notification.service";
 import { TemplateKeys } from "../../common/constants/template-keys";
+import { FileUploadService } from "../../common/services/file-upload/file-upload.service";
 
 @Injectable()
 export class DisputeService {
@@ -34,6 +35,7 @@ export class DisputeService {
     private disputeRepository: Repository<Dispute>,
     private infringementService: InfringementService,
     private emailNotificationService: EmailNotificationService,
+    private fileUploadService: FileUploadService,
     private dataSource: DataSource
   ) {}
 
@@ -196,9 +198,10 @@ export class DisputeService {
 
   async update(
     id: string,
-    request: UpdateDisputeRequest
+    request: UpdateDisputeRequest,
+    responsePhotos?: Express.Multer.File[]
   ): Promise<UpdateDisputeResponse> {
-    const { status, responseReason, responsePhotos } = request;
+    const { status, responseReason } = request;
 
     const dispute = await this.disputeRepository.findOne({ where: { id } });
     if (!dispute) {
@@ -208,14 +211,28 @@ export class DisputeService {
       );
     }
 
+    // Upload response photos to S3 if provided
+    let responsePhotoUrls: string[] = [];
+    if (responsePhotos && responsePhotos.length > 0) {
+      responsePhotoUrls = await this.fileUploadService.uploadMultipleFiles(
+        responsePhotos,
+        "disputes"
+      );
+    }
+
     // If status is provided, call the status-specific function
     if (status) {
-      await this.handleStatusUpdate(dispute, status, responseReason || "");
+      await this.handleStatusUpdate(
+        dispute,
+        status,
+        responseReason || "",
+        responsePhotoUrls
+      );
     } else {
       // Just update the dispute data without status change
       await this.disputeRepository.update(id, {
         responseReason,
-        responsePhotos,
+        responsePhotos: responsePhotoUrls,
       });
     }
 
@@ -228,7 +245,7 @@ export class DisputeService {
     response.id = id;
     response.status = updatedDispute.status;
     response.responseReason = updatedDispute.responseReason;
-    response.responsePhotos = updatedDispute.responsePhotos;
+    response.responsePhotos = updatedDispute.responsePhotos as string[];
 
     return response;
   }
@@ -259,20 +276,37 @@ export class DisputeService {
   private async handleStatusUpdate(
     dispute: Dispute,
     status: DisputeStatus,
-    responseReason: string
+    responseReason: string,
+    responsePhotoUrls: string[] = []
   ): Promise<void> {
     switch (status) {
       case DisputeStatus.APPROVED:
-        await this.handleApprovedStatus(dispute, responseReason);
+        await this.handleApprovedStatus(
+          dispute,
+          responseReason,
+          responsePhotoUrls
+        );
         break;
       case DisputeStatus.REJECTED:
-        await this.handleRejectedStatus(dispute, responseReason);
+        await this.handleRejectedStatus(
+          dispute,
+          responseReason,
+          responsePhotoUrls
+        );
         break;
       case DisputeStatus.PENDING:
-        await this.handlePendingStatus(dispute, responseReason);
+        await this.handlePendingStatus(
+          dispute,
+          responseReason,
+          responsePhotoUrls
+        );
         break;
       case DisputeStatus.APPROVED_WITH_ADMIN_FEES:
-        await this.handleApprovedWithAdminFeesStatus(dispute, responseReason);
+        await this.handleApprovedWithAdminFeesStatus(
+          dispute,
+          responseReason,
+          responsePhotoUrls
+        );
         break;
       default:
         // For any other status, throw an error
@@ -285,7 +319,8 @@ export class DisputeService {
 
   private async handleApprovedStatus(
     dispute: Dispute,
-    responseReason: string
+    responseReason: string,
+    responsePhotoUrls: string[] = []
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -297,6 +332,7 @@ export class DisputeService {
       await queryRunner.manager.update(Dispute, dispute.id, {
         status: DisputeStatus.APPROVED,
         responseReason,
+        responsePhotos: responsePhotoUrls,
       });
 
       // Change infringement status to waived
@@ -337,7 +373,8 @@ export class DisputeService {
 
   private async handleRejectedStatus(
     dispute: Dispute,
-    responseReason: string
+    responseReason: string,
+    responsePhotoUrls: string[] = []
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -349,6 +386,7 @@ export class DisputeService {
       await queryRunner.manager.update(Dispute, dispute.id, {
         status: DisputeStatus.REJECTED,
         responseReason,
+        responsePhotos: responsePhotoUrls,
       });
 
       // Send email notification
@@ -385,18 +423,21 @@ export class DisputeService {
 
   private async handlePendingStatus(
     dispute: Dispute,
-    responseReason: string
+    responseReason: string,
+    responsePhotoUrls: string[] = []
   ): Promise<void> {
     // Update dispute status to pending
     await this.disputeRepository.update(dispute.id, {
       status: DisputeStatus.PENDING,
       responseReason,
+      responsePhotos: responsePhotoUrls,
     });
   }
 
   private async handleApprovedWithAdminFeesStatus(
     dispute: Dispute,
-    responseReason: string
+    responseReason: string,
+    responsePhotoUrls: string[] = []
   ): Promise<void> {
     // Start database transaction
     const queryRunner = this.dataSource.createQueryRunner();
@@ -408,6 +449,7 @@ export class DisputeService {
       await queryRunner.manager.update(Dispute, dispute.id, {
         status: DisputeStatus.APPROVED_WITH_ADMIN_FEES,
         responseReason,
+        responsePhotos: responsePhotoUrls,
       });
 
       // Send email notification

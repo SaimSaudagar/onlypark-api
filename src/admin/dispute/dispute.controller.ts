@@ -9,8 +9,11 @@ import {
   HttpCode,
   UseGuards,
   Query,
+  UseInterceptors,
+  UploadedFiles,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiConsumes } from "@nestjs/swagger";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { RoleGuard } from "../../auth/guards/roles.guard";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { PermissionsGuard } from "../../common/guards/permission.guard";
@@ -42,8 +45,14 @@ export class DisputeController {
 
   @Patch("update/:id")
   @Roles(UserType.ADMIN, UserType.SUPER_ADMIN)
-  update(@Param("id") id: string, @Body() request: UpdateDisputeRequest) {
-    return this.disputeService.update(id, request);
+  @UseInterceptors(FilesInterceptor("responsePhotos", 10)) // Allow up to 10 response photos
+  @ApiConsumes("multipart/form-data")
+  update(
+    @Param("id") id: string,
+    @Body() request: UpdateDisputeRequest,
+    @UploadedFiles() responsePhotos?: Express.Multer.File[]
+  ) {
+    return this.disputeService.update(id, request, responsePhotos);
   }
 
   @Patch("/update-status")
