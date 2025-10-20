@@ -12,6 +12,8 @@ import { MasterCarParkSeederModule } from "./master-car-park/master-car-park-see
 import { SubCarParkSeederModule } from "./sub-car-park/sub-car-park-seeder.module";
 import { TenancySeederModule } from "./tenancy/tenancy-seeder.module";
 import { WhitelistCompanySeederModule } from "./whitelist-company/whitelist-company-seeder.module";
+import { WhitelistSeederModule } from "./whitelist/whitelist-seeder.module";
+import { BlacklistSeederModule } from "./blacklist/blacklist-seeder.module";
 import { InfringementCarParkSeederModule } from "./infringement-car-park/infringement-car-park-seeder.module";
 import { InfringementPenaltySeederModule } from "./infringement-penalty/infringement-penalty-seeder.module";
 import { InfringementReasonSeederModule } from "./infringement-reason/infringement-reason-seeder.module";
@@ -55,6 +57,8 @@ import { InfringementReasonSeederModule } from "./infringement-reason/infringeme
     SubCarParkSeederModule,
     TenancySeederModule,
     WhitelistCompanySeederModule,
+    WhitelistSeederModule,
+    BlacklistSeederModule,
     InfringementCarParkSeederModule,
     InfringementPenaltySeederModule,
     InfringementReasonSeederModule,
