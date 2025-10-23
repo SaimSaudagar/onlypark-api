@@ -1,0 +1,62 @@
+import { IsOptional, IsString, IsDateString, IsEnum } from "class-validator";
+
+export class DashboardRequest {
+  @IsOptional()
+  @IsString()
+  carParkId?: string;
+
+  @IsOptional()
+  @IsDateString()
+  dateFrom?: string;
+
+  @IsOptional()
+  @IsDateString()
+  dateTo?: string;
+}
+
+export class DashboardMetricsResponse {
+  availableSpaces: number;
+  expiredSpaces: number;
+}
+
+export class TotalVisitorsResponse {
+  date: string;
+  visitors: number;
+}
+
+export class ScanStayResponse {
+  month: string;
+  active: number;
+  expired: number;
+}
+
+export class DigitalPermitsResponse {
+  selfServer: number;
+  permanent: number;
+  shortStay: number;
+  scheduled: number;
+  total: number;
+}
+
+export class NonComplianceResponse {
+  notices: number;
+  paid: number;
+  unpaid: number;
+  total: number;
+}
+
+export class DisputesResponse {
+  total: number;
+  pending: number;
+  granted: number;
+  denied: number;
+}
+
+export class DashboardResponse {
+  metrics: DashboardMetricsResponse;
+  totalVisitors: TotalVisitorsResponse[];
+  scanStay: ScanStayResponse[];
+  digitalPermits: DigitalPermitsResponse;
+  nonCompliance: NonComplianceResponse;
+  disputes: DisputesResponse;
+}

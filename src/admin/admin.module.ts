@@ -8,6 +8,7 @@ import { DisputeModule } from "./dispute/dispute.module";
 import { WhitelistModule } from "./whitelist/whitelist.module";
 import { CronJobsModule } from "./cron-jobs/cron-jobs.module";
 import { UserModule } from "./user/user.module";
+import { DashboardModule } from "./dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from "./user/user.module";
     WhitelistModule,
     CronJobsModule,
     UserModule,
+    DashboardModule,
   ],
 })
 export class AdminModule {}

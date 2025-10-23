@@ -8,6 +8,7 @@ import { WhitelistModule } from "./whitelist/whitelist.module";
 import { VisitorModule } from "./visitor/visitor.module";
 import { InfringementModule } from "./infringement/infringement.module";
 import { DisputeModule } from "./dispute/dispute.module";
+import { PatrolOfficerDashboardModule } from "./dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DisputeModule } from "./dispute/dispute.module";
     VisitorModule,
     InfringementModule,
     DisputeModule,
+    PatrolOfficerDashboardModule,
   ],
 })
 export class PatrolOfficerModule {}

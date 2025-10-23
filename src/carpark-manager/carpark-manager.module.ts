@@ -4,6 +4,7 @@ import { SubCarParkModule } from "./sub-car-park/sub-car-park.module";
 import { BlacklistModule } from "./blacklist/blacklist.module";
 import { WhitelistModule } from "./whitelist/whitelist.module";
 import { VisitorModule } from "./visitor/visitor.module";
+import { CarparkManagerDashboardModule } from "./dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { VisitorModule } from "./visitor/visitor.module";
     BlacklistModule,
     WhitelistModule,
     VisitorModule,
+    CarparkManagerDashboardModule,
   ],
 })
 export class CarparkManagerModule {}
