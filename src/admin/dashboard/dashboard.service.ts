@@ -233,26 +233,21 @@ export class DashboardService {
     endDate: Date,
     subCarParkId?: string
   ): Promise<NonComplianceResponse> {
-    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
-
     // Get infringement data
     const [notices, paid, unpaid] = await Promise.all([
       this.infringementRepository.count({
         where: {
-          ...whereCondition,
           createdAt: Between(startDate, endDate),
         },
       }),
       this.infringementRepository.count({
         where: {
-          ...whereCondition,
           status: InfringementStatus.PAID,
           createdAt: Between(startDate, endDate),
         },
       }),
       this.infringementRepository.count({
         where: {
-          ...whereCondition,
           status: InfringementStatus.NOT_PAID,
           createdAt: Between(startDate, endDate),
         },
@@ -274,33 +269,27 @@ export class DashboardService {
     endDate: Date,
     subCarParkId?: string
   ): Promise<DisputesResponse> {
-    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
-
     // Get dispute data
     const [total, pending, granted, denied] = await Promise.all([
       this.disputeRepository.count({
         where: {
-          ...whereCondition,
           createdAt: Between(startDate, endDate),
         },
       }),
       this.disputeRepository.count({
         where: {
-          ...whereCondition,
           status: DisputeStatus.PENDING,
           createdAt: Between(startDate, endDate),
         },
       }),
       this.disputeRepository.count({
         where: {
-          ...whereCondition,
           status: DisputeStatus.APPROVED,
           createdAt: Between(startDate, endDate),
         },
       }),
       this.disputeRepository.count({
         where: {
-          ...whereCondition,
           status: DisputeStatus.REJECTED,
           createdAt: Between(startDate, endDate),
         },
