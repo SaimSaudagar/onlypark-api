@@ -44,7 +44,7 @@ export class DashboardService {
   async getDashboardData(
     request: DashboardRequest
   ): Promise<DashboardResponse> {
-    const { carParkId, dateFrom, dateTo } = request;
+    const { subCarParkId, dateFrom, dateTo } = request;
 
     // Set default date range if not provided
     const endDate = dateTo ? new Date(dateTo) : new Date();
@@ -60,12 +60,12 @@ export class DashboardService {
       nonCompliance,
       disputes,
     ] = await Promise.all([
-      this.getMetrics(carParkId),
-      this.getTotalVisitors(startDate, endDate, carParkId),
-      this.getScanStayData(startDate, endDate, carParkId),
-      this.getDigitalPermitsData(startDate, endDate, carParkId),
-      this.getNonComplianceData(startDate, endDate, carParkId),
-      this.getDisputesData(startDate, endDate, carParkId),
+      this.getMetrics(subCarParkId),
+      this.getTotalVisitors(startDate, endDate, subCarParkId),
+      this.getScanStayData(startDate, endDate, subCarParkId),
+      this.getDigitalPermitsData(startDate, endDate, subCarParkId),
+      this.getNonComplianceData(startDate, endDate, subCarParkId),
+      this.getDisputesData(startDate, endDate, subCarParkId),
     ]);
 
     return {
@@ -79,9 +79,9 @@ export class DashboardService {
   }
 
   private async getMetrics(
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<DashboardMetricsResponse> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get available spaces (active visitor bookings)
     const availableSpaces = await this.visitorBookingRepository.count({
@@ -108,9 +108,9 @@ export class DashboardService {
   private async getTotalVisitors(
     startDate: Date,
     endDate: Date,
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<TotalVisitorsResponse[]> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get all visitor bookings in the date range
     const bookings = await this.visitorBookingRepository.find({
@@ -140,9 +140,9 @@ export class DashboardService {
   private async getScanStayData(
     startDate: Date,
     endDate: Date,
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<ScanStayResponse[]> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get all visitor bookings in the date range
     const bookings = await this.visitorBookingRepository.find({
@@ -181,9 +181,9 @@ export class DashboardService {
   private async getDigitalPermitsData(
     startDate: Date,
     endDate: Date,
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<DigitalPermitsResponse> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get different types of whitelist entries
     const [selfServer, permanent, shortStay, scheduled] = await Promise.all([
@@ -231,9 +231,9 @@ export class DashboardService {
   private async getNonComplianceData(
     startDate: Date,
     endDate: Date,
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<NonComplianceResponse> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get infringement data
     const [notices, paid, unpaid] = await Promise.all([
@@ -272,9 +272,9 @@ export class DashboardService {
   private async getDisputesData(
     startDate: Date,
     endDate: Date,
-    carParkId?: string
+    subCarParkId?: string
   ): Promise<DisputesResponse> {
-    const whereCondition = carParkId ? { subCarParkId: carParkId } : {};
+    const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get dispute data
     const [total, pending, granted, denied] = await Promise.all([

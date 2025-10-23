@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsDateString, IsEnum } from "class-validator";
 export class DashboardRequest {
   @IsOptional()
   @IsString()
-  carParkId?: string;
+  subCarParkId?: string;
 
   @IsOptional()
   @IsDateString()
