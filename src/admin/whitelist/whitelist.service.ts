@@ -460,7 +460,7 @@ export class WhitelistService {
     id: string,
     request: UpdateWhitelistRequest
   ): Promise<UpdateWhitelistResponse> {
-    const { subCarParkId, tenancyId, endDate } = request;
+    const { subCarParkId, tenancyId, endDate, startDate } = request;
 
     // Validate subCarPark if provided
     if (subCarParkId) {
@@ -496,8 +496,10 @@ export class WhitelistService {
     let endDateObj = entity.endDate;
 
     if (endDate) {
-      startDateObj = new Date(); // Current date
+      startDateObj = new Date(startDate);
       endDateObj = new Date(endDate);
+
+      console.log(startDateObj, endDateObj);
 
       if (startDateObj >= endDateObj) {
         throw new CustomException(
