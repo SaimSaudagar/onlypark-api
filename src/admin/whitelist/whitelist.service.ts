@@ -564,8 +564,8 @@ export class WhitelistService {
     // Calculate new dates for permanent booking
     const startDateObj = new Date(); // Current date
     const endDateObj = new Date(
-      startDateObj.getTime() + 365 * 24 * 60 * 60 * 1000
-    ); // 1 year from now
+      startDateObj.getTime() + 5 * 365 * 24 * 60 * 60 * 1000
+    ); // 5 year from now
 
     // Update entity
     Object.assign(entity, {
