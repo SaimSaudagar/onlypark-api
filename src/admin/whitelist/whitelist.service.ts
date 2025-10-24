@@ -659,7 +659,7 @@ export class WhitelistService {
       );
     }
 
-    if (entity.status === WhitelistStatus.ACTIVE) {
+    if (entity.status === WhitelistStatus.CHECKOUT) {
       throw new CustomException(
         ErrorCode.BOOKING_ALREADY_COMPLETED.key,
         HttpStatus.BAD_REQUEST
