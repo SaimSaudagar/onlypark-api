@@ -489,16 +489,18 @@ export class UserService {
     savedUser: User,
     request: UpdateUserRequest
   ): Promise<void> {
-    const patrolOfficer = await queryRunner.manager.update(
-      PatrolOfficer,
-      { userId: savedUser.id },
-      {
-        officerName: savedUser.name,
-        status: PatrolOfficerStatus.ACTIVE,
-      }
-    );
-
-    console.log("patrolOfficer", patrolOfficer);
+    const patrolOfficer = await queryRunner.manager.findOne(PatrolOfficer, {
+      where: { userId: savedUser.id },
+    });
+    if (!patrolOfficer) {
+      throw new CustomException(
+        ErrorCode.PATROL_OFFICER_NOT_FOUND.key,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    patrolOfficer.officerName = savedUser.name;
+    patrolOfficer.status = PatrolOfficerStatus.ACTIVE;
+    await queryRunner.manager.save(patrolOfficer);
 
     if (
       request.visitorSubCarParkIds &&
