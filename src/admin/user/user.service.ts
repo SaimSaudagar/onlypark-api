@@ -743,6 +743,8 @@ export class UserService {
         break;
     }
 
+    console.log("additionalData", additionalData);
+
     return {
       id: user.id,
       name: user.name,
