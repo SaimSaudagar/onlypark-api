@@ -3,6 +3,10 @@ import { ApiGetBaseRequest } from "../../common";
 
 export class CarparkManagerDashboardRequest extends ApiGetBaseRequest {
   @IsOptional()
+  @IsString()
+  subCarParkId?: string;
+
+  @IsOptional()
   @IsDateString()
   dateFrom?: string;
 

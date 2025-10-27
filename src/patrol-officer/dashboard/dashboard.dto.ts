@@ -3,6 +3,10 @@ import { ApiGetBaseRequest } from "../../common";
 
 export class PatrolOfficerDashboardRequest extends ApiGetBaseRequest {
   @IsOptional()
+  @IsString()
+  subCarParkId?: string;
+
+  @IsOptional()
   @IsDateString()
   dateFrom?: string;
 

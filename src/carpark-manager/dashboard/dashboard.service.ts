@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between, In } from "typeorm";
 import { DataSource } from "typeorm";
+import { CustomException } from "../../common/exceptions/custom.exception";
 import {
   CarparkManagerDashboardRequest,
   CarparkManagerDashboardResponse,
@@ -24,6 +25,7 @@ import {
   DisputeStatus,
   WhitelistType,
 } from "../../common/enums";
+import { ErrorCode } from "src/common/exceptions/error-code";
 
 @Injectable()
 export class CarparkManagerDashboardService {
@@ -45,7 +47,7 @@ export class CarparkManagerDashboardService {
     request: CarparkManagerDashboardRequest,
     carparkManagerId: string
   ): Promise<CarparkManagerDashboardResponse> {
-    const { dateFrom, dateTo } = request;
+    const { subCarParkId, dateFrom, dateTo } = request;
 
     // Set default date range if not provided
     const endDate = dateTo ? new Date(dateTo) : new Date();
@@ -57,6 +59,18 @@ export class CarparkManagerDashboardService {
     const assignedSubCarParkIds =
       await this.getAssignedSubCarParkIds(carparkManagerId);
 
+    // If specific subCarParkId is requested, validate it's assigned to this manager
+    let filteredSubCarParkIds = assignedSubCarParkIds;
+    if (subCarParkId) {
+      if (!assignedSubCarParkIds.includes(subCarParkId)) {
+        throw new CustomException(
+          ErrorCode.SUB_CAR_PARK_NOT_ASSIGNED_TO_USER.key,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      filteredSubCarParkIds = [subCarParkId];
+    }
+
     const [
       metrics,
       totalVisitors,
@@ -65,12 +79,12 @@ export class CarparkManagerDashboardService {
       nonCompliance,
       disputes,
     ] = await Promise.all([
-      this.getMetrics(assignedSubCarParkIds),
-      this.getTotalVisitors(startDate, endDate, assignedSubCarParkIds),
-      this.getScanStayData(startDate, endDate, assignedSubCarParkIds),
-      this.getDigitalPermitsData(startDate, endDate, assignedSubCarParkIds),
-      this.getNonComplianceData(startDate, endDate, assignedSubCarParkIds),
-      this.getDisputesData(startDate, endDate, assignedSubCarParkIds),
+      this.getMetrics(filteredSubCarParkIds),
+      this.getTotalVisitors(startDate, endDate, filteredSubCarParkIds),
+      this.getScanStayData(startDate, endDate, filteredSubCarParkIds),
+      this.getDigitalPermitsData(startDate, endDate, filteredSubCarParkIds),
+      this.getNonComplianceData(startDate, endDate), // Noncompliance shows all car parks
+      this.getDisputesData(startDate, endDate, filteredSubCarParkIds),
     ]);
 
     return {
@@ -261,14 +275,9 @@ export class CarparkManagerDashboardService {
 
   private async getNonComplianceData(
     startDate: Date,
-    endDate: Date,
-    assignedSubCarParkIds: string[]
+    endDate: Date
   ): Promise<CarparkManagerNonComplianceResponse> {
-    if (assignedSubCarParkIds.length === 0) {
-      return { notices: 0, paid: 0, unpaid: 0, total: 0 };
-    }
-
-    // Get infringement data for assigned car parks
+    // Get infringement data for all car parks (not filtered by assigned car parks)
     const [notices, paid, unpaid] = await Promise.all([
       this.infringementRepository.count({
         where: {

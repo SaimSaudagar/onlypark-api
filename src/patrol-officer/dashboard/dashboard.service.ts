@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between, In } from "typeorm";
 import { DataSource } from "typeorm";
+import { CustomException } from "../../common/exceptions/custom.exception";
 import {
   PatrolOfficerDashboardRequest,
   PatrolOfficerDashboardResponse,
@@ -45,7 +46,7 @@ export class PatrolOfficerDashboardService {
     request: PatrolOfficerDashboardRequest,
     patrolOfficerId: string
   ): Promise<PatrolOfficerDashboardResponse> {
-    const { dateFrom, dateTo } = request;
+    const { subCarParkId, dateFrom, dateTo } = request;
 
     // Set default date range if not provided
     const endDate = dateTo ? new Date(dateTo) : new Date();
@@ -57,6 +58,18 @@ export class PatrolOfficerDashboardService {
     const assignedSubCarParkIds =
       await this.getAssignedSubCarParkIds(patrolOfficerId);
 
+    // If specific subCarParkId is requested, validate it's assigned to this officer
+    let filteredSubCarParkIds = assignedSubCarParkIds;
+    if (subCarParkId) {
+      if (!assignedSubCarParkIds.includes(subCarParkId)) {
+        throw new CustomException(
+          "Access denied: Sub car park not assigned to this officer",
+          403
+        );
+      }
+      filteredSubCarParkIds = [subCarParkId];
+    }
+
     const [
       metrics,
       totalVisitors,
@@ -65,12 +78,12 @@ export class PatrolOfficerDashboardService {
       nonCompliance,
       disputes,
     ] = await Promise.all([
-      this.getMetrics(assignedSubCarParkIds),
-      this.getTotalVisitors(startDate, endDate, assignedSubCarParkIds),
-      this.getScanStayData(startDate, endDate, assignedSubCarParkIds),
-      this.getDigitalPermitsData(startDate, endDate, assignedSubCarParkIds),
-      this.getNonComplianceData(startDate, endDate, assignedSubCarParkIds),
-      this.getDisputesData(startDate, endDate, assignedSubCarParkIds),
+      this.getMetrics(filteredSubCarParkIds),
+      this.getTotalVisitors(startDate, endDate, filteredSubCarParkIds),
+      this.getScanStayData(startDate, endDate, filteredSubCarParkIds),
+      this.getDigitalPermitsData(startDate, endDate, filteredSubCarParkIds),
+      this.getNonComplianceData(startDate, endDate), // Noncompliance shows all car parks
+      this.getDisputesData(startDate, endDate, filteredSubCarParkIds),
     ]);
 
     return {
@@ -261,14 +274,9 @@ export class PatrolOfficerDashboardService {
 
   private async getNonComplianceData(
     startDate: Date,
-    endDate: Date,
-    assignedSubCarParkIds: string[]
+    endDate: Date
   ): Promise<PatrolOfficerNonComplianceResponse> {
-    if (assignedSubCarParkIds.length === 0) {
-      return { notices: 0, paid: 0, unpaid: 0, total: 0 };
-    }
-
-    // Get infringement data for assigned car parks
+    // Get infringement data for all car parks (not filtered by assigned car parks)
     const [notices, paid, unpaid] = await Promise.all([
       this.infringementRepository.count({
         where: {
