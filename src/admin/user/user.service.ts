@@ -498,6 +498,8 @@ export class UserService {
       }
     );
 
+    console.log("patrolOfficer", patrolOfficer);
+
     if (
       request.visitorSubCarParkIds &&
       request.visitorSubCarParkIds.length > 0
