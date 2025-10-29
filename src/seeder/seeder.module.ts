@@ -17,6 +17,7 @@ import { BlacklistSeederModule } from "./blacklist/blacklist-seeder.module";
 import { InfringementCarParkSeederModule } from "./infringement-car-park/infringement-car-park-seeder.module";
 import { InfringementPenaltySeederModule } from "./infringement-penalty/infringement-penalty-seeder.module";
 import { InfringementReasonSeederModule } from "./infringement-reason/infringement-reason-seeder.module";
+import { ScanStaySeederModule } from "./scan-stay/scan-stay-seeder.module";
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { InfringementReasonSeederModule } from "./infringement-reason/infringeme
     InfringementCarParkSeederModule,
     InfringementPenaltySeederModule,
     InfringementReasonSeederModule,
+    ScanStaySeederModule,
   ],
 })
 export class SeederModule {}

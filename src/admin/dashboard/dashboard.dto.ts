@@ -24,9 +24,14 @@ export class TotalVisitorsResponse {
   visitors: number;
 }
 
-export class ScanStayResponse {
+export class ScanStayMonthlyData {
+  month: string;
   active: number;
   expired: number;
+}
+
+export class ScanStayResponse {
+  monthlyData: ScanStayMonthlyData[];
 }
 
 export class DigitalPermitsResponse {

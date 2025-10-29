@@ -150,23 +150,38 @@ export class DashboardService {
         ...whereCondition,
         createdAt: Between(startDate, endDate),
       },
-      select: ["status"],
+      select: ["status", "createdAt"],
     });
 
-    // Count active and expired bookings across all months
-    const counts = bookings.reduce(
+    // Group by month and count active and expired bookings
+    const monthlyData = bookings.reduce(
       (acc, booking) => {
-        if (booking.status === VisitorBookingStatus.ACTIVE) {
-          acc.active++;
-        } else if (booking.status === VisitorBookingStatus.CHECKOUT) {
-          acc.expired++;
+        const month = booking.createdAt.toISOString().substring(0, 7); // YYYY-MM format
+        if (!acc[month]) {
+          acc[month] = { active: 0, expired: 0 };
         }
+
+        if (booking.status === VisitorBookingStatus.ACTIVE) {
+          acc[month].active++;
+        } else if (booking.status === VisitorBookingStatus.CHECKOUT) {
+          acc[month].expired++;
+        }
+
         return acc;
       },
-      { active: 0, expired: 0 }
+      {} as Record<string, { active: number; expired: number }>
     );
 
-    return counts;
+    // Convert to array and sort by month
+    const monthlyDataArray = Object.entries(monthlyData)
+      .map(([month, counts]) => ({
+        month,
+        active: counts.active,
+        expired: counts.expired,
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+
+    return { monthlyData: monthlyDataArray };
   }
 
   private async getDigitalPermitsData(

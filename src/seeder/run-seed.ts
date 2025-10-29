@@ -11,6 +11,7 @@ import { BlacklistSeederService } from "./blacklist/blacklist-seeder.service";
 import { InfringementCarParkSeederService } from "./infringement-car-park/infringement-car-park-seeder.service";
 import { InfringementPenaltySeederService } from "./infringement-penalty/infringement-penalty-seeder.service";
 import { InfringementReasonSeederService } from "./infringement-reason/infringement-reason-seeder.service";
+import { ScanStaySeederService } from "./scan-stay/scan-stay-seeder.service";
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeederModule);
@@ -31,48 +32,52 @@ const runSeed = async () => {
     // await app.get(RolePermissionSeederService).run();
 
     // Seed car makes
-    console.log("Seeding car makes...");
-    await app.get(CarMakeSeederService).run();
+    // console.log("Seeding car makes...");
+    // await app.get(CarMakeSeederService).run();
 
-    // Seed master car parks
-    console.log("Seeding master car parks...");
-    await app.get(MasterCarParkSeederService).run();
+    // // Seed master car parks
+    // console.log("Seeding master car parks...");
+    // await app.get(MasterCarParkSeederService).run();
 
-    // Seed sub car parks
-    console.log("Seeding sub car parks...");
-    await app.get(SubCarParkSeederService).run();
+    // // Seed sub car parks
+    // console.log("Seeding sub car parks...");
+    // await app.get(SubCarParkSeederService).run();
 
-    // Seed tenancies
-    console.log("Seeding tenancies...");
-    await app.get(TenancySeederService).run();
+    // // Seed tenancies
+    // console.log("Seeding tenancies...");
+    // await app.get(TenancySeederService).run();
 
-    // Seed whitelist companies
-    console.log("Seeding whitelist companies...");
-    await app.get(WhitelistCompanySeederService).run();
+    // // Seed whitelist companies
+    // console.log("Seeding whitelist companies...");
+    // await app.get(WhitelistCompanySeederService).run();
 
-    // Seed whitelists (after tenancies are created)
-    console.log("Seeding whitelists...");
-    await app.get(WhitelistSeederService).run();
+    // // Seed whitelists (after tenancies are created)
+    // console.log("Seeding whitelists...");
+    // await app.get(WhitelistSeederService).run();
 
-    // Seed blacklists
-    console.log("Seeding blacklists...");
-    await app.get(BlacklistSeederService).run();
+    // // Seed blacklists
+    // console.log("Seeding blacklists...");
+    // await app.get(BlacklistSeederService).run();
 
-    // Seed infringement car parks
-    console.log("Seeding infringement car parks...");
-    await app.get(InfringementCarParkSeederService).run();
+    // // Seed infringement car parks
+    // console.log("Seeding infringement car parks...");
+    // await app.get(InfringementCarParkSeederService).run();
 
-    // Seed infringement penalties (after car parks are created)
-    console.log("Seeding infringement penalties...");
-    await app.get(InfringementPenaltySeederService).run();
+    // // Seed infringement penalties (after car parks are created)
+    // console.log("Seeding infringement penalties...");
+    // await app.get(InfringementPenaltySeederService).run();
 
-    // Seed infringement reasons
-    console.log("Seeding infringement reasons...");
-    await app.get(InfringementReasonSeederService).run();
+    // // Seed infringement reasons
+    // console.log("Seeding infringement reasons...");
+    // await app.get(InfringementReasonSeederService).run();
+
+    // Seed scan and stay data (after all other data is seeded)
+    console.log("Seeding scan and stay data...");
+    await app.get(ScanStaySeederService).run();
 
     // Seed users last (after roles and permissions are set up)
-    console.log("Seeding users...");
-    await app.get(UserSeederService).run();
+    // console.log("Seeding users...");
+    // await app.get(UserSeederService).run();
 
     console.log("Seeding completed successfully!");
   } catch (error) {
