@@ -176,6 +176,8 @@ export class VisitorBookingService {
       pageNo,
       pageSize,
       status,
+      dateFrom,
+      dateTo,
       subCarParkId,
     } = request;
     const skip = (pageNo - 1) * pageSize;
@@ -190,6 +192,10 @@ export class VisitorBookingService {
 
     if (subCarParkId) {
       whereOptions.subCarParkId = subCarParkId;
+    }
+
+    if (dateFrom && dateTo) {
+      whereOptions.startDate = Between(new Date(dateFrom), new Date(dateTo));
     }
 
     if (sortField) {
@@ -386,7 +392,15 @@ export class VisitorBookingService {
   }
 
   async exportToCsv(request: FindVisitorBookingRequest): Promise<string> {
-    const { search, sortField, sortOrder, subCarParkId, status, dateFrom, dateTo } = request;
+    const {
+      search,
+      sortField,
+      sortOrder,
+      subCarParkId,
+      status,
+      dateFrom,
+      dateTo,
+    } = request;
 
     const whereOptions: FindOptionsWhere<VisitorBooking> = {};
     const orderOptions: FindOptionsOrder<VisitorBooking> = {};
