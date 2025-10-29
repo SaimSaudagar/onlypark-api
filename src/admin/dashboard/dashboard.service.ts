@@ -141,7 +141,7 @@ export class DashboardService {
     startDate: Date,
     endDate: Date,
     subCarParkId?: string
-  ): Promise<ScanStayResponse[]> {
+  ): Promise<ScanStayResponse> {
     const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
     // Get all visitor bookings in the date range
@@ -150,32 +150,23 @@ export class DashboardService {
         ...whereCondition,
         createdAt: Between(startDate, endDate),
       },
-      select: ["createdAt", "status"],
+      select: ["status"],
     });
 
-    // Group by month and status
-    const groupedData = bookings.reduce(
+    // Count active and expired bookings across all months
+    const counts = bookings.reduce(
       (acc, booking) => {
-        const month = booking.createdAt.toISOString().substring(0, 7); // YYYY-MM format
-        if (!acc[month]) {
-          acc[month] = { active: 0, expired: 0 };
-        }
-
         if (booking.status === VisitorBookingStatus.ACTIVE) {
-          acc[month].active++;
+          acc.active++;
         } else if (booking.status === VisitorBookingStatus.CHECKOUT) {
-          acc[month].expired++;
+          acc.expired++;
         }
-
         return acc;
       },
-      {} as Record<string, { active: number; expired: number }>
+      { active: 0, expired: 0 }
     );
 
-    // Convert to array and sort by month
-    return Object.entries(groupedData)
-      .map(([month, data]) => ({ month, ...data }))
-      .sort((a, b) => a.month.localeCompare(b.month));
+    return counts;
   }
 
   private async getDigitalPermitsData(

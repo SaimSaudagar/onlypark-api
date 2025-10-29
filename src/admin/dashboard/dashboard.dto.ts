@@ -25,7 +25,6 @@ export class TotalVisitorsResponse {
 }
 
 export class ScanStayResponse {
-  month: string;
   active: number;
   expired: number;
 }
@@ -55,7 +54,7 @@ export class DisputesResponse {
 export class DashboardResponse {
   metrics: DashboardMetricsResponse;
   totalVisitors: TotalVisitorsResponse[];
-  scanStay: ScanStayResponse[];
+  scanStay: ScanStayResponse;
   digitalPermits: DigitalPermitsResponse;
   nonCompliance: NonComplianceResponse;
   disputes: DisputesResponse;
