@@ -83,25 +83,19 @@ export class DashboardService {
   ): Promise<DashboardMetricsResponse> {
     const whereCondition = subCarParkId ? { subCarParkId: subCarParkId } : {};
 
-    // Get available spaces (active visitor bookings)
-    const availableSpaces = await this.visitorBookingRepository.count({
-      where: {
-        ...whereCondition,
-        status: VisitorBookingStatus.ACTIVE,
-      },
+    // Get whitelist count
+    const whitelist = await this.whitelistRepository.count({
+      where: whereCondition,
     });
 
-    // Get expired spaces (checkout visitor bookings)
-    const expiredSpaces = await this.visitorBookingRepository.count({
-      where: {
-        ...whereCondition,
-        status: VisitorBookingStatus.CHECKOUT,
-      },
+    // Get scan and stay count (visitor bookings)
+    const scanAndStay = await this.visitorBookingRepository.count({
+      where: whereCondition,
     });
 
     return {
-      availableSpaces,
-      expiredSpaces,
+      whitelist,
+      scanAndStay,
     };
   }
 

@@ -15,8 +15,8 @@ export class DashboardRequest {
 }
 
 export class DashboardMetricsResponse {
-  availableSpaces: number;
-  expiredSpaces: number;
+  whitelist: number;
+  scanAndStay: number;
 }
 
 export class TotalVisitorsResponse {
